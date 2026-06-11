@@ -1,0 +1,12 @@
+{
+    "sql_server": {
+        "server": "SEU_SERVIDOR",
+        "user": "UTILIZADOR",
+        "password": "PASSWORD"
+    },
+
+    "databases": {
+        "sage50": "NOME_BASE_SAGE",
+        "mss": "NOME_BASE_MSS"
+    }
+}
