@@ -1,6 +1,10 @@
 import configparser
 import subprocess
 from pathlib import Path
+from core.database import Database
+
+
+# VERIFICACAO DO myTeam.exe EM EXECUCAO OU NAO
 
 INI_PATH = r"C:\MIS\MSSV5\Backoffice\MSSBO.INI"
 RUNNING = "Running"
@@ -92,3 +96,52 @@ def is_service_running(output):
             return False
 
     return "RUNNING" in output
+
+
+# VERIFICACAO SE A DATABASE World_Geometries EXISTE OU NAO
+
+WORLD_GEOMETRIES_DATABASE = "World_Geometries"
+WORLD_GEOMETRIES_SUPPORT_LINK = "https://msssupport.sysdevmobile.com/portal/pt/kb/articles/myteam-monitor"
+
+
+def get_world_geometries_info(server, user, password):
+    exists = world_geometries_exist(
+        server=server,
+        user=user,
+        password=password
+    )
+
+    if exists:
+        return {
+            "database_name": WORLD_GEOMETRIES_DATABASE,
+            "exists": True,
+            "status": "OK",
+            "support_link": None
+        }
+
+    return {
+        "database_name": WORLD_GEOMETRIES_DATABASE,
+        "exists": False,
+        "status": "Missing",
+        "support_link": WORLD_GEOMETRIES_SUPPORT_LINK
+    }
+
+
+def world_geometries_exist(server, user, password, nome_bd=WORLD_GEOMETRIES_DATABASE):
+    db = Database(
+        server=server,
+        database="master",
+        user=user,
+        password=password
+    )
+
+    nome_bd_seguro = nome_bd.replace("'", "''")
+
+    query = f"SELECT DB_ID(N'{nome_bd_seguro}')"
+
+    resultado = db.execute(query)
+
+    if not resultado:
+        return False
+
+    return resultado[0][0] is not None
