@@ -2,6 +2,9 @@ import configparser
 import subprocess
 from pathlib import Path
 from core.database import Database
+from core.port_checks import is_optimizer_port_open
+from core.webapi_checks import are_api_keys_equal
+from core.webapi_checks import get_webapi_status
 
 
 # VERIFICACAO DO myTeam.exe EM EXECUCAO OU NAO
@@ -145,3 +148,76 @@ def world_geometries_exist(server, user, password, nome_bd=WORLD_GEOMETRIES_DATA
         return False
 
     return resultado[0][0] is not None
+
+#### VERIFICAÇÃO Se a porta 288 está aberta e se existe algum serviço a escutar nela.
+
+def get_optimizer_port_info():
+
+    if is_optimizer_port_open():
+
+        return {
+            "status": "OK",
+            "port": 288
+        }
+    
+    return {
+        "status": "Closed",
+        "port": 288
+    }
+
+### VERIFICAÇÃO SE A WebAPI esta em execução
+
+# =====================================================
+# WEB API
+# =====================================================
+
+WEBAPI_SERVICE_NAME = "MSSWebAPI"
+
+
+def get_webapi_service_info():
+
+    return {
+        "service_name": WEBAPI_SERVICE_NAME,
+        "status": get_windows_service_status(
+            WEBAPI_SERVICE_NAME
+        )
+    }
+
+
+def get_webapi_apikey_info():
+
+    if are_api_keys_equal():
+
+        return {
+            "status": "OK",
+            "ApiKey": True,
+            "ApiKeyLog": True,
+            "ApiKeyInternal": True
+        }
+
+    return {
+        "status": "Different",
+        "ApiKey": False,
+        "ApiKeyLog": False,
+        "ApiKeyInternal": False
+    }
+
+
+def get_webapi_status_info():
+
+    status = get_webapi_status()
+
+    return {
+        "online": status.get(
+            "online",
+            False
+        ),
+        "message": status.get(
+            "message",
+            ""
+        ),
+        "api_version": status.get(
+            "apiVersion",
+            ""
+        )
+    }

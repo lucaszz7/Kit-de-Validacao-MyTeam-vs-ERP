@@ -45,6 +45,7 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
         USRNOM AS NomeVendedor,
         CAST(USRVND AS VARCHAR(50)) AS CodigoVendedorERP
     FROM {mss_db}.dbo.MSUSR
+    WHERE UPPER(LTRIM(RTRIM(USRUSR))) <> 'ADMIN'
 
     UNION ALL
 
@@ -117,9 +118,10 @@ def get_invalid_mss_mappings(db: DatabaseExecutor) -> list[ValidationIssue]:
     FROM {mss_db}.dbo.MSUSR m
     LEFT JOIN {sage_db}.dbo.Salesman s
         ON CAST(s.SalesmanID AS VARCHAR(50)) = CAST(m.USRVND AS VARCHAR(50))
-    WHERE m.USRVND IS NOT NULL
-      AND LTRIM(RTRIM(CAST(m.USRVND AS VARCHAR(50)))) <> ''
-      AND s.SalesmanID IS NULL
+    WHERE UPPER(LTRIM(RTRIM(m.USRUSR))) <> 'ADMIN'
+        AND m.USRVND IS NOT NULL
+        AND LTRIM(RTRIM(CAST(m.USRVND AS VARCHAR(50)))) <> ''
+        AND s.SalesmanID IS NULL
     """
 
     rows = db.execute(query)
@@ -150,8 +152,11 @@ def get_mss_users_without_erp_salesman(db: DatabaseExecutor) -> list[ValidationI
         CAST(USRUSR AS VARCHAR(50)) AS CodigoUtilizador,
         USRNOM
     FROM {mss_db}.dbo.MSUSR
-    WHERE USRVND IS NULL
-       OR LTRIM(RTRIM(CAST(USRVND AS VARCHAR(50)))) = ''
+    WHERE UPPER(LTRIM(RTRIM(USRUSR))) <> 'ADMIN'
+        AND (
+            USRVND IS NULL
+            OR LTRIM(RTRIM(CAST(USRVND AS VARCHAR(50)))) = ''
+            )
     """
 
     rows = db.execute(query)
