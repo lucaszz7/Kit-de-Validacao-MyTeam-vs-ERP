@@ -6,8 +6,9 @@ from core.port_checks import is_optimizer_port_open
 from core.webapi_checks import are_api_keys_equal
 from core.webapi_checks import get_webapi_status
 
-
+# ==========================================================================================================
 # VERIFICACAO DO myTeam.exe EM EXECUCAO OU NAO
+# ==========================================================================================================
 
 INI_PATH = r"C:\MIS\MSSV5\Backoffice\MSSBO.INI"
 RUNNING = "Running"
@@ -100,8 +101,9 @@ def is_service_running(output):
 
     return "RUNNING" in output
 
-
+# ==========================================================================================================
 # VERIFICACAO SE A DATABASE World_Geometries EXISTE OU NAO
+# ==========================================================================================================
 
 WORLD_GEOMETRIES_DATABASE = "World_Geometries"
 WORLD_GEOMETRIES_SUPPORT_LINK = "https://msssupport.sysdevmobile.com/portal/pt/kb/articles/myteam-monitor"
@@ -149,7 +151,9 @@ def world_geometries_exist(server, user, password, nome_bd=WORLD_GEOMETRIES_DATA
 
     return resultado[0][0] is not None
 
+# ==========================================================================================================
 #### VERIFICAÇÃO Se a porta 288 está aberta e se existe algum serviço a escutar nela.
+# ==========================================================================================================
 
 def get_optimizer_port_info():
 
@@ -165,11 +169,9 @@ def get_optimizer_port_info():
         "port": 288
     }
 
-### VERIFICAÇÃO SE A WebAPI esta em execução
-
-# =====================================================
-# WEB API
-# =====================================================
+# ==========================================================================================================
+# ### VERIFICAÇÃO SE A WebAPI esta em execução, SE AS API KEYS SÃO IGUAIS E SE A MESMA ESTÁ ONLINE
+# ==========================================================================================================
 
 WEBAPI_SERVICE_NAME = "MSSWebAPI"
 
@@ -206,6 +208,10 @@ def get_webapi_apikey_info():
 def get_webapi_status_info():
 
     status = get_webapi_status()
+    date_on_server = status.get(
+        "dateOnServer",
+        ""
+    )
 
     return {
         "online": status.get(
@@ -215,9 +221,106 @@ def get_webapi_status_info():
         "message": status.get(
             "message",
             ""
-        ),
+        ) or "",
         "api_version": status.get(
             "apiVersion",
             ""
+        ),
+        "date_on_server": status.get(
+            "dateOnServer",
+            ""
+        ),
+        "date_on_server_formatted": format_webapi_date(
+            date_on_server
         )
+    }
+
+
+def format_webapi_date(value):
+
+    if not value:
+        return ""
+
+    value = str(value)
+
+    if len(value) < 14:
+        return value
+
+    return (
+        f"{value[6:8]}/{value[4:6]}/{value[0:4]} "
+        f"{value[8:10]}:{value[10:12]}:{value[12:14]}"
+    )
+
+# ==========================================================================================================
+# VERIFICAÇÃO SE A API GOOGLE MAPS EXISTE OU NAO
+# ==========================================================================================================
+
+def get_google_maps_api_info(db):
+
+    query = """
+    SELECT CFGPAR, CFGVAL
+    FROM BOMSCFG
+    WHERE CFGGRP = 'GOOGLE'
+    """
+
+    rows = db.execute(query)
+
+    configured_parameters = []
+
+    for row in rows:
+
+        parameter = str(row[0]).strip()
+        value = row[1]
+
+        if value is not None and str(value).strip():
+
+            configured_parameters.append(parameter)
+
+    return {
+
+        "status": "OK" if configured_parameters else "Missing",
+
+        "configured": len(configured_parameters) > 0,
+
+        "parameters": configured_parameters
+    }
+
+# ==========================================================================================================
+# Validar se tem o símbolo no respetivo campo no BackOffice preenchido ou não
+# ==========================================================================================================
+
+def get_currency_symbol_info(db):
+
+    query = """
+    SELECT
+        TERTER,
+        TERVAL
+    FROM MSTER
+    WHERE TERDSC LIKE '%Simbolo do moeda%'
+    """
+
+    rows = db.execute(query)
+
+    terminals_without_symbol = []
+
+    for row in rows:
+
+        terminal = str(row[0]).strip()
+        symbol = "" if row[1] is None else str(row[1]).strip()
+
+        if symbol == "":
+
+            terminals_without_symbol.append(terminal)
+
+    if not terminals_without_symbol:
+
+        return{
+            "status": "OK",
+            "currency_symbol": "€",
+            "missing_terminals": []
+        }   
+    
+    return {
+        "status": "Missing",
+        "missing_terminals": terminals_without_symbol
     }

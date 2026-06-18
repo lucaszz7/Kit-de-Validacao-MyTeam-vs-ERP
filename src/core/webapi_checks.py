@@ -6,6 +6,7 @@ import requests
 INI_PATH = r"C:\MIS\MSSV5\Backoffice\MSSBO.INI"
 
 APPSETTINGS_PATH = r"C:\MIS\MSSV5\MSSWebAPI\appsettings.json"
+GET_STATUS_URL = "http://localhost:19080/MSSWebApi/MSSClient/Authentication/GetStatus"
 
 
 def get_ini_keys():
@@ -84,10 +85,14 @@ def are_api_keys_equal():
 def get_webapi_status():
 
     try:
+        api_key = get_ini_keys()["ApiKey"]
 
         response = requests.post(
+            GET_STATUS_URL,
 
-            "http://localhost:19080/MSSWebApi/MSSClient/Authentication/GetStatus",
+            headers={
+                "X-Api-Key": api_key
+            },
 
             json={
                 "value": 123
@@ -97,7 +102,22 @@ def get_webapi_status():
 
         )
 
-        return response.json()
+        try:
+            data = response.json()
+        except ValueError:
+            data = {}
+
+        if response.status_code != 200:
+            return {
+                "online": False,
+                "message": data.get(
+                    "title",
+                    f"HTTP {response.status_code}"
+                ),
+                "status_code": response.status_code
+            }
+
+        return data
 
     except Exception as e:
 

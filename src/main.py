@@ -13,62 +13,86 @@ from core.verifications import get_webapi_service_info
 from core.verifications import get_webapi_apikey_info
 from core.verifications import get_webapi_status_info
 
+from core.verifications import get_google_maps_api_info
+
+from core.verifications import get_currency_symbol_info
+
+
 try:
 
-    print("A verificar serviço MyTeam...")
+    print()
+    print("==========================================")
+    print("      KIT DE VALIDAÇÃO MYTEAM VS ERP")
+    print("==========================================")
+
+    # ==========================================
+    # MYTEAM
+    # ==========================================
+
+    print()
+    print(">>> SERVIÇO MYTEAM")
 
     myteam_service = get_myteam_service_info()
 
-    print(f"Serviço MyTeam: {myteam_service['service_name']}")
-    print(f"Status MyTeam: {myteam_service['status']}")
+    print(f"Nome........: {myteam_service['service_name']}")
+    print(f"Status......: {myteam_service['status']}")
+
+    # ==========================================
+    # WEBAPI
+    # ==========================================
 
     print()
-
-    print("A verificar serviço WebAPI...")
+    print(">>> WebAPI")
 
     webapi_service = get_webapi_service_info()
 
-    print(f"Serviço WebAPI: {webapi_service['status']}")
-
-    print()
-
-    print("A verificar Apikeys...")
+    print(f"Serviço.....: {webapi_service['status']}")
 
     apikey = get_webapi_apikey_info()
 
-    print(f"ApiKeys: {apikey['status']}")
-
-    print()
-
-    print("A verificar GetStatus...")
+    print(f"ApiKeys.....: {apikey['status']}")
 
     status = get_webapi_status_info()
 
-    print(f"Online: {status['online']}")
+    print(f"Online......: {status['online']}")
+    print(f"Versão API..: {status['api_version']}")
 
-    print(f"Versão API: {status['api_version']}")
+    if status["message"]:
+        print(f"Mensagem....: {status['message']}")
 
-    print(f"Mensagem: {status['message']}")
+    if status["date_on_server_formatted"]:
+        print(
+            f"Data servidor: {status['date_on_server_formatted']}"
+        )
+
+    # ==========================================
+    # PORTA 288
+    # ==========================================
 
     print()
-
-    print("A verificar porta do Otimizador...")
+    print(">>> OTIMIZADOR")
 
     optimizer = get_optimizer_port_info()
 
-    print(f"Porta {optimizer['port']}: {optimizer['status']}")
+    print(f"Porta 288...: {optimizer['status']}")
+
+    # ==========================================
+    # CONFIG
+    # ==========================================
 
     print()
-
-    print("A carregar configuração...")
+    print(">>> CONFIGURAÇÃO")
 
     config = load_config()
 
-    print("Configuração carregada!")
+    print("Configuração carregada com sucesso.")
+
+    # ==========================================
+    # WORLD_GEOMETRIES
+    # ==========================================
 
     print()
-
-    print("A verificar base de dados World_Geometries...")
+    print(">>> WORLD_GEOMETRIES")
 
     world_geometries = get_world_geometries_info(
         server=config["sql_server"]["server"],
@@ -76,15 +100,20 @@ try:
         password=config["sql_server"]["password"]
     )
 
-    print(f"Base de dados: {world_geometries['database_name']}")
-    print(f"Status World_Geometries: {world_geometries['status']}")
+    print(f"Base de dados........: {world_geometries['database_name']}")
+    print(f"Status......: {world_geometries['status']}")
 
     if not world_geometries["exists"]:
-        print(f"Artigo de suporte: {world_geometries['support_link']}")
+        print(
+            f"Suporte.....: {world_geometries['support_link']}"
+        )
+
+    # ==========================================
+    # SQL
+    # ==========================================
 
     print()
-
-    print("A ligar ao SQL Server...")
+    print(">>> SQL SERVER")
 
     db = Database(
         server=config["sql_server"]["server"],
@@ -95,15 +124,48 @@ try:
 
     db.execute("SELECT 1")
 
-    print("Ligação efetuada com sucesso!")
+    print("Ligação efetuada com sucesso.")
+
+    # ==========================================
+    # GOOGLE MAPS
+    # ==========================================
+
+    db_mss = Database(
+        server=config["sql_server"]["server"],
+        database=config["databases"]["mss"],
+        user=config["sql_server"]["user"],
+        password=config["sql_server"]["password"]
+    )
+
+    print()
+    print(">>> API DE MAPAS")
+
+    google_maps = get_google_maps_api_info(db_mss)
+
+    print(f"Status......: {google_maps['status']}")
 
     print()
 
-    # ================================
-    # MAPEAMENTO COMPLETO (VISUAL)
-    # ================================
+    print(">>> SÍMBOLO DA MOEDA")
 
-    print("MAPEAMENTO DE VENDEDORES:")
+    currency = get_currency_symbol_info(db_mss)
+
+    print(f"Estado......: {currency['status']}")
+
+    if currency["missing_terminals"]:
+
+        print("Terminais sem símbolo:")
+
+        for terminal in currency["missing_terminals"]:
+
+            print(f"  • Terminal {terminal}")
+
+    # ==========================================
+    # MAPEAMENTO DE VENDEDORES
+    # ==========================================
+
+    print()
+    print(">>> MAPEAMENTO DE VENDEDORES")
     print()
 
     rows = get_salesmen_mapping(db)
@@ -111,32 +173,47 @@ try:
     for row in rows:
 
         if row["origem"] == "MSS":
+
             print(row)
 
     print()
 
-    # ================================
-    # VALIDACAO
-    # ================================
+    # ==========================================
+    # VALIDAÇÃO
+    # ==========================================
 
-    print("VALIDAÇÃO DE VENDEDORES:")
     print()
+    print(">>> VALIDAÇÃO DE VENDEDORES")
 
     result = validate_salesmen(db)
 
     if result["success"]:
-        print("Nenhuma divergência encontrada!")
+
+        print()
+        print("✓ Nenhuma divergência encontrada.")
+
     else:
-        print(f"Foram encontradas {result['total_issues']} divergências:")
+
+        print()
+        print(
+            f"Foram encontradas "
+            f"{result['total_issues']} divergências:"
+        )
         print()
 
         for issue in result["issues"]:
-            print(f"- {issue['message']}")
+
+            print(f"• {issue['message']}")
 
     print()
-    print("Validação concluída!")
+    print("==========================================")
+    print("      VALIDAÇÃO CONCLUÍDA")
+    print("==========================================")
 
 except Exception as e:
 
-    print("ERRO:")
+    print()
+    print("==========================================")
+    print("               ERRO")
+    print("==========================================")
     print(e)
