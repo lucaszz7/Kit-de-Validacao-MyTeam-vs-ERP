@@ -1,6 +1,7 @@
 import configparser
 import subprocess
 from pathlib import Path
+from datetime import datetime
 from core.database import Database
 from core.port_checks import is_optimizer_port_open
 from core.webapi_checks import are_api_keys_equal
@@ -323,4 +324,43 @@ def get_currency_symbol_info(db):
     return {
         "status": "Missing",
         "missing_terminals": terminals_without_symbol
+    }
+
+# ==========================================================================================================
+# Encontrar o documento mais antigo sincronizado na tabela STMSDCC
+# ==========================================================================================================
+
+def get_historical_sync_start_info(db_mss):
+
+    query = """
+    SELECT
+        MIN(DCCDTA) AS DataMaisAntiga
+    FROM STMSDCC
+    """
+
+    rows = db_mss.execute(query)
+
+    if not rows or rows[0][0] is None:
+
+        return {
+            "status": "No Data",
+            "start_date": None,
+            "start_date_formatted": ""
+        }
+
+    start_date = str(rows[0][0])
+
+    if len(start_date) == 8:
+        start_date_formatted = (
+            f"{start_date[6:8]}/"
+            f"{start_date[4:6]}/"
+            f"{start_date[0:4]}"
+        )
+    else:
+        start_date_formatted = start_date
+
+    return {
+        "status": "OK",
+        "start_date": start_date,
+        "start_date_formatted": start_date_formatted
     }
