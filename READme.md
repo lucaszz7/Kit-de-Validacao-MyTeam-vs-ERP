@@ -1,81 +1,138 @@
 # Kit de Validação MyTeam vs ERP
 
-Ferramenta de diagnóstico para comparar valores apresentados nos dashboards do MyTeam com os valores existentes no ERP do cliente.
+Ferramenta de diagnóstico para validar a integração entre **MyTeam**, **BackOffice (MSS)** e **Sage 50 (ERP)**.
 
-O objetivo é ajudar a equipa técnica a encontrar divergências causadas por documentos, vendedores, séries, datas de sincronização ou mapeamentos incorretos.
+O objetivo é ajudar a equipa técnica a encontrar divergências causadas por documentos mal configurados, vendedores não mapeados, serviços parados, configs MSS em falta ou datas de sincronização incorretas.
+
+## Estado Atual (V1 — Interface Gráfica)
+
+A aplicação corre em **Python + PySide6** com 4 painéis na barra lateral:
+
+| Painel | O que valida | Estado |
+|--------|----------------|--------|
+| **Verificações de ambiente** | MyTeam, WebAPI, SQL Server, World Geometries, Google Maps, moeda, histórico | Implementado |
+| **Documentos de encomendas** | BO vs ERP vs MyTeam vs tabela de vendas | Implementado |
+| **Vendas** | Comparação de vendas MyTeam vs ERP | Por implementar |
+| **Vendedores** | Mapeamento MSS ↔ Sage 50 | Implementado |
+
+Cada painel permite validar tudo de uma vez (botão verde) ou clicar num cartão individual. Os resultados podem ser exportados para **Excel** (.xlsx).
 
 ## Decisão Técnica
 
-Este projeto vai ser desenvolvido em **Python**.
-
-Entre C++ e Python, Python é a opção mais indicada para esta fase porque:
+Este projeto é desenvolvido em **Python** porque:
 
 - permite criar a primeira versão mais rapidamente;
 - liga facilmente a SQL Server com `pyodbc`;
-- facilita exportação para CSV e Excel;
+- facilita exportação para Excel;
 - é mais simples de manter e explicar no relatório de estágio;
 - pode ser empacotado como `.exe` para Windows com PyInstaller.
 
-C++ só faria sentido se o projeto exigisse desempenho muito alto, controlo nativo de baixo nível ou integração pesada com bibliotecas C/C++. Para esta ferramenta, o gargalo será quase sempre a base de dados, não a linguagem.
+## Funcionalidades Implementadas
 
-## Funcionalidades Previstas
+### Ambiente
 
-- Seleção do ERP.
-- Seleção do indicador a validar.
-- Comparação entre valores MyTeam e valores ERP.
-- Identificação de diferenças.
-- Queries de diagnóstico por ERP.
-- Checklists de configuração inicial.
-- Exportação de resultados.
-- Documentação modular para adicionar novos ERPs.
+- Estado do serviço Windows MyTeam (`MSSBO.INI`)
+- Serviço WebAPI, endpoint de status e consistência de API Keys
+- Porta do otimizador (288)
+- Ligação SQL Server
+- Existência da base World Geometries
+- Configuração Google Maps API no MSS
+- Símbolo de moeda por terminal
+- Data do documento histórico mais antigo sincronizado
 
-## Módulo Inicial
+### Documentos de encomendas
 
-A versão 1.0 foca-se no ERP **Sage 50**.
+Compara 4 origens de dados e lista divergências:
 
-Indicadores iniciais:
+1. Documentos configurados no BackOffice (`DOCS_ENC`)
+2. Documentos de encomenda no ERP (natureza = Encomenda)
+3. Tipos já integrados no MyTeam (quantidade + total líquido)
+4. Tipos existentes na tabela de vendas do ERP
 
-- Faturação do período.
-- Encomendas em aberto.
-- Vendas por vendedor.
+### Vendedores
 
-## Estrutura
+- Tabela de mapeamento: utilizadores **MSS** com respetivo código ERP
+- Validação automática: vendedores ERP sem MSS, MSS sem ERP, mapeamentos inválidos
+- Utilizador `ADMIN` ignorado na validação
+
+### Vendas
+
+Painel reservado — queries ainda por implementar.
+
+## Estrutura do Projeto
 
 ```text
 .
 ├── config/
-├── docs/
-├── modulos/
-│   ├── sage50/
-│   ├── sage100/
-│   ├── primavera/
-│   └── phc/
+│   └── config.example.json      # Modelo de ligação SQL
 ├── src/
-│   └── kit_validacao/
+│   ├── main.py                  # Ponto de entrada da aplicação
+│   ├── core/
+│   │   ├── config_loader.py     # Leitura do config.json
+│   │   ├── database.py          # Ligação ODBC ao SQL Server
+│   │   ├── verifications.py     # Verificações de ambiente e MSS
+│   │   ├── webapi_checks.py     # WebAPI e API Keys
+│   │   └── port_checks.py       # Porta do otimizador
+│   ├── modulos/
+│   │   └── sage50/
+│   │       ├── queries_encomendas.py
+│   │       └── queries_vendedores.py
+│   └── ui/
+│       └── main_window.py       # Interface gráfica (4 painéis)
 ├── READme.md
 ├── TODO.md
 └── requirements.txt
 ```
 
+## Requisitos
+
+- Windows 10/11
+- Python 3.10+
+- Driver ODBC para SQL Server
+- Acesso às bases MSS e Sage 50 do cliente
+- Ficheiro `C:\MIS\MSSV5\Backoffice\MSSBO.INI` (para verificações de serviço)
+
 ## Como Começar
 
 1. Criar e ativar um ambiente virtual.
-2. Instalar as dependências.
+2. Instalar dependências.
 3. Copiar `config/config.example.json` para `config/config.json`.
-4. Ajustar as ligações às bases de dados.
-5. Executar a aplicação.
+4. Ajustar servidor, utilizador, password e nomes das bases.
+5. Executar a aplicação a partir da pasta `src`.
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python -m src.kit_validacao.main
+copy config\config.example.json config\config.json
+cd src
+python main.py
 ```
 
-## Entregáveis
+## Arquitetura da Interface
 
-- Ferramenta de comparação v1.
-- Módulo Sage 50 com queries e checklist.
-- Documentação modular.
-- Artigo KB interno.
-- Roadmap para Sage 100, Primavera e PHC.
+O ficheiro `src/ui/main_window.py` está organizado em fases:
+
+1. Widgets reutilizáveis (`TaskWorker`, cartões de estado)
+2. Layout (sidebar + 4 painéis)
+3. Disparo de validações (`run_*`)
+4. Execução assíncrona em thread (UI não congela)
+5. Coleta de dados (`collect_*` → `core/` e `modulos/sage50/`)
+6. Renderização dos resultados na tela
+7. Exportação Excel
+
+A lógica de negócio **não** fica na UI — apenas consome os dicionários devolvidos pelos módulos de validação.
+
+## Roadmap
+
+- [ ] Implementar validação de **vendas**
+- [ ] Empacotamento `.exe` com PyInstaller
+- [ ] Suporte a Sage 100, Primavera e PHC
+- [ ] Manual de utilizador e artigo KB interno
+
+## Entregáveis Previstos
+
+- Ferramenta de validação v1 com interface gráfica
+- Módulo Sage 50 com queries de encomendas e vendedores
+- Checklist de ambiente automatizado
+- Documentação modular para novos ERPs

@@ -4,7 +4,6 @@ from core.config_loader import load_config
 
 
 class DatabaseExecutor(Protocol):
-    """Contrato minimo esperado do objeto de base de dados usado neste modulo."""
 
     def execute(self, query: str) -> Iterable[Any]:
         """Executa uma query SQL e devolve as linhas retornadas."""
@@ -46,7 +45,6 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
         CAST(USRVND AS VARCHAR(50)) AS CodigoVendedorERP
     FROM {mss_db}.dbo.MSUSR
     WHERE UPPER(LTRIM(RTRIM(USRUSR))) <> 'ADMIN'
-
     UNION ALL
 
     SELECT

@@ -75,11 +75,25 @@ def read_ini_file(ini_path):
 
 def get_windows_service_status(service_name):
     try:
+        startupinfo = None
+        creationflags = 0
+
+        if hasattr(subprocess, "STARTUPINFO"):
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            if hasattr(subprocess, "SW_HIDE"):
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+
+        if hasattr(subprocess, "CREATE_NO_WINDOW"):
+            creationflags = subprocess.CREATE_NO_WINDOW
+
         result = subprocess.run(
             ["sc", "query", service_name],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
+            startupinfo=startupinfo,
+            creationflags=creationflags
         )
 
         output = f"{result.stdout}\n{result.stderr}".upper()

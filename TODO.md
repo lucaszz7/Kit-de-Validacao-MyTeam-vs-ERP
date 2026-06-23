@@ -1,54 +1,77 @@
 # TODO
 
-## Decisão Inicial
+## Concluído
 
-- [x] Definir o tema do projeto.
-- [x] Criar `READme.md`.
-- [x] Criar `TODO.md`.
-- [x] Escolher linguagem principal: Python.
-- [x] Criar estrutura base de pastas.
+### Projeto base
 
-## Configuração do Projeto
+- [x] Definir tema e linguagem (Python)
+- [x] Estrutura de pastas (`src/core`, `src/modulos/sage50`, `src/ui`)
+- [x] `config/config.example.json`
+- [x] `requirements.txt` (PySide6, pyodbc, requests)
 
-- [ ] Criar ambiente virtual Python.
-- [ ] Instalar dependências.
-- [ ] Criar `config/config.json` a partir de `config/config.example.json`.
-- [ ] Confirmar driver ODBC para SQL Server no Windows.
-- [ ] Validar acesso à base de dados MyTeam.
-- [ ] Validar acesso à base de dados Sage 50.
+### Core — ambiente e infraestrutura
 
-## Módulo Sage 50
+- [x] Ligação SQL Server (`database.py`, `config_loader.py`)
+- [x] Verificação serviço MyTeam (Windows)
+- [x] Verificação WebAPI (serviço, status, API Keys)
+- [x] Porta do otimizador
+- [x] World Geometries
+- [x] Google Maps API, moeda e histórico de sincronização (MSS)
 
-- [ ] Mapear tabelas de faturação.
-- [ ] Mapear tabelas de encomendas.
-- [ ] Mapear tabelas de vendedores.
-- [ ] Completar query de faturação.
-- [ ] Completar query de encomendas.
-- [ ] Completar query de vendedores.
-- [ ] Validar queries com dados reais ou base de teste.
-- [ ] Preencher checklist Sage 50 com regras finais.
+### Módulo Sage 50
 
-## Aplicação
+- [x] Query e validação de **documentos de encomenda** (`queries_encomendas.py`)
+- [x] Query e validação de **vendedores** (`queries_vendedores.py`)
+- [x] Mapeamento MSS → ERP com deteção de divergências
 
-- [ ] Criar interface inicial.
-- [ ] Criar seleção de ERP.
-- [ ] Criar seleção de indicador.
-- [ ] Criar input de período.
-- [ ] Mostrar tabela de comparação.
-- [ ] Implementar estado OK / Divergência.
-- [ ] Implementar exportação CSV.
-- [ ] Avaliar exportação Excel.
+### Interface gráfica (PySide6)
 
-## Documentação
+- [x] Janela principal com sidebar e 4 painéis
+- [x] Painel de ambiente (10 cartões + validação completa)
+- [x] Painel de documentos de encomendas (layout com 5 secções + resumo numérico)
+- [x] Painel de vendedores (tabela MSS + log de divergências)
+- [x] Validações em thread separada (UI responsiva)
+- [x] Estados OK / Warning / Erro nos cartões
+- [x] Exportação Excel (.xlsx) por painel
+- [x] Documentação interna do `main_window.py` (16 fases)
 
-- [ ] Completar documentação de arquitetura.
-- [ ] Criar manual de utilizador.
-- [ ] Criar artigo KB interno.
-- [ ] Documentar processo para adicionar novo ERP.
-- [ ] Documentar limitações conhecidas.
+---
 
-## Roadmap
+## Em curso / Por fazer
 
-- [ ] Preparar estrutura Sage 100.
-- [ ] Preparar estrutura Primavera.
-- [ ] Preparar estrutura PHC.
+### Configuração local (cada instalador)
+
+- [ ] Criar `config/config.json` a partir do exemplo
+- [ ] Confirmar driver ODBC SQL Server no Windows
+- [ ] Validar acesso às bases MSS e Sage 50 do cliente
+
+### Módulo Sage 50 — vendas
+
+- [ ] Criar `queries_vendas.py`
+- [ ] Implementar validação no painel **Vendas**
+- [ ] Testar com dados reais ou base de teste
+
+### Módulo Sage 50 — indicadores futuros
+
+- [ ] Query de faturação do período
+- [ ] Query de encomendas em aberto (indicadores dashboard)
+- [ ] Checklist Sage 50 completo em documentação
+
+### Aplicação — melhorias
+
+- [ ] Seleção de ERP (atualmente só Sage 50)
+- [ ] Seleção de período para indicadores numéricos
+- [ ] Empacotamento `.exe` (PyInstaller)
+
+### Documentação
+
+- [ ] Manual de utilizador
+- [ ] Artigo KB interno
+- [ ] Processo para adicionar novo ERP
+- [ ] Limitações conhecidas
+
+### Roadmap
+
+- [ ] Estrutura Sage 100
+- [ ] Estrutura Primavera
+- [ ] Estrutura PHC
