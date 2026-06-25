@@ -22,7 +22,6 @@ def normalize_text(value):
 
 
 # ==========================================================
-# 6.1
 # Documentos configurados no Backoffice
 # ==========================================================
 
@@ -48,7 +47,6 @@ def get_documents_configured_in_bo(db_mss: DatabaseExecutor):
     }
 
 # ==========================================================
-# 6.2
 # Documentos de encomenda existentes no ERP
 # ==========================================================
 
@@ -70,11 +68,10 @@ def get_order_documents_in_erp(db: DatabaseExecutor):
 
 
 # ==========================================================
-# 6.3
 # Documentos já integrados no MyTeam
 # ==========================================================
 
-def get_integrated_documents(db_mss: DatabaseExecutor):
+def get_integrated_documents(db_mss: DatabaseExecutor, allowed_documents=None):
 
     query = """
     SELECT
@@ -87,19 +84,20 @@ def get_integrated_documents(db_mss: DatabaseExecutor):
     """
 
     rows = db_mss.execute(query)
+    allowed = {normalize_text(doc) for doc in allowed_documents or []}
 
     return [
         {
             "documento": normalize_text(row[0]),
             "total_documentos": row[1],
-            "total_liquido": row[2]
+            "total_liquido": row[2] or 0
         }
         for row in rows
+        if not allowed or normalize_text(row[0]) in allowed
     ]
 
 
 # ==========================================================
-# 6.4
 # Documentos existentes na tabela de vendas
 # ==========================================================
 
@@ -137,9 +135,11 @@ def validate_order_documents(db, db_mss):
 
     docs_sales = get_documents_in_sales_table(db)
 
+    integrated_documents = get_integrated_documents(db_mss, docs_bo | docs_erp)
+
     docs_integrated = {
         row["documento"]
-        for row in get_integrated_documents(db_mss)
+        for row in integrated_documents
     }
 
 # -------------------------------------------------------------------
@@ -218,7 +218,7 @@ def validate_order_documents(db, db_mss):
 
         "documents_erp": sorted(docs_erp),
 
-        "documents_integrated": get_integrated_documents(db_mss),
+        "documents_integrated": integrated_documents,
 
         "documents_sales": sorted(docs_sales)
     }

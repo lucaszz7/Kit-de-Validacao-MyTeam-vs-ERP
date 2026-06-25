@@ -45,6 +45,7 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
         CAST(USRVND AS VARCHAR(50)) AS CodigoVendedorERP
     FROM {mss_db}.dbo.MSUSR
     WHERE UPPER(LTRIM(RTRIM(USRUSR))) <> 'ADMIN'
+    
     UNION ALL
 
     SELECT

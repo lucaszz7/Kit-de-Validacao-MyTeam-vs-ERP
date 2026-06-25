@@ -1,52 +1,26 @@
-"""
-Interface gráfica do Kit de Validação MyTeam vs ERP.
+"""Interface PySide6 do Kit de Validação MyTeam vs ERP.
 
-Este ficheiro concentra TODA a camada visual da aplicação (PySide6/Qt).
-A lógica de negócio fica nos módulos core/ e modulos/sage50/ — aqui só
-se monta a janela, se disparam validações e se mostram os resultados.
-
-MAPA DO FICHEIRO (ordem de leitura recomendada)
-────────────────────────────────────────────────
-  FASE 1  → Imports (Qt + funções de validação externas)
-  FASE 2  → Widgets reutilizáveis (cartões, contadores, worker)
-  FASE 3  → Arranque da janela principal (MainWindow.__init__)
-  FASE 4  → Estrutura visual: sidebar + área de conteúdo
-  FASE 5  → Os 4 painéis: ambiente | encomendas | vendas | vendedores
-  FASE 6  → Componentes de resultados (tabela genérica + layout encomendas)
-  FASE 7  → Navegação entre painéis e exportação Excel
-  FASE 8  → Ações do utilizador (clique em cartão / botão validar)
-  FASE 9  → Motor assíncrono (validações em thread separada)
-  FASE 10 → Coleta de dados (chama core/ e modulos/sage50/)
-  FASE 11 → Infraestrutura (config.json + ligação SQL)
-  FASE 12 → Renderização (preenche tabelas, listas e logs na UI)
-  FASE 13 → Formatação de valores para exibição
-  FASE 14 → Gestão dos widgets de resultado (limpar, inserir linhas)
-  FASE 15 → Geração de ficheiros Excel
-  FASE 16 → Estilos visuais (folha QSS)
-
-FLUXO TÍPICO DE UMA VALIDAÇÃO
-──────────────────────────────
-  1. Utilizador clica num cartão ou botão  →  run_*()
-  2. run_task() lança TaskWorker numa thread
-  3. collect_*() executa queries/verificações (fora da UI)
-  4. render_*_results() atualiza cartões, tabelas e logs
+A lógica de validação fica em core/ e modulos/; este ficheiro monta a janela,
+executa as validações em background e apresenta resultados, logs e exportações.
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 from xml.sax.saxutils import escape
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from PySide6.QtCore import QObject, Qt, QThread, Signal, Slot
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QFont, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
     QFileDialog,
     QFrame,
+    QGraphicsDropShadowEffect,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -81,26 +55,7 @@ from core.verifications import (
 )
 from modulos.sage50.queries_encomendas import validate_order_documents
 from modulos.sage50.queries_vendedores import get_salesmen_mapping, validate_salesmen
-
-
-# =============================================================================
-# FASE 1 — IMPORTS E DEPENDÊNCIAS EXTERNAS
-# =============================================================================
-# PySide6  → widgets da interface (janelas, botões, tabelas)
-# core.*   → verificações de ambiente (serviços Windows, WebAPI, SQL, MSS)
-# modulos  → validações específicas Sage 50 (encomendas, vendedores)
-#
-# Regra: este ficheiro NÃO contém queries SQL nem regras de negócio.
-#        Apenas consome os dicts devolvidos pelos módulos acima.
-# =============================================================================
-
-
-# =============================================================================
-# FASE 2 — WIDGETS REUTILIZÁVEIS
-# =============================================================================
-# Pequenos componentes visuais partilhados por todos os painéis.
-# Criados uma vez e reutilizados em build_cards_group / build_orders_*.
-# =============================================================================
+from modulos.sage50.queries_vendas import validate_sales_documents
 
 
 class TaskWorker(QObject):
@@ -166,7 +121,6 @@ class StatusCard(QFrame):
         self.set_status("A validar...", "Aguarde enquanto a verificação está em curso.")
 
     def set_status(self, status: str, detail: str = ""):
-        # Traduz texto do estado para cor visual (verde / amarelo / vermelho)
         normalized = str(status).lower()
 
         if normalized in {"ok", "running", "true", "online"}:
@@ -180,9 +134,12 @@ class StatusCard(QFrame):
         else:
             state = "neutral"
 
+        self.setProperty("cardState", state)
         self.status_label.setProperty("state", state)
         self.status_label.setText(str(status))
         self.detail_label.setText(detail or "Sem detalhes adicionais.")
+        self.style().unpolish(self)
+        self.style().polish(self)
         self.style().unpolish(self.status_label)
         self.style().polish(self.status_label)
 
@@ -190,8 +147,6 @@ class StatusCard(QFrame):
 class CountStatCard(QFrame):
     """
     Cartão numérico do painel de encomendas (BackOffice, ERP, Integrados, Divergências).
-
-    Usado apenas em build_orders_results_section — resumo rápido no topo.
     """
     def __init__(self, title: str):
         super().__init__()
@@ -214,57 +169,50 @@ class CountStatCard(QFrame):
     def set_value(self, value: int | str):
         self.value_label.setText(str(value))
 
+    def set_state(self, state: str | None):
+        self.value_label.setProperty("state", state)
+        self.value_label.style().unpolish(self.value_label)
+        self.value_label.style().polish(self.value_label)
+
 
 class MainWindow(QMainWindow):
     """
     Janela principal da aplicação.
 
     Responsabilidades:
-      - Montar os 4 painéis de validação
+      - Montar os 6 painéis de validação (incluindo Definições e Logs)
       - Ligar botões/cartões às funções collect_* do backend
       - Mostrar resultados em tabelas, listas e logs
       - Exportar relatórios para Excel
     """
 
-    # =========================================================================
-    # FASE 3 — ARRANQUE DA APLICAÇÃO
-    # =========================================================================
-    # Cria variáveis de estado, monta a UI e abre o painel de ambiente.
-    # =========================================================================
-
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Kit de Validação MyTeam vs ERP")
         self.resize(1180, 760)
+        self.setMinimumSize(1040, 680)
 
-        # --- Conexões SQL (criadas só na 1.ª validação que precisar delas) ---
+        # As ligações SQL só são criadas quando uma validação precisa delas.
         self.config: dict[str, Any] | None = None
-        self.db_sage: Database | None = None   # base Sage 50 (ERP)
-        self.db_mss: Database | None = None    # base MSS (BackOffice / MyTeam)
+        self.db_sage: Database | None = None
+        self.db_mss: Database | None = None
 
-        # --- Controlo da thread de validação ---
         self.thread: QThread | None = None
         self.worker: TaskWorker | None = None
         self.current_success_callback: Callable[[Any], None] | None = None
-        self.current_page_key = "environment"  # painel visível no momento
-        self.loading_card_keys: list[str] = [] # cartões em estado "A validar..."
+        self.current_page_key = "environment"
+        self.loading_card_keys: list[str] = []
 
-        # --- Registos criados em build_ui (acesso rápido depois) ---
-        self.cards: dict[str, StatusCard] = {}              # cartões por chave
-        self.result_widgets: dict[str, dict[str, Any]] = {} # tabelas/logs por painel
-        self.nav_buttons: dict[str, QPushButton] = {}       # botões da sidebar
-        self.validation_controls: list[QWidget] = []        # tudo que bloqueia durante validação
+        self.cards: dict[str, StatusCard] = {}
+        self.result_widgets: dict[str, dict[str, Any]] = {}
+        self.nav_buttons: dict[str, QPushButton] = {}
+        self.validation_controls: list[QWidget] = []
+
+        self.global_log_widget: QTextEdit | None = None
 
         self.build_ui()
         self.apply_styles()
         self.show_page("environment")
-
-    # =========================================================================
-    # FASE 4 — ESTRUTURA VISUAL (LAYOUT BASE)
-    # =========================================================================
-    # Monta sidebar (menu lateral) + área de conteúdo com scroll.
-    # A sidebar tem os 4 botões de navegação e o botão Exportar Excel.
-    # =========================================================================
 
     def build_ui(self):
         """Raiz da interface: sidebar à esquerda, conteúdo à direita."""
@@ -278,7 +226,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(root)
 
     def build_sidebar(self):
-        """Menu lateral com navegação entre os 4 painéis e exportação."""
+        """Menu lateral com navegação entre os 6 painéis e exportação."""
         sidebar = QFrame()
         sidebar.setObjectName("sidebar")
         sidebar.setFixedWidth(260)
@@ -296,7 +244,10 @@ class MainWindow(QMainWindow):
         layout.addWidget(subtitle)
         layout.addSpacing(14)
 
-        # Botões de navegação — cada um troca o painel visível (show_page)
+        sep_validations = QLabel("VALIDAÇÕES")
+        sep_validations.setObjectName("sidebarSectionLabel")
+        layout.addWidget(sep_validations)
+
         self.nav_buttons["environment"] = self.create_nav_button(
             "Verificações de ambiente",
             lambda: self.show_page("environment"),
@@ -319,9 +270,24 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.nav_buttons["sales"])
         layout.addWidget(self.nav_buttons["salesmen"])
 
+        layout.addSpacing(6)
+        sep_system = QLabel("SISTEMA")
+        sep_system.setObjectName("sidebarSectionLabel")
+        layout.addWidget(sep_system)
+
+        self.nav_buttons["settings"] = self.create_nav_button(
+            "Definições",
+            lambda: self.show_page("settings"),
+        )
+        self.nav_buttons["logs"] = self.create_nav_button(
+            "Logs",
+            lambda: self.show_page("logs"),
+        )
+        layout.addWidget(self.nav_buttons["settings"])
+        layout.addWidget(self.nav_buttons["logs"])
+
         layout.addStretch()
 
-        # Exporta os resultados do painel atualmente aberto
         self.export_button = self.create_validation_button(
             "Exportar para Excel",
             self.export_current_results,
@@ -337,7 +303,7 @@ class MainWindow(QMainWindow):
         return sidebar
 
     def build_content(self):
-        """Área principal: título + subtítulo + stack com os 4 painéis."""
+        """Área principal: título + subtítulo + stack com os 6 painéis."""
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setObjectName("contentScroll")
@@ -355,50 +321,42 @@ class MainWindow(QMainWindow):
         self.page_subtitle.setObjectName("pageSubtitle")
         self.page_subtitle.setWordWrap(True)
 
-        # QStackedWidget: só um painel visível de cada vez (índice 0–3)
+        header_divider = QFrame()
+        header_divider.setObjectName("headerDivider")
+        header_divider.setFixedHeight(2)
+
         self.stack = QStackedWidget()
-        self.stack.addWidget(self.build_environment_page())
-        self.stack.addWidget(self.build_orders_page())
-        self.stack.addWidget(self.build_sales_page())
-        self.stack.addWidget(self.build_salesmen_page())
+        self.stack.addWidget(self.build_environment_page())   # 0
+        self.stack.addWidget(self.build_orders_page())        # 1
+        self.stack.addWidget(self.build_sales_page())         # 2
+        self.stack.addWidget(self.build_salesmen_page())      # 3
+        self.stack.addWidget(self.build_settings_page())      # 4
+        self.stack.addWidget(self.build_logs_page())          # 5
 
         layout.addWidget(self.page_title)
         layout.addWidget(self.page_subtitle)
+        layout.addWidget(header_divider)
         layout.addWidget(self.stack, 1)
 
         scroll.setWidget(content)
         return scroll
 
-    # =========================================================================
-    # FASE 5 — OS 4 PAINÉIS DE VALIDAÇÃO
-    # =========================================================================
-    # Cada painel segue o mesmo padrão:
-    #   [ grelha de StatusCards ] + [ botão Validar tudo ] + [ secção resultados ]
-    #
-    #  Painel 0 — Ambiente    → 10 verificações (serviços, SQL, MSS)
-    #  Painel 1 — Encomendas  → compara BO vs ERP vs MyTeam vs vendas
-    #  Painel 2 — Vendas      → placeholder (queries ainda por implementar)
-    #  Painel 3 — Vendedores  → mapeamento MSS ↔ Sage 50
-    # =========================================================================
-
     def build_environment_page(self):
         """Painel 0: serviços Windows, WebAPI, SQL Server e configs MSS."""
         page = QWidget()
+        page.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(16)
 
         cards = [
-            # Serviços Windows e conectividade
             ("myteam", "MyTeam", self.run_myteam_check),
             ("webapi_service", "WebAPI", self.run_webapi_service_check),
             ("webapi_status", "Status WebAPI", self.run_webapi_status_check),
             ("apikeys", "API Keys da WebAPI", self.run_apikeys_check),
             ("optimizer", "Otimizador", self.run_optimizer_check),
-            # SQL Server e bases de dados
             ("sql", "SQL Server", self.run_sql_check),
             ("world", "World Geometries", self.run_world_check),
-            # Configurações guardadas na base MSS
             ("maps", "Google Maps API", self.run_maps_check),
             ("currency", "Moeda", self.run_currency_check),
             ("historical", "Histórico", self.run_historical_check),
@@ -440,11 +398,11 @@ class MainWindow(QMainWindow):
             primary=True,
         )
         layout.addWidget(validate_button)
-        layout.addWidget(self.build_orders_results_section(), 1)
+        layout.addWidget(self.build_orders_results_section("orders"), 1)
         return page
 
     def build_sales_page(self):
-        """Painel 2: vendas (ainda por implementar — mostra placeholder)."""
+        """Painel 2: vendas (ainda por implementar)."""
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -462,7 +420,7 @@ class MainWindow(QMainWindow):
             primary=True,
         )
         layout.addWidget(validate_button)
-        layout.addWidget(self.build_results_section("sales"), 1)
+        layout.addWidget(self.build_orders_results_section("sales"), 1)
         return page
 
     def build_salesmen_page(self):
@@ -487,13 +445,108 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.build_results_section("salesmen"), 1)
         return page
 
-    # =========================================================================
-    # FASE 6 — COMPONENTES DE RESULTADOS
-    # =========================================================================
-    # Dois layouts possíveis:
-    #   build_results_section      → tabela + log (ambiente, vendas, vendedores)
-    #   build_orders_results_section → 5 secções + resumo numérico (encomendas)
-    # =========================================================================
+    def build_settings_page(self):
+        """
+        Painel 4: Definições — mostra informação de ligação carregada do config.json.
+        Não mostra o caminho do ficheiro.
+        """
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(16)
+        
+        group = QGroupBox("Consola de definições")
+        group.setObjectName("settingsGroup")
+        group_layout = QVBoxLayout(group)
+        group_layout.setContentsMargins(16, 16, 16, 16)
+        group_layout.setSpacing(12)
+        
+        subtitle = QLabel("Parâmetros de conectividade ativos obtidos a partir do ficheiro de configuração local.")
+        subtitle.setObjectName("settingsSubtitle")
+        subtitle.setWordWrap(True)
+        group_layout.addWidget(subtitle)
+        
+        info_frame = QFrame()
+        info_frame.setObjectName("settingsInfoFrame")
+        info_frame.setFixedHeight(120)
+        
+        info_layout = QVBoxLayout(info_frame)
+        info_layout.setContentsMargins(16, 14, 16, 14)
+        info_layout.setSpacing(8)
+        
+        self.settings_sql_label = QLabel("Servidor SQL: —")
+        self.settings_sql_label.setObjectName("settingsInfoLine")
+        self.settings_erp_label = QLabel("Base ERP (Sage 50): —")
+        self.settings_erp_label.setObjectName("settingsInfoLine")
+        self.settings_mss_label = QLabel("Base MSS: —")
+        self.settings_mss_label.setObjectName("settingsInfoLine")
+        
+        for lbl in (self.settings_sql_label, self.settings_erp_label, self.settings_mss_label):
+            info_layout.addWidget(lbl)
+            
+        group_layout.addWidget(info_frame)
+        layout.addWidget(group)
+        layout.addStretch()
+        return page
+
+    def build_logs_page(self):
+        """
+        Painel 5: Logs — consola estilo VSCode com todas as verificações executadas.
+        Cada entrada tem prefixo [HH:MM:SS] e cor por nível (info / ok / warning / error).
+        """
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(16)
+        
+        group = QGroupBox("Consola de logs")
+        group.setObjectName("logsGroup")
+        group_layout = QVBoxLayout(group)
+        group_layout.setContentsMargins(16, 16, 16, 16)
+        group_layout.setSpacing(12)
+        
+        top_row = QHBoxLayout()
+        top_row.setSpacing(10)
+        
+        subtitle = QLabel("Registo cronológico das validações executadas nesta sessão.")
+        subtitle.setObjectName("logsSubtitle")
+        subtitle.setWordWrap(True)
+        top_row.addWidget(subtitle, 1)
+        
+        clear_btn = QPushButton("Limpar logs")
+        clear_btn.setObjectName("clearLogsButton")
+        clear_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        clear_btn.setFixedSize(110, 32)
+        clear_btn.clicked.connect(self.clear_global_log)
+        top_row.addWidget(clear_btn)
+
+        export_logs_btn = QPushButton("Exportar TXT")
+        export_logs_btn.setObjectName("exportLogsButton")
+        export_logs_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        export_logs_btn.setFixedSize(120, 32)
+        export_logs_btn.clicked.connect(self.export_logs_to_txt)
+        top_row.addWidget(export_logs_btn)
+        
+        group_layout.addLayout(top_row)
+        
+        log_terminal = QTextEdit()
+        log_terminal.setReadOnly(True)
+        log_terminal.setObjectName("logTerminal")
+        log_terminal.setFixedHeight(480)
+        log_terminal.setPlaceholderText("Nenhuma validação executada ainda nesta sessão.")
+        
+        mono_font = QFont("Consolas")
+        if not mono_font.exactMatch():
+            mono_font = QFont("Courier New")
+        mono_font.setPointSize(12)
+        log_terminal.setFont(mono_font)
+        
+        group_layout.addWidget(log_terminal)
+        layout.addWidget(group)
+        layout.addStretch()
+        
+        self.global_log_widget = log_terminal
+        return page
 
     def build_cards_group(
         self,
@@ -514,8 +567,9 @@ class MainWindow(QMainWindow):
         for index, (key, card_title, callback) in enumerate(cards):
             card = StatusCard(card_title)
             card.clicked.connect(callback)
+            self.apply_soft_shadow(card, blur=14, alpha=22, y_offset=2)
             self.cards[key] = card
-            self.validation_controls.append(card)  # desativados durante validação
+            self.validation_controls.append(card)
             grid.addWidget(card, index // columns, index % columns)
 
         if action_widget is not None:
@@ -528,29 +582,40 @@ class MainWindow(QMainWindow):
         return group
 
     def build_results_section(self, page_key: str):
-        """
-        Layout padrão de resultados: resumo + barra progresso + tabela + log.
-
-        Usado nos painéis: environment, sales, salesmen.
-        """
+        """Layout padrão de resultados: resumo + barra progresso + tabela + log."""
         group = QGroupBox("Resultados da validação")
         group.setObjectName("resultsGroup")
         layout = QVBoxLayout(group)
         layout.setContentsMargins(14, 18, 14, 14)
         layout.setSpacing(10)
-
+        
         summary = QLabel("Clique numa caixa acima ou no botão de validação.")
         summary.setObjectName("summaryLabel")
         summary.setWordWrap(True)
-
+        
+        updated_label = QLabel("")
+        updated_label.setObjectName("updatedLabel")
+        updated_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        
+        updated_font = QFont("Segoe UI", 12, QFont.Weight.Bold)
+        if not updated_font.exactMatch():
+            updated_font = QFont("Arial", 12, QFont.Weight.Bold)
+        updated_label.setFont(updated_font)
+        updated_label.setStyleSheet("color: #000000; padding-right: 4px;")
+        
+        summary_row = QHBoxLayout()
+        summary_row.setSpacing(10)
+        summary_row.addWidget(summary, 1)
+        summary_row.addWidget(updated_label)
+        
         progress = QProgressBar()
         progress.setRange(0, 0)
         progress.setTextVisible(False)
         progress.hide()
-
+        
         table_label = QLabel("Resumo técnico")
         table_label.setObjectName("sectionLabel")
-
+        
         table_headers = self.get_table_headers(page_key)
         table = QTableWidget(0, len(table_headers))
         table.setHorizontalHeaderLabels(table_headers)
@@ -558,91 +623,102 @@ class MainWindow(QMainWindow):
         table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         
-        # Sem scroll interno — a página inteira faz scroll via QScrollArea.
-        
-        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        table.setMinimumHeight(160)
+        table.setMaximumHeight(260)
+        table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        
         table.setShowGrid(True)
         table.setGridStyle(Qt.PenStyle.SolidLine)
         table.setWordWrap(True)
         table.verticalHeader().setVisible(False)
         table.verticalHeader().setDefaultSectionSize(34)
+        
         for column in range(len(table_headers)):
-            resize_mode = QHeaderView.ResizeMode.Stretch if column == len(table_headers) - 1 else QHeaderView.ResizeMode.ResizeToContents
+            resize_mode = (
+                QHeaderView.ResizeMode.Stretch
+                if column == len(table_headers) - 1
+                else QHeaderView.ResizeMode.ResizeToContents
+            )
             table.horizontalHeader().setSectionResizeMode(column, resize_mode)
-        table.setFixedHeight(96)
-
+            
         log_label = QLabel("Log de execução")
         log_label.setObjectName("sectionLabel")
-
+        
         log_box = QTextEdit()
         log_box.setReadOnly(True)
-        log_box.setMinimumHeight(110)
+        log_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        log_box.setMinimumHeight(140)
         log_box.setPlaceholderText("As mensagens da validação aparecem aqui.")
-
-        layout.addWidget(summary)
+        
+        layout.addLayout(summary_row)
         layout.addWidget(progress)
         layout.addWidget(table_label)
         layout.addWidget(table)
         layout.addWidget(log_label)
         layout.addWidget(log_box)
-
+        
         self.result_widgets[page_key] = {
             "summary": summary,
+            "updated_label": updated_label,
             "progress": progress,
             "table": table,
             "log": log_box,
         }
         return group
 
-    def build_orders_results_section(self):
-        """
-        Layout exclusivo do painel de encomendas.
+    def build_orders_results_section(self, page_key: str = "orders"):
+        """Layout de validação documental usado por encomendas e vendas."""
+        erp_section_title = (
+            "2. Documentos de venda existentes no ERP"
+            if page_key == "sales"
+            else "2. Documentos de encomenda existentes no ERP"
+        )
 
-        Estrutura apresentada ao utilizador:
-          [ Resumo: BO | ERP | Integrados | Divergências ]
-          [ 1. Docs configurados no BackOffice ]
-          [ 2. Docs de encomenda no ERP ]
-          [ 3. Docs integrados no MyTeam (tabela) ]
-          [ 4. Docs na tabela de vendas ]
-          [ 5. Divergências encontradas ]
-        """
         group = QGroupBox("Resultados da validação")
         group.setObjectName("resultsGroup")
         layout = QVBoxLayout(group)
         layout.setContentsMargins(14, 18, 14, 14)
         layout.setSpacing(12)
-
         summary = QLabel("Clique na caixa acima ou no botão de validação.")
         summary.setObjectName("summaryLabel")
         summary.setWordWrap(True)
+        
+        updated_label = QLabel("")
+        updated_label.setObjectName("updatedLabel")
+        updated_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        
+        updated_font = QFont("Segoe UI", 12, QFont.Weight.Bold)
+        if not updated_font.exactMatch():
+            updated_font = QFont("Arial", 12, QFont.Weight.Bold)
+        updated_label.setFont(updated_font)
+        updated_label.setStyleSheet("color: #000000; padding-right: 4px;")
 
+        summary_row = QHBoxLayout()
+        summary_row.setSpacing(10)
+        summary_row.addWidget(summary, 1)
+        summary_row.addWidget(updated_label)
         progress = QProgressBar()
         progress.setRange(0, 0)
         progress.setTextVisible(False)
         progress.hide()
-
-        # Resumo numérico no topo
         stats_row = QHBoxLayout()
         stats_row.setSpacing(12)
         stat_bo = CountStatCard("BackOffice")
         stat_erp = CountStatCard("ERP")
         stat_integrated = CountStatCard("Integrados")
         stat_issues = CountStatCard("Divergências")
+        for stat_card in (stat_bo, stat_erp, stat_integrated, stat_issues):
+            self.apply_soft_shadow(stat_card, blur=14, alpha=22, y_offset=2)
         stats_row.addWidget(stat_bo)
         stats_row.addWidget(stat_erp)
         stats_row.addWidget(stat_integrated)
         stats_row.addWidget(stat_issues)
-
-        # Secções 1 a 5 do relatório de encomendas
         section_bo, bo_list = self.build_doc_list_section(
             "1. Documentos configurados no BackOffice para os Dashboards"
         )
-        section_erp, erp_list = self.build_doc_list_section(
-            "2. Documentos de encomenda existentes no ERP"
-        )
-
+        section_erp, erp_list = self.build_doc_list_section(erp_section_title)
         section_integrated = QGroupBox("3. Tipos de documentos já integrados no MyTeam")
         integrated_layout = QVBoxLayout(section_integrated)
         integrated_table = QTableWidget(0, 3)
@@ -660,11 +736,9 @@ class MainWindow(QMainWindow):
         integrated_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         integrated_table.setFixedHeight(96)
         integrated_layout.addWidget(integrated_table)
-
         section_sales, sales_list = self.build_doc_list_section(
             "4. Tipos de documentos existentes na tabela de vendas"
         )
-
         section_issues = QGroupBox("5. Divergências encontradas")
         issues_layout = QVBoxLayout(section_issues)
         issues_box = QTextEdit()
@@ -673,8 +747,7 @@ class MainWindow(QMainWindow):
         issues_box.setMinimumHeight(90)
         issues_box.setPlaceholderText("As divergências aparecem aqui após a validação.")
         issues_layout.addWidget(issues_box)
-
-        layout.addWidget(summary)
+        layout.addLayout(summary_row)
         layout.addWidget(progress)
         layout.addLayout(stats_row)
         layout.addWidget(section_bo)
@@ -682,9 +755,9 @@ class MainWindow(QMainWindow):
         layout.addWidget(section_integrated)
         layout.addWidget(section_sales)
         layout.addWidget(section_issues)
-
-        self.result_widgets["orders"] = {
+        self.result_widgets[page_key] = {
             "summary": summary,
+            "updated_label": updated_label,
             "progress": progress,
             "stat_bo": stat_bo,
             "stat_erp": stat_erp,
@@ -713,25 +786,24 @@ class MainWindow(QMainWindow):
         return group, doc_list
 
     def get_table_headers(self, page_key: str) -> list[str]:
-        """Colunas da tabela de resultados conforme o painel."""
         if page_key == "salesmen":
             return ["Origem", "Código", "Nome", "Código ERP"]
-
         return ["Área", "Item", "Estado", "Detalhe"]
 
-    # =========================================================================
-    # FASE 7 — NAVEGAÇÃO E EXPORTAÇÃO
-    # =========================================================================
-
     def create_nav_button(self, text: str, callback: Callable[[], None]):
-        """Botão da sidebar para mudar de painel."""
         button = QPushButton(text)
         button.clicked.connect(callback)
         button.setCursor(Qt.CursorShape.PointingHandCursor)
         return button
 
+    def apply_soft_shadow(self, widget: QWidget, blur: int = 18, alpha: int = 30, y_offset: int = 2):
+        effect = QGraphicsDropShadowEffect(widget)
+        effect.setBlurRadius(blur)
+        effect.setOffset(0, y_offset)
+        effect.setColor(QColor(15, 23, 32, alpha))
+        widget.setGraphicsEffect(effect)
+
     def create_validation_button(self, text: str, callback: Callable[[], None], primary: bool = False):
-        """Botão verde 'Validar ...' de cada painel."""
         button = QPushButton(text)
         button.clicked.connect(callback)
         button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -740,22 +812,32 @@ class MainWindow(QMainWindow):
         return button
 
     def export_current_results(self):
-        """Exporta o painel aberto. Encomendas gera relatório multi-secção."""
-        if self.current_page_key == "orders":
-            if not self.result_widgets["orders"].get("has_results"):
+        """Exporta o painel aberto. Definições e Logs não têm exportação."""
+        if self.current_page_key in ("settings", "logs"):
+            QMessageBox.information(
+                self,
+                "Exportar Excel",
+                "Este painel não possui resultados em Excel para exportar. Use a exportação própria do painel quando existir.",
+            )
+            return
+
+        if self.current_page_key in ("orders", "sales"):
+            widgets = self.result_widgets.get(self.current_page_key)
+            if not widgets or not widgets.get("has_results"):
                 QMessageBox.information(
                     self,
                     "Exportar Excel",
-                    "Ainda não existem dados para exportar neste painel.",
+                    "Ainda não existem resultados para exportar neste painel. Execute primeiro uma validação.",
                 )
                 return
         else:
-            table = self.result_widgets[self.current_page_key]["table"]
-            if table.rowCount() == 0:
+            widgets = self.result_widgets.get(self.current_page_key)
+            table = widgets.get("table") if widgets else None
+            if table is None or table.rowCount() == 0:
                 QMessageBox.information(
                     self,
                     "Exportar Excel",
-                    "Ainda não existem dados para exportar neste painel.",
+                    "Ainda não existem resultados para exportar neste painel. Execute primeiro uma validação.",
                 )
                 return
 
@@ -773,18 +855,27 @@ class MainWindow(QMainWindow):
         if not file_path.lower().endswith(".xlsx"):
             file_path += ".xlsx"
 
-        if self.current_page_key == "orders":
-            self.export_orders_to_excel(file_path)
-        else:
-            self.export_table_to_excel(file_path)
-        QMessageBox.information(
-            self,
-            "Exportar Excel",
-            "Ficheiro Excel criado com sucesso.",
-        )
+        try:
+            if self.current_page_key in ("orders", "sales"):
+                self.export_orders_to_excel(file_path, self.current_page_key)
+            else:
+                self.export_table_to_excel(file_path)
+        except Exception as error:
+            self.show_export_error(error)
+            return
+
+        QMessageBox.information(self, "Exportar Excel", "Ficheiro Excel criado com sucesso.")
+
+    def show_export_error(self, error: Exception):
+        detail = str(error).strip()
+        message = "Não foi possível exportar o ficheiro Excel."
+        if detail:
+            message = f"{message}\n\nDetalhe técnico: {detail}"
+
+        QMessageBox.critical(self, "Exportar Excel", message)
 
     def show_page(self, page_key: str):
-        """Troca o painel visível no QStackedWidget e atualiza título/subtítulo."""
+        """Troca o painel visível e atualiza título/subtítulo da área de conteúdo."""
         pages = {
             "environment": {
                 "index": 0,
@@ -806,6 +897,16 @@ class MainWindow(QMainWindow):
                 "title": "Vendedores",
                 "subtitle": "Valida o mapeamento entre vendedores do MSS e do Sage 50.",
             },
+            "settings": {
+                "index": 4,
+                "title": "Definições",
+                "subtitle": "Configuração de ligação carregada pelo kit de validação.",
+            },
+            "logs": {
+                "index": 5,
+                "title": "Logs",
+                "subtitle": "Consola com o registo cronológico de todas as validações executadas nesta sessão.",
+            },
         }
 
         page = pages[page_key]
@@ -819,17 +920,33 @@ class MainWindow(QMainWindow):
             button.style().unpolish(button)
             button.style().polish(button)
 
-    # =========================================================================
-    # FASE 8 — AÇÕES DO UTILIZADOR (disparo das validações)
-    # =========================================================================
-    # Cada método run_* é ligado a um cartão ou botão.
-    # Todos delegam em run_task() → collect_*() → render_*_results().
-    # =========================================================================
+        if page_key == "settings":
+            self._refresh_settings_panel()
 
-    # --- Painel Ambiente: validação completa ou cartão individual ---
+    def _refresh_settings_panel(self):
+        """Lê config (se já carregada) e atualiza os labels de Definições."""
+        if self.config is None:
+            try:
+                self.config = load_config()
+            except Exception:
+                pass
+
+        if self.config:
+            sql = self.config.get("sql_server", {})
+            dbs = self.config.get("databases", {})
+            server = sql.get("server", "—")
+            sage = dbs.get("sage50", "—")
+            mss = dbs.get("mss", "—")
+        else:
+            server = "—"
+            sage = "—"
+            mss = "—"
+
+        self.settings_sql_label.setText(f"Servidor SQL: {server}")
+        self.settings_erp_label.setText(f"Base ERP (Sage 50): {sage}")
+        self.settings_mss_label.setText(f"Base MSS: {mss}")
 
     def run_environment_checks(self):
-        """Valida TODOS os 10 itens de ambiente de uma vez."""
         self.show_page("environment")
         self.run_task(
             "verificações de ambiente",
@@ -837,16 +954,8 @@ class MainWindow(QMainWindow):
             self.render_environment_results,
             "environment",
             [
-                "myteam",
-                "webapi_service",
-                "webapi_status",
-                "apikeys",
-                "optimizer",
-                "sql",
-                "world",
-                "maps",
-                "currency",
-                "historical",
+                "myteam", "webapi_service", "webapi_status", "apikeys",
+                "optimizer", "sql", "world", "maps", "currency", "historical",
             ],
         )
 
@@ -881,7 +990,6 @@ class MainWindow(QMainWindow):
         self.run_environment_card("Histórico", "historical", lambda: {"historical": self.collect_historical_only()})
 
     def run_environment_card(self, title: str, card_key: str, task: Callable[[], dict[str, Any]]):
-        """Valida um único cartão do painel de ambiente (ex.: só MyTeam)."""
         self.show_page("environment")
         self.run_task(
             title,
@@ -891,10 +999,7 @@ class MainWindow(QMainWindow):
             [card_key],
         )
 
-    # --- Painéis Encomendas, Vendas e Vendedores ---
-
     def run_order_checks(self):
-        """Valida documentos de encomenda (BO, ERP, MyTeam, tabela vendas)."""
         self.show_page("orders")
         self.run_task(
             "documentos de encomendas",
@@ -905,18 +1010,16 @@ class MainWindow(QMainWindow):
         )
 
     def run_sales_checks(self):
-        """Valida vendas — placeholder até queries_vendas existir."""
         self.show_page("sales")
         self.run_task(
             "vendas",
-            lambda: {"sales": self.collect_sales_placeholder()},
+            lambda: {"sales": self.collect_sales_checks()},
             self.render_sales_results,
             "sales",
             ["sales"],
         )
 
     def run_salesmen_checks(self):
-        """Valida mapeamento MSS ↔ ERP e mostra tabela de utilizadores MSS."""
         self.show_page("salesmen")
         self.run_task(
             "vendedores",
@@ -926,13 +1029,6 @@ class MainWindow(QMainWindow):
             ["salesmen"],
         )
 
-    # =========================================================================
-    # FASE 9 — MOTOR ASSÍNCRONO (THREAD)
-    # =========================================================================
-    # Impede que a UI congele durante SQL/HTTP.
-    # Fluxo: run_task → TaskWorker.run → finish_task → render_*_results
-    # =========================================================================
-
     def run_task(
         self,
         title: str,
@@ -941,7 +1037,6 @@ class MainWindow(QMainWindow):
         page_key: str,
         loading_card_keys: list[str],
     ):
-        """Orquestra uma validação: bloqueia UI, corre em thread, renderiza resultado."""
         if self.thread is not None:
             QMessageBox.information(self, "Validação em curso", "Aguarde a validação atual terminar.")
             return
@@ -950,6 +1045,8 @@ class MainWindow(QMainWindow):
         self.current_success_callback = on_success
         self.loading_card_keys = loading_card_keys
         self.set_busy(True, f"A validar {title}...", page_key)
+
+        self.append_global_log(f"A iniciar validação: {title}", level="info")
 
         self.thread = QThread()
         self.worker = TaskWorker(task)
@@ -965,14 +1062,12 @@ class MainWindow(QMainWindow):
 
     @Slot(object)
     def finish_task(self, result: Any):
-        """Chamado quando a thread termina com sucesso — atualiza a UI."""
         if self.current_success_callback is not None:
             self.current_success_callback(result)
         self.set_busy(False, page_key=self.current_page_key)
 
     @Slot(str)
     def fail_task(self, message: str):
-        """Chamado quando a thread falha — mostra erro no log/divergências."""
         self.set_busy(False, page_key=self.current_page_key)
         self.clear_results(self.current_page_key)
         self.set_summary(self.current_page_key, "Ocorreu um erro durante a validação.")
@@ -981,6 +1076,7 @@ class MainWindow(QMainWindow):
             self.cards[key].set_status("Erro", "Ver log de execução.")
 
         self.add_detail(self.current_page_key, f"Erro: {message}")
+        self.append_global_log(f"ERRO: {message}", level="error")
         QMessageBox.critical(self, "Erro", message)
 
     def cleanup_thread(self):
@@ -990,14 +1086,13 @@ class MainWindow(QMainWindow):
         self.loading_card_keys = []
 
     def set_busy(self, busy: bool, message: str = "", page_key: str | None = None):
-        """Ativa/desativa cursor de espera, barra de progresso e botões."""
         page_key = page_key or self.current_page_key
-        widgets = self.result_widgets[page_key]
+        widgets = self.result_widgets.get(page_key)
 
-        if message:
-            widgets["summary"].setText(message)
-
-        widgets["progress"].setVisible(busy)
+        if widgets:
+            if message:
+                widgets["summary"].setText(message)
+            widgets["progress"].setVisible(busy)
 
         if busy:
             QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
@@ -1011,16 +1106,7 @@ class MainWindow(QMainWindow):
 
         QApplication.processEvents()
 
-    # =========================================================================
-    # FASE 10 — COLETA DE DADOS (camada entre UI e backend)
-    # =========================================================================
-    # Estas funções correm DENTRO da thread (via TaskWorker).
-    # Chamam core.verifications e modulos.sage50 — devolvem dicts prontos
-    # para a renderização. Não tocam em widgets Qt.
-    # =========================================================================
-
     def collect_environment_checks(self):
-        """Agrega todas as verificações do painel de ambiente num único dict."""
         return {
             "myteam": get_myteam_service_info(),
             "webapi_service": get_webapi_service_info(),
@@ -1034,10 +1120,7 @@ class MainWindow(QMainWindow):
             "historical": self.collect_historical_only(),
         }
 
-    # --- Verificações individuais (cada cartão chama core.verifications) ---
-
     def collect_sql_only(self):
-        """Testa ligação ao SQL Server usando config.json."""
         config = self.ensure_config()
         db_sage, _ = self.ensure_databases()
         db_sage.execute("SELECT 1")
@@ -1064,39 +1147,25 @@ class MainWindow(QMainWindow):
         return get_historical_sync_start_info(db_mss)
 
     def collect_order_checks(self):
-        """Chama validate_order_documents — compara BO, ERP, MyTeam e vendas."""
         db_sage, db_mss = self.ensure_databases()
         return validate_order_documents(db_sage, db_mss)
 
-    def collect_sales_placeholder(self):
-        """Placeholder do painel de vendas até existir queries_vendas.py."""
-        return {
-            "status": "Por fazer",
-            "implemented": False,
-            "message": "As queries de vendas ainda não foram implementadas.",
-        }
+    def collect_sales_checks(self):
+        db_sage, db_mss = self.ensure_databases()
+        return validate_sales_documents(db_sage, db_mss)
 
     def collect_salesmen_checks(self):
-        """Valida vendedores e traz mapeamento bruto para exibir na tabela."""
         db_sage, _ = self.ensure_databases()
         result = validate_salesmen(db_sage)
         result["mapping"] = get_salesmen_mapping(db_sage)
         return result
 
-    # =========================================================================
-    # FASE 11 — INFRAESTRUTURA (config + bases de dados)
-    # =========================================================================
-    # Ligações criadas uma vez e reutilizadas em todas as validações SQL.
-    # =========================================================================
-
     def ensure_config(self):
-        """Carrega config.json uma única vez por sessão."""
         if self.config is None:
             self.config = load_config()
         return self.config
 
     def ensure_databases(self):
-        """Abre ligações Sage 50 e MSS reutilizáveis durante a sessão."""
         config = self.ensure_config()
 
         if self.db_sage is None:
@@ -1117,34 +1186,29 @@ class MainWindow(QMainWindow):
 
         return self.db_sage, self.db_mss
 
-    # =========================================================================
-    # FASE 12 — RENDERIZAÇÃO (backend → widgets na tela)
-    # =========================================================================
-    # Cada render_* recebe o dict de collect_* e preenche cartões/tabelas/logs.
-    # Corre na thread principal (após finish_task).
-    # =========================================================================
-
     def render_environment_results(self, result: dict[str, Any]):
-        """Preenche cartões e tabela do painel de ambiente."""
         page_key = "environment"
         self.clear_results(page_key)
+        self.append_global_log("── Verificações de ambiente ──", level="section")
 
         if "myteam" in result:
-            # Serviço Windows do MyTeam (Running / Stopped)
             myteam = result["myteam"]
             self.cards["myteam"].set_status(
                 myteam["status"],
                 f"Serviço: {myteam['service_name'] or 'não encontrado'}",
             )
             self.add_table_row(page_key, "Ambiente", "MyTeam", myteam["status"], myteam["service_name"] or "")
+            level = "ok" if myteam["status"] == "Running" else "warning"
+            self.append_global_log(f"MyTeam → {myteam['status']} ({myteam['service_name'] or 'não encontrado'})", level=level)
             if myteam["status"] != "Running":
                 self.add_detail(page_key, f"O serviço MyTeam não está em execução. Serviço detetado: {myteam['service_name'] or 'não encontrado'}.")
 
         if "webapi_service" in result:
-            # Serviço Windows da WebAPI + endpoint de status online/offline
             webapi = result["webapi_service"]
             self.cards["webapi_service"].set_status(webapi["status"], f"Serviço: {webapi['service_name']}")
             self.add_table_row(page_key, "Ambiente", "WebAPI", webapi["status"], webapi["service_name"])
+            level = "ok" if webapi["status"] == "Running" else "warning"
+            self.append_global_log(f"WebAPI → {webapi['status']} ({webapi['service_name']})", level=level)
             if webapi["status"] != "Running":
                 self.add_detail(page_key, f"O serviço WebAPI não está em execução. Serviço detetado: {webapi['service_name']}.")
 
@@ -1152,38 +1216,39 @@ class MainWindow(QMainWindow):
             status = result["webapi_status"]
             card_status = "Online" if status["online"] else "Offline"
             detail = self.build_webapi_status_detail(status)
-            if status["online"]:
-                card_detail = detail
-                table_detail = detail
-            else:
-                card_detail = "Ver log de execução."
-                table_detail = "Ver log de execução."
+            card_detail = detail if status["online"] else "Ver log de execução."
             self.cards["webapi_status"].set_status(card_status, card_detail)
-            self.add_table_row(page_key, "Ambiente", "Status WebAPI", card_status, table_detail)
+            self.add_table_row(page_key, "Ambiente", "Status WebAPI", card_status, card_detail)
+            level = "ok" if status["online"] else "error"
+            self.append_global_log(f"Status WebAPI → {card_status} | {detail}", level=level)
             if not status["online"]:
-                self.add_detail(page_key, status.get("message") or "O endpoint Status WebAPI respondeu como offline ou não devolveu detalhe do erro.")
+                self.add_detail(page_key, status.get("message") or "O endpoint Status WebAPI respondeu como offline.")
 
         if "apikeys" in result:
             apikeys = result["apikeys"]
-            apikey_detail = "Chaves da WebAPI consistentes."
-            if apikeys["status"] != "OK":
-                apikey_detail = "Ver log de execução."
-                self.add_detail(page_key, "As API Keys da WebAPI estão diferentes entre MSSBO.INI e appsettings.json.")
+            apikey_detail = "Chaves da WebAPI consistentes." if apikeys["status"] == "OK" else "Ver log de execução."
             self.cards["apikeys"].set_status(apikeys["status"], apikey_detail)
             self.add_table_row(page_key, "Ambiente", "API Keys da WebAPI", apikeys["status"], apikey_detail)
+            level = "ok" if apikeys["status"] == "OK" else "warning"
+            self.append_global_log(f"API Keys WebAPI → {apikeys['status']}", level=level)
+            if apikeys["status"] != "OK":
+                self.add_detail(page_key, "As API Keys da WebAPI estão diferentes entre MSSBO.INI e appsettings.json.")
 
         if "optimizer" in result:
             optimizer = result["optimizer"]
             self.cards["optimizer"].set_status(optimizer["status"], f"Porta {optimizer['port']}")
             self.add_table_row(page_key, "Ambiente", "Otimizador", optimizer["status"], f"Porta {optimizer['port']}")
+            level = "ok" if optimizer["status"] == "OK" else "warning"
+            self.append_global_log(f"Otimizador → {optimizer['status']} (porta {optimizer['port']})", level=level)
             if optimizer["status"] != "OK":
                 self.add_detail(page_key, f"A porta {optimizer['port']} do otimizador está {optimizer['status']}.")
 
         if "sql" in result:
-            # Teste SELECT 1 na base Sage 50
             sql = result["sql"]
             self.cards["sql"].set_status(sql["status"], f"Servidor: {sql['server']}")
             self.add_table_row(page_key, "SQL", "Ligação", sql["status"], sql["server"])
+            level = "ok" if sql["status"] == "OK" else "error"
+            self.append_global_log(f"SQL Server → {sql['status']} ({sql['server']})", level=level)
 
         if "world" in result:
             world = result["world"]
@@ -1191,77 +1256,70 @@ class MainWindow(QMainWindow):
             card_detail = "Base de dados encontrada." if world["exists"] else "Ver log de execução."
             self.cards["world"].set_status(world["status"], card_detail)
             self.add_table_row(
-                page_key,
-                "SQL",
-                world["database_name"],
-                world["status"],
+                page_key, "SQL", world["database_name"], world["status"],
                 detail if world["exists"] else "Ver log de execução.",
             )
+            level = "ok" if world["exists"] else "error"
+            self.append_global_log(f"World Geometries → {world['status']} | {detail}", level=level)
             if not world["exists"]:
                 self.add_detail(page_key, detail)
 
         if "maps" in result:
-            # Parâmetros Google Maps na base MSS
             maps = result["maps"]
             detail = f"Parâmetros encontrados: {len(maps['parameters'])}"
             card_detail = detail if maps["status"] == "OK" else "Ver log de execução."
             self.cards["maps"].set_status(maps["status"], card_detail)
             self.add_table_row(
-                page_key,
-                "MSS",
-                "Google Maps API",
-                maps["status"],
+                page_key, "MSS", "Google Maps API", maps["status"],
                 ", ".join(maps["parameters"]) if maps["status"] == "OK" else "Ver log de execução.",
             )
+            level = "ok" if maps["status"] == "OK" else "warning"
+            self.append_global_log(f"Google Maps API → {maps['status']} | {detail}", level=level)
             if maps["status"] != "OK":
                 self.add_detail(page_key, "A configuração da Google Maps API não foi encontrada no MSS.")
 
         if "currency" in result:
             currency = result["currency"]
-            detail = "Todos os terminais têm símbolo."
-            if currency["missing_terminals"]:
-                detail = "Terminais em falta: " + ", ".join(currency["missing_terminals"])
-                self.add_detail(page_key, detail)
+            detail = "Todos os terminais têm símbolo." if not currency["missing_terminals"] else "Terminais em falta: " + ", ".join(currency["missing_terminals"])
             card_detail = detail if currency["status"] == "OK" else "Ver log de execução."
             self.cards["currency"].set_status(currency["status"], card_detail)
             self.add_table_row(
-                page_key,
-                "MSS",
-                "Moeda",
-                currency["status"],
+                page_key, "MSS", "Moeda", currency["status"],
                 detail if currency["status"] == "OK" else "Ver log de execução.",
             )
+            level = "ok" if currency["status"] == "OK" else "warning"
+            self.append_global_log(f"Moeda → {currency['status']} | {detail}", level=level)
+            if currency["missing_terminals"]:
+                self.add_detail(page_key, detail)
 
         if "historical" in result:
             historical = result["historical"]
             if historical["start_date_formatted"]:
-                detail = (
-                    "Data do documento mais antigo sincronizado no MSS: "
-                    f"{historical['start_date_formatted']}"
-                )
-                card_detail = f"Doc. mais antigo sincronizado: {historical['start_date_formatted']}"
+                detail = f"Doc. mais antigo sincronizado: {historical['start_date_formatted']}"
+                card_detail = detail
             else:
                 detail = "Não foi encontrado nenhum documento sincronizado no MSS para determinar a data mais antiga."
                 card_detail = "Sem dados históricos."
             self.cards["historical"].set_status(historical["status"], card_detail)
             self.add_table_row(page_key, "MSS", "Histórico", historical["status"], detail)
+            level = "ok" if historical["status"] == "OK" else "warning"
+            self.append_global_log(f"Histórico → {historical['status']} | {detail}", level=level)
 
         self.fit_table_to_contents(page_key)
         self.add_no_issues_message(page_key)
         self.set_summary(page_key, "Verificação de ambiente concluída.")
+        self.mark_updated(page_key)
+        self.append_global_log("Verificação de ambiente concluída.", level="info")
 
     def render_orders_results(self, result: dict[str, Any]):
-        """Preenche as 5 secções e o resumo numérico de encomendas."""
         page_key = "orders"
         self.clear_results(page_key)
+        self.append_global_log("── Documentos de encomendas ──", level="section")
 
         orders = result["orders"]
         status = "OK" if orders["success"] else "Warning"
-        detail = (
-            "Sem divergências."
-            if orders["success"]
-            else f"{orders['total_issues']} divergência(s) encontrada(s)."
-        )
+        total_issues = orders["total_issues"]
+        detail = "Sem divergências." if orders["success"] else f"{total_issues} divergência(s) encontrada(s)."
 
         self.cards["orders"].set_status(status, detail)
 
@@ -1269,23 +1327,19 @@ class MainWindow(QMainWindow):
         erp_order_docs = sorted(orders.get("documents_erp", []))
         integrated_docs = orders.get("documents_integrated", [])
         sales_docs = sorted(orders.get("documents_sales", []))
-        total_issues = orders["total_issues"]
 
         widgets = self.result_widgets[page_key]
-
-        # Resumo numérico (4 cartões no topo)
         widgets["stat_bo"].set_value(len(bo_docs))
         widgets["stat_erp"].set_value(len(erp_order_docs))
         widgets["stat_integrated"].set_value(len(integrated_docs))
         widgets["stat_issues"].set_value(total_issues)
+        widgets["stat_issues"].set_state("error" if total_issues else "ok")
 
-        # Secções 1 a 4 — listas e tabela de integrados
         self.set_doc_list(widgets["bo_list"], bo_docs)
         self.set_doc_list(widgets["erp_list"], erp_order_docs)
         self.populate_integrated_table(widgets["integrated_table"], integrated_docs)
         self.set_doc_list(widgets["sales_list"], sales_docs)
 
-        # Secção 5 — divergências (ou mensagem de sucesso)
         if orders["success"]:
             widgets["issues"].setPlainText("Nenhuma divergência encontrada.")
         else:
@@ -1294,43 +1348,83 @@ class MainWindow(QMainWindow):
 
         widgets["has_results"] = True
 
-        if orders["success"]:
-            summary_text = "Validação de documentos de encomendas concluída sem divergências."
-        else:
-            summary_text = (
-                f"Validação concluída com {total_issues} divergência(s). "
-                "Consulte a secção 5 para o detalhe."
-            )
+        level = "ok" if orders["success"] else "warning"
+        self.append_global_log(f"Encomendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_order_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues}", level=level)
+        if not orders["success"]:
+            for issue in orders["issues"]:
+                self.append_global_log(f"  ⚠ {issue['message']}", level="warning")
 
+        summary_text = (
+            "Validação de documentos de encomendas concluída sem divergências."
+            if orders["success"]
+            else f"Validação concluída com {total_issues} divergência(s). Consulte a secção 5 para o detalhe."
+        )
         self.set_summary(page_key, summary_text)
+        self.mark_updated(page_key)
+        self.append_global_log("Validação de encomendas concluída.", level="info")
 
     def render_sales_results(self, result: dict[str, Any]):
-        """Placeholder — informa que vendas ainda não foi implementado."""
         page_key = "sales"
         self.clear_results(page_key)
+        self.append_global_log("── Vendas ──", level="section")
 
         sales = result["sales"]
-        self.cards["sales"].set_status(sales["status"], "Ainda não implementado.")
-        self.add_table_row(page_key, "Vendas", "Estado", sales["status"], sales["message"])
-        self.add_detail(page_key, sales["message"])
+        status = "OK" if sales["success"] else "Warning"
+        total_issues = sales["total_issues"]
+        detail = "Sem divergências." if sales["success"] else f"{total_issues} divergência(s) encontrada(s)."
 
-        self.fit_table_to_contents(page_key)
-        self.set_summary(page_key, "Validação de vendas concluída.")
+        self.cards["sales"].set_status(status, detail)
+
+        bo_docs = sorted(sales.get("documents_configured_bo", []))
+        erp_docs = sorted(sales.get("documents_erp", []))
+        integrated_docs = sales.get("documents_integrated", [])
+        sales_docs = sorted(sales.get("documents_sales", []))
+
+        widgets = self.result_widgets[page_key]
+        widgets["stat_bo"].set_value(len(bo_docs))
+        widgets["stat_erp"].set_value(len(erp_docs))
+        widgets["stat_integrated"].set_value(len(integrated_docs))
+        widgets["stat_issues"].set_value(total_issues)
+        widgets["stat_issues"].set_state("error" if total_issues else "ok")
+
+        self.set_doc_list(widgets["bo_list"], bo_docs)
+        self.set_doc_list(widgets["erp_list"], erp_docs)
+        self.populate_integrated_table(widgets["integrated_table"], integrated_docs)
+        self.set_doc_list(widgets["sales_list"], sales_docs)
+
+        if sales["success"]:
+            widgets["issues"].setPlainText("Nenhuma divergência encontrada.")
+        else:
+            issue_lines = [f"⚠ {issue['message']}" for issue in sales["issues"]]
+            widgets["issues"].setPlainText("\n".join(issue_lines))
+
+        widgets["has_results"] = True
+
+        level = "ok" if sales["success"] else "warning"
+        self.append_global_log(f"Vendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues}", level=level)
+        if not sales["success"]:
+            for issue in sales["issues"]:
+                self.append_global_log(f"  ⚠ {issue['message']}", level="warning")
+
+        summary_text = (
+            "Validação de vendas concluída sem divergências."
+            if sales["success"]
+            else f"Validação de vendas concluída com {total_issues} divergência(s). Consulte a secção 5 para o detalhe."
+        )
+        self.set_summary(page_key, summary_text)
+        self.mark_updated(page_key)
+        self.append_global_log("Validação de vendas concluída.", level="info")
 
     def render_salesmen_results(self, result: dict[str, Any]):
-        """Tabela só com utilizadores MSS (sem ERP, sem ADMIN). Divergências no log."""
         page_key = "salesmen"
         self.clear_results(page_key)
+        self.append_global_log("── Vendedores ──", level="section")
 
         salesmen = result["salesmen"]
         mapping = self.filter_mss_salesmen_mapping(salesmen.get("mapping", []))
         total_issues = salesmen["total_issues"]
-        detail = (
-            f"{len(mapping)} utilizadores MSS analisados."
-            if salesmen["success"]
-            else "Ver log de execução."
-        )
         status = "OK" if salesmen["success"] else "Warning"
+        detail = f"{len(mapping)} utilizadores MSS analisados." if salesmen["success"] else "Ver log de execução."
 
         self.cards["salesmen"].set_status(status, detail)
 
@@ -1339,43 +1433,35 @@ class MainWindow(QMainWindow):
 
         for issue in salesmen["issues"]:
             self.add_detail(page_key, issue["message"])
+            self.append_global_log(f"  ⚠ {issue['message']}", level="warning")
+
+        level = "ok" if salesmen["success"] else "warning"
+        self.append_global_log(f"Vendedores → {status} | {len(mapping)} utilizadores MSS | {total_issues} divergência(s)", level=level)
 
         self.fit_table_to_contents(page_key)
         self.add_no_issues_message(page_key)
 
-        if total_issues:
-            summary_text = (
-                f"Validação de vendedores concluída com {total_issues} "
-                f"divergência(s). Foram analisados {len(mapping)} "
-                "utilizadores MSS. Consulte o log de execução para o detalhe."
-            )
-        else:
-            summary_text = (
-                f"Validação de vendedores concluída sem divergências. "
-                f"Foram analisados {len(mapping)} utilizadores MSS."
-            )
-
+        summary_text = (
+            f"Validação de vendedores concluída com {total_issues} divergência(s). "
+            f"Foram analisados {len(mapping)} utilizadores MSS. Consulte o log de execução para o detalhe."
+            if total_issues
+            else f"Validação de vendedores concluída sem divergências. Foram analisados {len(mapping)} utilizadores MSS."
+        )
         self.set_summary(page_key, summary_text)
-
-    # =========================================================================
-    # FASE 13 — FORMATAÇÃO DE VALORES PARA EXIBIÇÃO
-    # =========================================================================
+        self.mark_updated(page_key)
+        self.append_global_log("Validação de vendedores concluída.", level="info")
 
     def build_webapi_status_detail(self, status: dict[str, Any]):
         parts = []
-
         if status.get("api_version"):
             parts.append(f"Versão API: {status['api_version']}")
-
         if status.get("date_on_server_formatted"):
             parts.append(f"Servidor: {status['date_on_server_formatted']}")
-
         return " | ".join(parts) or "Sem detalhes."
 
     def build_world_detail(self, world: dict[str, Any]):
         if world["exists"]:
             return "Base de dados encontrada."
-
         return f"A base de dados {world['database_name']} não foi encontrada. Suporte: {world['support_link']}"
 
     def format_currency(self, value: Any) -> str:
@@ -1383,61 +1469,46 @@ class MainWindow(QMainWindow):
             numeric_value = float(value)
         except (TypeError, ValueError):
             return "-"
-
         formatted = f"{numeric_value:,.2f}"
         formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
         return f"{formatted} €"
 
     def format_amount(self, value: Any) -> str:
-        """Total líquido na tabela de integrados (ex.: 155 000)."""
         try:
             numeric_value = int(round(float(value)))
         except (TypeError, ValueError):
             return "-"
-
-        formatted = f"{numeric_value:,}"
-        return formatted.replace(",", " ")
+        return f"{numeric_value:,}".replace(",", " ")
 
     def set_doc_list(self, widget: QTextEdit, documents: list[str]):
-        if documents:
-            widget.setPlainText("\n".join(documents))
-        else:
-            widget.setPlainText("Nenhum documento encontrado.")
+        widget.setPlainText("\n".join(documents) if documents else "Nenhum documento encontrado.")
 
     def populate_integrated_table(self, table: QTableWidget, integrated_docs: list[dict[str, Any]]):
         table.setRowCount(0)
-
         for item in integrated_docs:
             row = table.rowCount()
             table.insertRow(row)
             table.setItem(row, 0, QTableWidgetItem(str(item.get("documento", ""))))
             table.setItem(row, 1, QTableWidgetItem(str(item.get("total_documentos", 0))))
-            table.setItem(row, 2, QTableWidgetItem(self.format_amount(item.get("total_liquido"))))
-
+            table.setItem(row, 2, QTableWidgetItem(self.format_currency(item.get("total_liquido"))))
         table.resizeRowsToContents()
         header_height = table.horizontalHeader().height()
-        rows_height = sum(table.rowHeight(row_index) for row_index in range(table.rowCount()))
+        rows_height = sum(table.rowHeight(r) for r in range(table.rowCount()))
         frame = table.frameWidth() * 2
-        total_height = header_height + rows_height + frame + 6
-        total_height = max(total_height, header_height + 50)
+        total_height = max(header_height + rows_height + frame + 6, header_height + 50)
         table.setFixedHeight(total_height)
 
-    # =========================================================================
-    # FASE 14 — GESTÃO DOS WIDGETS DE RESULTADO
-    # =========================================================================
-    # Limpar painéis, inserir linhas nas tabelas, escrever logs e ajustar altura.
-    # =========================================================================
-
     def clear_results(self, page_key: str):
-        """Repor painel ao estado inicial antes de uma nova validação."""
-        widgets = self.result_widgets[page_key]
+        widgets = self.result_widgets.get(page_key)
+        if not widgets:
+            return
 
-        if page_key == "orders":
-            # Layout especial de encomendas — repor cada secção
+        if page_key in ("orders", "sales"):
             widgets["stat_bo"].set_value(0)
             widgets["stat_erp"].set_value(0)
             widgets["stat_integrated"].set_value(0)
             widgets["stat_issues"].set_value(0)
+            widgets["stat_issues"].set_state(None)
             widgets["bo_list"].clear()
             widgets["erp_list"].clear()
             widgets["sales_list"].clear()
@@ -1447,61 +1518,62 @@ class MainWindow(QMainWindow):
             widgets["has_results"] = False
             return
 
-        # Layout padrão — tabela + log de execução
         widgets["table"].setRowCount(0)
         widgets["log"].clear()
         widgets["table"].setFixedHeight(96)
 
     def fit_table_to_contents(self, page_key: str):
-        """Ajusta a altura da tabela ao conteúdo; scroll fica na página."""
         table = self.result_widgets[page_key]["table"]
         table.resizeRowsToContents()
-
         header_height = table.horizontalHeader().height()
-        rows_height = sum(table.rowHeight(row) for row in range(table.rowCount()))
+        rows_height = sum(table.rowHeight(r) for r in range(table.rowCount()))
         frame = table.frameWidth() * 2
-
-        total_height = header_height + rows_height + frame + 6
-        total_height = max(total_height, header_height + 50)
-
+        total_height = max(header_height + rows_height + frame + 6, header_height + 50)
         table.setFixedHeight(total_height)
 
     def set_summary(self, page_key: str, text: str):
-        self.result_widgets[page_key]["summary"].setText(text)
+        widgets = self.result_widgets.get(page_key)
+        if widgets:
+            widgets["summary"].setText(text)
+
+    def mark_updated(self, page_key: str):
+        widgets = self.result_widgets.get(page_key)
+        if widgets:
+            label = widgets.get("updated_label")
+            if label is not None:
+                label.setText(f"Última validação: {datetime.now().strftime('%H:%M:%S')}")
 
     def add_detail(self, page_key: str, text: str):
-        """Escreve no log (painéis normais) ou na caixa de divergências (encomendas)."""
-        widgets = self.result_widgets[page_key]
-        if page_key == "orders":
+        widgets = self.result_widgets.get(page_key)
+        if not widgets:
+            return
+        if page_key in ("orders", "sales"):
             current = widgets["issues"].toPlainText().strip()
             if current:
                 widgets["issues"].append(f"\n{text}")
             else:
                 widgets["issues"].setPlainText(text)
             return
-
         widgets["log"].append(text)
 
     def add_no_issues_message(self, page_key: str):
-        if page_key == "orders":
+        if page_key in ("orders", "sales"):
             return
-
-        if not self.result_widgets[page_key]["log"].toPlainText().strip():
+        widgets = self.result_widgets.get(page_key)
+        if widgets and not widgets["log"].toPlainText().strip():
             self.add_detail(page_key, "Nenhuma divergência encontrada.")
 
     def add_table_row(self, page_key: str, area: str, item: str, status: str, detail: str):
         self.add_table_values(
             page_key,
-            [area, item, self.format_status_text(str(status)), detail],
+            [area, item, str(status), detail],
             status_column=2,
             status_value=str(status),
         )
 
     def filter_mss_salesmen_mapping(self, mapping: list[dict[str, str]]) -> list[dict[str, str]]:
-        # Tabela mostra só MSS; vendedores ERP e utilizador ADMIN ficam de fora
         return [
-            row
-            for row in mapping
+            row for row in mapping
             if row["origem"].upper() == "MSS"
             and row["codigo_vendedor"].strip().upper() != "ADMIN"
         ]
@@ -1509,12 +1581,7 @@ class MainWindow(QMainWindow):
     def add_salesman_mapping_row(self, page_key: str, row: dict[str, str]):
         self.add_table_values(
             page_key,
-            [
-                row["origem"],
-                row["codigo_vendedor"],
-                row["nome_vendedor"],
-                row["codigo_vendedor_erp"],
-            ],
+            [row["origem"], row["codigo_vendedor"], row["nome_vendedor"], row["codigo_vendedor_erp"]],
         )
 
     def add_table_values(
@@ -1541,34 +1608,107 @@ class MainWindow(QMainWindow):
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 
-    def format_status_text(self, status: str):
-        return status
-
     def status_text_color(self, status: str):
-        """Verde para estados positivos, vermelho para avisos/erros."""
         normalized = status.strip().lower()
-
         if normalized in {"ok", "running", "true", "online"}:
             return QColor("#1a7f37")
-
-        if normalized in {
-            "warning", "missing", "different", "closed", "no data", "por fazer",
-            "error", "stopped", "false", "offline",
-        }:
+        if normalized in {"warning", "missing", "different", "closed", "no data", "por fazer",
+                          "error", "stopped", "false", "offline"}:
             return QColor("#c62828")
-
         return QColor("#20242a")
 
-    # =========================================================================
-    # FASE 15 — EXPORTAÇÃO EXCEL
-    # =========================================================================
-    # Gera .xlsx sem dependências externas (XML + ZIP manual).
-    # Encomendas exporta as 5 secções; restantes exportam a tabela visível.
-    # =========================================================================
+    _LOG_COLORS = {
+        "timestamp": "#6A9955",
+        "section": "#569CD6",
+        "info": "#D4D4D4",
+        "ok": "#4EC9B0",
+        "warning": "#CE9178",
+        "error": "#F44747",
+    }
 
-    def export_orders_to_excel(self, file_path: str):
-        """Monta Excel multi-secção a partir dos widgets de encomendas."""
-        widgets = self.result_widgets["orders"]
+    def append_global_log(self, text: str, level: str = "info"):
+        """Escreve uma linha no terminal global do painel Logs."""
+        if self.global_log_widget is None:
+            return
+
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        cursor = self.global_log_widget.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+
+        def write(txt: str, color: str, bold: bool = False):
+            fmt = QTextCharFormat()
+            fmt.setForeground(QColor(color))
+            if bold:
+                fmt.setFontWeight(700)
+            cursor.setCharFormat(fmt)
+            cursor.insertText(txt)
+
+        write(f"[{timestamp}] ", self._LOG_COLORS["timestamp"])
+
+        if level == "section":
+            write(text, self._LOG_COLORS["section"], bold=True)
+        else:
+            write(text, self._LOG_COLORS.get(level, self._LOG_COLORS["info"]))
+
+        plain_fmt = QTextCharFormat()
+        plain_fmt.setForeground(QColor(self._LOG_COLORS["info"]))
+        cursor.setCharFormat(plain_fmt)
+        cursor.insertText("\n")
+
+        self.global_log_widget.setTextCursor(cursor)
+        self.global_log_widget.ensureCursorVisible()
+
+    def clear_global_log(self):
+        """Limpa o terminal global de logs."""
+        if self.global_log_widget is not None:
+            self.global_log_widget.clear()
+
+    def export_logs_to_txt(self):
+        if self.global_log_widget is None:
+            return
+
+        log_text = self.global_log_widget.toPlainText().strip()
+        if not log_text:
+            QMessageBox.information(
+                self,
+                "Exportar TXT",
+                "Ainda não existem logs para exportar. Execute primeiro uma validação.",
+            )
+            return
+
+        default_name = f"logs_validacao_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Guardar logs em TXT",
+            default_name,
+            "Texto (*.txt)",
+        )
+
+        if not file_path:
+            return
+
+        if not file_path.lower().endswith(".txt"):
+            file_path += ".txt"
+
+        try:
+            Path(file_path).write_text(log_text + "\n", encoding="utf-8")
+        except Exception as error:
+            detail = str(error).strip()
+            message = "Não foi possível exportar o ficheiro TXT."
+            if detail:
+                message = f"{message}\n\nDetalhe técnico: {detail}"
+            QMessageBox.critical(self, "Exportar TXT", message)
+            return
+
+        QMessageBox.information(self, "Exportar TXT", "Ficheiro TXT criado com sucesso.")
+
+    def export_orders_to_excel(self, file_path: str, page_key: str = "orders"):
+        widgets = self.result_widgets[page_key]
+        erp_section_title = (
+            "2. Documentos de venda no ERP"
+            if page_key == "sales"
+            else "2. Documentos de encomenda no ERP"
+        )
         rows = [
             ["BackOffice", widgets["stat_bo"].value_label.text()],
             ["ERP", widgets["stat_erp"].value_label.text()],
@@ -1578,7 +1718,7 @@ class MainWindow(QMainWindow):
             ["1. Documentos configurados no BackOffice"],
             *[[doc] for doc in widgets["bo_list"].toPlainText().splitlines() if doc.strip()],
             [],
-            ["2. Documentos de encomenda no ERP"],
+            [erp_section_title],
             *[[doc] for doc in widgets["erp_list"].toPlainText().splitlines() if doc.strip()],
             [],
             ["3. Documentos integrados no MyTeam"],
@@ -1604,7 +1744,6 @@ class MainWindow(QMainWindow):
         self.write_xlsx(Path(file_path), rows)
 
     def export_table_to_excel(self, file_path: str):
-        """Exporta a tabela visível do painel atual (ambiente/vendas/vendedores)."""
         table = self.result_widgets[self.current_page_key]["table"]
         rows = []
 
@@ -1624,17 +1763,13 @@ class MainWindow(QMainWindow):
         self.write_xlsx(Path(file_path), rows)
 
     def write_xlsx(self, file_path: Path, rows: list[list[str]]):
-        """Escreve ficheiro Excel (.xlsx) a partir de linhas de texto."""
         sheet_rows = []
-
         for row_index, row in enumerate(rows, start=1):
             cells = []
             for column_index, value in enumerate(row, start=1):
                 cell = self.excel_cell_name(row_index, column_index)
-                safe_value = escape(str(value))
-                cells.append(
-                    f'<c r="{cell}" t="inlineStr"><is><t>{safe_value}</t></is></c>'
-                )
+                safe_value = escape(self.clean_excel_text(value))
+                cells.append(f'<c r="{cell}" t="inlineStr"><is><t>{safe_value}</t></is></c>')
             sheet_rows.append(f'<row r="{row_index}">{"".join(cells)}</row>')
 
         sheet_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -1645,41 +1780,37 @@ class MainWindow(QMainWindow):
 </worksheet>"""
 
         with ZipFile(file_path, "w", ZIP_DEFLATED) as workbook:
-            workbook.writestr(
-                "[Content_Types].xml",
-                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            workbook.writestr("[Content_Types].xml", """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
   <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
   <Default Extension="xml" ContentType="application/xml"/>
   <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
   <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
-</Types>""",
-            )
-            workbook.writestr(
-                "_rels/.rels",
-                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+</Types>""")
+            workbook.writestr("_rels/.rels", """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
-</Relationships>""",
-            )
-            workbook.writestr(
-                "xl/workbook.xml",
-                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+</Relationships>""")
+            workbook.writestr("xl/workbook.xml", """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
           xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <sheets>
     <sheet name="Resumo" sheetId="1" r:id="rId1"/>
   </sheets>
-</workbook>""",
-            )
-            workbook.writestr(
-                "xl/_rels/workbook.xml.rels",
-                """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+</workbook>""")
+            workbook.writestr("xl/_rels/workbook.xml.rels", """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
-</Relationships>""",
-            )
+</Relationships>""")
             workbook.writestr("xl/worksheets/sheet1.xml", sheet_xml)
+
+    def clean_excel_text(self, value: Any) -> str:
+        text = "" if value is None else str(value)
+        return "".join(
+            char
+            for char in text
+            if char in "\t\n\r" or ord(char) >= 32
+        )
 
     def excel_cell_name(self, row: int, column: int):
         name = ""
@@ -1687,12 +1818,6 @@ class MainWindow(QMainWindow):
             column, remainder = divmod(column - 1, 26)
             name = chr(65 + remainder) + name
         return f"{name}{row}"
-
-    # =========================================================================
-    # FASE 16 — ESTILOS VISUAIS (QSS)
-    # =========================================================================
-    # Folha de estilos global: cores, bordas, estados dos cartões e tabelas.
-    # =========================================================================
 
     def apply_styles(self):
         self.setStyleSheet(
@@ -1704,7 +1829,7 @@ class MainWindow(QMainWindow):
             }
 
             #sidebar {
-                background: #16202a;
+                background: #111a23;
                 color: white;
             }
 
@@ -1719,33 +1844,52 @@ class MainWindow(QMainWindow):
 
             #appTitle {
                 color: white;
-                font-size: 22px;
+                font-size: 21px;
                 font-weight: 700;
             }
 
-            #appSubtitle,
+            #appSubtitle {
+                color: #7d8a98;
+                font-size: 12px;
+            }
+
             #sidebarHint {
-                color: #b8c2cc;
+                color: #6b7785;
+                font-size: 11px;
+            }
+
+            /* Rótulos de secção na sidebar (VALIDAÇÕES / SISTEMA) */
+            #sidebarSectionLabel {
+                color: #4a5a6a;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 1px;
+                padding: 2px 0 0 2px;
             }
 
             QPushButton {
-                min-height: 36px;
-                padding: 8px 12px;
-                border-radius: 6px;
-                border: 1px solid #c9d2dc;
-                background: #f8fafc;
+                min-height: 38px;
+                padding: 8px 14px;
+                border-radius: 8px;
+                border: 1px solid transparent;
+                background: rgba(255, 255, 255, 0.05);
+                color: #cbd5e0;
                 text-align: left;
+                font-weight: 600;
             }
 
             QPushButton:hover {
-                background: #eef4f8;
+                background: rgba(255, 255, 255, 0.10);
+                color: white;
             }
 
             QPushButton[active="true"] {
                 color: white;
-                border: 1px solid #21866f;
                 background: #21866f;
+                border: none;
+                border-left: 4px solid #4fd8b8;
                 font-weight: 700;
+                padding-left: 11px;
             }
 
             QPushButton[primary="true"] {
@@ -1753,6 +1897,7 @@ class MainWindow(QMainWindow):
                 border: 2px solid #0d2b22;
                 background: #21866f;
                 font-weight: 700;
+                font-size: 14px;
                 text-align: center;
             }
 
@@ -1766,6 +1911,7 @@ class MainWindow(QMainWindow):
                 border: 1px solid #9ccbb9;
                 background: #dff5ea;
                 font-weight: 700;
+                text-align: center;
             }
 
             QPushButton[export="true"]:hover {
@@ -1775,11 +1921,68 @@ class MainWindow(QMainWindow):
             QPushButton:disabled {
                 color: #89939f;
                 background: #e7ebef;
+                border: 1px solid #d7dde3;
+            }
+
+            QMessageBox {
+                background: #f8fafc;
+            }
+
+            QMessageBox QLabel {
+                color: #11161c;
+                background: transparent;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            QMessageBox QPushButton {
+                min-width: 70px;
+                min-height: 30px;
+                padding: 6px 14px;
+                border-radius: 6px;
+                border: 1px solid #176b58;
+                background: #21866f;
+                color: white;
+                text-align: center;
+                font-weight: 700;
+            }
+
+            QMessageBox QPushButton:hover {
+                background: #1b6f5c;
+            }
+
+            #clearLogsButton,
+            #exportLogsButton {
+                background: #0e639c;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-weight: 700;
+                min-height: 32px;
+                padding: 6px 16px;
+                text-align: center;
+            }
+
+            #clearLogsButton:hover,
+            #exportLogsButton:hover {
+                background: #1177bb;
+            }
+
+            #clearLogsButton:pressed,
+            #exportLogsButton:pressed {
+                background: #0b4f7e;
+            }
+
+            #headerDivider {
+                background: rgba(33, 134, 111, 0.30);
+                border: none;
+                border-radius: 1px;
             }
 
             #pageTitle {
-                font-size: 24px;
+                font-size: 25px;
                 font-weight: 700;
+                color: #11161c;
             }
 
             #pageSubtitle {
@@ -1790,27 +1993,39 @@ class MainWindow(QMainWindow):
                 color: #23303b;
                 background: #eaf5ef;
                 border: 1px solid #cce7da;
-                border-radius: 6px;
-                padding: 8px 10px;
+                border-radius: 8px;
+                padding: 9px 12px;
                 font-weight: 600;
+            }
+
+            #updatedLabel {
+                color: #6f7d8a;
+                font-size: 11px;
+                font-style: italic;
+                padding-right: 4px;
             }
 
             #sectionLabel {
                 font-weight: 700;
                 color: #20242a;
+                margin-top: 4px;
             }
 
             QGroupBox {
                 border: 1px solid #d9e1e8;
-                border-radius: 8px;
-                margin-top: 12px;
+                border-radius: 10px;
+                margin-top: 14px;
                 font-weight: 700;
+                font-size: 13px;
+                color: #1c2733;
+                background: #ffffff;
             }
 
             QGroupBox::title {
                 subcontrol-origin: margin;
                 left: 12px;
-                padding: 0 6px;
+                padding: 0 8px;
+                color: #135a48;
             }
 
             #resultsGroup {
@@ -1820,23 +2035,102 @@ class MainWindow(QMainWindow):
 
             #resultsGroup::title {
                 color: #0f1720;
-                font-size: 14px;
+                font-size: 15px;
             }
+
+            /* ── Definições ─────────────────────────────────────────────── */
+
+            #settingsGroup {
+                border: 1px solid #cbd8e4;
+                background: #ffffff;
+            }
+
+            #settingsGroup::title {
+                color: #0f1720;
+                font-size: 15px;
+            }
+
+            #settingsSubtitle {
+                color: #21866f;
+                font-size: 12px;
+                font-style: italic;
+            }
+
+            #settingsInfoFrame {
+                background: #0d1b2a;
+                border: 1px solid #1e3448;
+                border-radius: 8px;
+            }
+
+            #settingsInfoLine {
+                color: #c5d8e8;
+                font-family: Consolas, "Courier New", monospace;
+                font-size: 13px;
+                padding: 5px 0;
+                background: transparent;
+            }
+
+            /* ── Logs ───────────────────────────────────────────────────── */
+
+            #logsGroup {
+                border: 1px solid #cbd8e4;
+                background: #ffffff;
+            }
+
+            #logsGroup::title {
+                color: #0f1720;
+                font-size: 15px;
+            }
+
+            #logsSubtitle {
+                color: #59636f;
+                font-size: 12px;
+                font-style: italic;
+            }
+
+            #logTerminal {
+                background: #1e1e1e;
+                color: #d4d4d4;
+                border: 1px solid #333333;
+                border-radius: 8px;
+                selection-background-color: #264f78;
+                selection-color: #d4d4d4;
+            }
+
+            /* ── Cartões de estado ──────────────────────────────────────── */
 
             #statusCard {
                 border: 1px solid #d9e1e8;
-                border-radius: 8px;
+                border-left: 4px solid #c9d2dc;
+                border-radius: 10px;
                 background: white;
             }
 
             #statusCard:hover {
                 border: 1px solid #21866f;
+                border-left: 4px solid #21866f;
                 background: #fbfefd;
+            }
+
+            #statusCard[cardState="ok"] {
+                border-left: 4px solid #1a7f37;
+            }
+
+            #statusCard[cardState="warning"] {
+                border-left: 4px solid #b8860b;
+            }
+
+            #statusCard[cardState="error"] {
+                border-left: 4px solid #c62828;
+            }
+
+            #statusCard[cardState="loading"] {
+                border-left: 4px solid #1f6fb2;
             }
 
             #countStatCard {
                 border: 1px solid #cbd8e4;
-                border-radius: 8px;
+                border-radius: 10px;
                 background: #ffffff;
                 min-width: 120px;
             }
@@ -1845,12 +2139,21 @@ class MainWindow(QMainWindow):
                 color: #59636f;
                 font-weight: 600;
                 font-size: 12px;
+                text-transform: uppercase;
             }
 
             #countStatValue {
                 color: #0f1720;
-                font-size: 28px;
+                font-size: 30px;
                 font-weight: 700;
+            }
+
+            #countStatValue[state="ok"] {
+                color: #1a7f37;
+            }
+
+            #countStatValue[state="error"] {
+                color: #c62828;
             }
 
             #docListBox,
@@ -1858,7 +2161,7 @@ class MainWindow(QMainWindow):
                 color: #24303a;
                 background: #fbfcfd;
                 border: 1px solid #d9e1e8;
-                border-radius: 4px;
+                border-radius: 6px;
             }
 
             #statusCard:disabled {
@@ -1867,6 +2170,7 @@ class MainWindow(QMainWindow):
 
             #cardTitle {
                 font-weight: 700;
+                color: #16202a;
             }
 
             #cardDetail {
@@ -1874,37 +2178,42 @@ class MainWindow(QMainWindow):
             }
 
             #statusPill {
-                border-radius: 6px;
-                padding: 5px 8px;
+                border-radius: 10px;
+                padding: 5px 10px;
                 font-weight: 700;
                 background: #e7ebef;
                 color: #39414a;
+                border: 1px solid #d7dde3;
             }
 
             #statusPill[state="ok"] {
                 background: #dff5ea;
                 color: #14633f;
+                border: 1px solid #b6e3cb;
             }
 
             #statusPill[state="warning"] {
                 background: #fff2cc;
                 color: #795400;
+                border: 1px solid #f2dd9c;
             }
 
             #statusPill[state="error"] {
                 background: #fde2e1;
                 color: #9b1c1c;
+                border: 1px solid #f3b9b7;
             }
 
             #statusPill[state="loading"] {
                 background: #dceeff;
                 color: #155a9a;
+                border: 1px solid #b6d9f7;
             }
 
             QTableWidget,
             QTextEdit {
                 border: 1px solid #d9e1e8;
-                border-radius: 6px;
+                border-radius: 8px;
                 background: white;
             }
 
@@ -1926,7 +2235,7 @@ class MainWindow(QMainWindow):
                 background: #263441;
                 border-right: 2px solid #0f1720;
                 border-bottom: 3px solid #0f1720;
-                padding: 7px;
+                padding: 8px;
                 font-weight: 700;
             }
 
