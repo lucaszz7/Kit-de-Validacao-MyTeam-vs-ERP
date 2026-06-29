@@ -119,12 +119,31 @@ def get_webapi_status():
 
         return data
 
-    except Exception as e:
+    except requests.exceptions.ConnectionError:
 
         return {
-
             "online": False,
+            "message": "Não foi possível ligar à WebAPI. Verifique se o serviço MSSWebAPI está em execução e se a porta 19080 está acessível."
+        }
 
-            "message": str(e)
+    except requests.exceptions.Timeout:
 
+        return {
+            "online": False,
+            "message": "A WebAPI não respondeu dentro do tempo limite (5 segundos). O serviço pode estar sobrecarregado ou bloqueado por firewall."
+        }
+
+    except Exception as e:
+
+        msg = str(e).strip()
+        if "Connection refused" in msg or "10061" in msg or "actively refused" in msg.lower():
+            friendly = "Não foi possível ligar à WebAPI (ligação recusada). Verifique se o serviço MSSWebAPI está em execução."
+        elif "Name or service not known" in msg or "[Errno -2]" in msg or "[Errno 11001]" in msg:
+            friendly = "Não foi possível resolver o endereço da WebAPI. Verifique a configuração de rede."
+        else:
+            friendly = f"Erro ao contactar a WebAPI: {msg}"
+
+        return {
+            "online": False,
+            "message": friendly
         }

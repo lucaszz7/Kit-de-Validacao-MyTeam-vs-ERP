@@ -13,11 +13,13 @@ from typing import Any
 from xml.sax.saxutils import escape
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from PySide6.QtCore import QObject, Qt, QThread, Signal, Slot
+from PySide6.QtCore import QDate, QObject, Qt, QThread, Signal, Slot
 from PySide6.QtGui import QColor, QFont, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
+    QComboBox,
+    QDateEdit,
     QFileDialog,
     QFrame,
     QGraphicsDropShadowEffect,
@@ -54,7 +56,7 @@ from core.verifications import (
     get_world_geometries_info,
 )
 from modulos.sage50.queries_encomendas import validate_order_documents
-from modulos.sage50.queries_vendedores import get_salesmen_mapping, validate_salesmen
+from modulos.sage50.queries_vendedores import get_erp_salesmen, get_integrated_salesmen, get_salesmen_mapping, validate_salesmen
 from modulos.sage50.queries_vendas import validate_sales_documents
 
 
@@ -205,6 +207,7 @@ class MainWindow(QMainWindow):
 
         self.cards: dict[str, StatusCard] = {}
         self.result_widgets: dict[str, dict[str, Any]] = {}
+        self.filter_widgets: dict[str, dict[str, Any]] = {}
         self.nav_buttons: dict[str, QPushButton] = {}
         self.validation_controls: list[QWidget] = []
 
@@ -390,6 +393,7 @@ class MainWindow(QMainWindow):
             ("orders", "Documentos de encomendas", self.run_order_checks),
         ]
 
+        layout.addWidget(self.build_filter_bar("orders", include_salesman=True))
         layout.addWidget(self.build_cards_group("Documentos de encomendas", cards, "orders"))
 
         validate_button = self.create_validation_button(
@@ -412,6 +416,7 @@ class MainWindow(QMainWindow):
             ("sales", "Vendas", self.run_sales_checks),
         ]
 
+        layout.addWidget(self.build_filter_bar("sales", include_salesman=True))
         layout.addWidget(self.build_cards_group("Vendas", cards, "sales"))
 
         validate_button = self.create_validation_button(
@@ -444,6 +449,62 @@ class MainWindow(QMainWindow):
         layout.addWidget(validate_button)
         layout.addWidget(self.build_results_section("salesmen"), 1)
         return page
+
+    def build_filter_bar(self, page_key: str, include_salesman: bool):
+        """Filtros visuais usados antes das validações documentais."""
+        group = QGroupBox("Filtros")
+        group.setObjectName("filterGroup")
+        layout = QHBoxLayout(group)
+        layout.setContentsMargins(14, 16, 14, 14)
+        layout.setSpacing(12)
+
+        start_date = self.create_date_filter()
+        start_date.setMaximumDate(QDate.currentDate())
+        end_date = self.create_date_filter()
+
+        layout.addWidget(self.create_labeled_control("Data início", start_date))
+        layout.addWidget(self.create_labeled_control("Data fim", end_date))
+
+        widgets: dict[str, Any] = {
+            "start_date": start_date,
+            "end_date": end_date,
+        }
+
+        if include_salesman:
+            salesman_combo = QComboBox()
+            salesman_combo.setObjectName("filterCombo")
+            salesman_combo.addItem("Todos os vendedores", None)
+            salesman_combo.setMinimumWidth(240)
+            salesman_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            self.validation_controls.append(salesman_combo)
+            layout.addWidget(self.create_labeled_control("Vendedor", salesman_combo), 1)
+            widgets["salesman"] = salesman_combo
+
+        layout.addStretch()
+        self.filter_widgets[page_key] = widgets
+        return group
+
+    def create_date_filter(self):
+        date_edit = QDateEdit()
+        date_edit.setObjectName("filterDate")
+        date_edit.setCalendarPopup(True)
+        date_edit.setDisplayFormat("dd/MM/yyyy")
+        date_edit.setDate(QDate.currentDate())
+        date_edit.setMinimumWidth(132)
+        self.validation_controls.append(date_edit)
+        return date_edit
+
+    def create_labeled_control(self, label_text: str, control: QWidget):
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(4)
+
+        label = QLabel(label_text)
+        label.setObjectName("filterLabel")
+        layout.addWidget(label)
+        layout.addWidget(control)
+        return container
 
     def build_settings_page(self):
         """
@@ -719,10 +780,11 @@ class MainWindow(QMainWindow):
             "1. Documentos configurados no BackOffice para os Dashboards"
         )
         section_erp, erp_list = self.build_doc_list_section(erp_section_title)
+        
         section_integrated = QGroupBox("3. Tipos de documentos já integrados no MyTeam")
         integrated_layout = QVBoxLayout(section_integrated)
-        integrated_table = QTableWidget(0, 3)
-        integrated_table.setHorizontalHeaderLabels(["Documento", "Quantidade", "Total Líquido"])
+        integrated_table = QTableWidget(0, 5)
+        integrated_table.setHorizontalHeaderLabels(["Vendedor", "Código Vendedor", "Documento", "Quantidade", "Total Líquido"])
         integrated_table.setAlternatingRowColors(True)
         integrated_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         integrated_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -731,11 +793,14 @@ class MainWindow(QMainWindow):
         integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         integrated_table.verticalHeader().setVisible(False)
         integrated_table.verticalHeader().setDefaultSectionSize(34)
-        integrated_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        integrated_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         integrated_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        integrated_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        integrated_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        integrated_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+        integrated_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
         integrated_table.setFixedHeight(96)
         integrated_layout.addWidget(integrated_table)
+        
         section_sales, sales_list = self.build_doc_list_section(
             "4. Tipos de documentos existentes na tabela de vendas"
         )
@@ -923,6 +988,66 @@ class MainWindow(QMainWindow):
         if page_key == "settings":
             self._refresh_settings_panel()
 
+        if page_key in ("orders", "sales"):
+            self.ensure_salesman_filter_options(page_key)
+
+    def ensure_salesman_filter_options(self, page_key: str):
+        """Carrega a lista de vendedores dos documentos integrados para os filtros."""
+        combo = self.filter_widgets.get(page_key, {}).get("salesman")
+        if combo is None or combo.property("loaded"):
+            return
+
+        try:
+            db_sage, _ = self.ensure_databases()
+            salesmen = get_erp_salesmen(db_sage)
+        except Exception as error:
+            self.append_global_log(
+                f"Não foi possível carregar vendedores para o filtro: {error}",
+                level="warning",
+            )
+            return
+
+        combo.blockSignals(True)
+        combo.clear()
+        combo.addItem("Todos os vendedores", None)
+        for salesman in salesmen:
+            name = salesman['salesman_name']
+            code = salesman['salesman_id']
+            label = f"{code} - {name}" if name else code
+            combo.addItem(label, code)
+        combo.setProperty("loaded", True)
+        combo.blockSignals(False)
+
+    def get_panel_filters(self, page_key: str) -> dict[str, Any] | None:
+        widgets = self.filter_widgets.get(page_key, {})
+        start_widget = widgets.get("start_date")
+        end_widget = widgets.get("end_date")
+
+        if start_widget is None or end_widget is None:
+            return {}
+
+        start_date = start_widget.date()
+        end_date = end_widget.date()
+
+        if start_date > end_date:
+            QMessageBox.warning(
+                self,
+                "Filtros inválidos",
+                "A data de início não pode ser posterior à data de fim.",
+            )
+            return None
+
+        filters = {
+            "start_date": start_date.toString("yyyy-MM-dd"),
+            "end_date": end_date.toString("yyyy-MM-dd"),
+        }
+
+        salesman_combo = widgets.get("salesman")
+        if salesman_combo is not None:
+            filters["salesman_id"] = salesman_combo.currentData()
+
+        return filters
+
     def _refresh_settings_panel(self):
         """Lê config (se já carregada) e atualiza os labels de Definições."""
         if self.config is None:
@@ -1001,9 +1126,13 @@ class MainWindow(QMainWindow):
 
     def run_order_checks(self):
         self.show_page("orders")
+        filters = self.get_panel_filters("orders")
+        if filters is None:
+            return
+
         self.run_task(
             "documentos de encomendas",
-            lambda: {"orders": self.collect_order_checks()},
+            lambda: {"orders": self.collect_order_checks(filters)},
             self.render_orders_results,
             "orders",
             ["orders"],
@@ -1011,9 +1140,13 @@ class MainWindow(QMainWindow):
 
     def run_sales_checks(self):
         self.show_page("sales")
+        filters = self.get_panel_filters("sales")
+        if filters is None:
+            return
+
         self.run_task(
             "vendas",
-            lambda: {"sales": self.collect_sales_checks()},
+            lambda: {"sales": self.collect_sales_checks(filters)},
             self.render_sales_results,
             "sales",
             ["sales"],
@@ -1062,22 +1195,29 @@ class MainWindow(QMainWindow):
 
     @Slot(object)
     def finish_task(self, result: Any):
-        if self.current_success_callback is not None:
-            self.current_success_callback(result)
-        self.set_busy(False, page_key=self.current_page_key)
+        try:
+            if self.current_success_callback is not None:
+                self.current_success_callback(result)
+        except Exception as error:
+            self.append_global_log(f"Erro ao renderizar resultados: {error}", level="error")
+            QMessageBox.critical(self, "Erro de Renderização", f"Ocorreu um erro ao apresentar os resultados:\n\n{error}")
+        finally:
+            self.set_busy(False, page_key=self.current_page_key)
 
     @Slot(str)
     def fail_task(self, message: str):
-        self.set_busy(False, page_key=self.current_page_key)
-        self.clear_results(self.current_page_key)
-        self.set_summary(self.current_page_key, "Ocorreu um erro durante a validação.")
+        try:
+            self.clear_results(self.current_page_key)
+            self.set_summary(self.current_page_key, "Ocorreu um erro durante a validação.")
 
-        for key in self.loading_card_keys:
-            self.cards[key].set_status("Erro", "Ver log de execução.")
+            for key in self.loading_card_keys:
+                self.cards[key].set_status("Erro", "Ver log de execução.")
 
-        self.add_detail(self.current_page_key, f"Erro: {message}")
-        self.append_global_log(f"ERRO: {message}", level="error")
-        QMessageBox.critical(self, "Erro", message)
+            self.add_detail(self.current_page_key, f"Erro: {message}")
+            self.append_global_log(f"ERRO: {message}", level="error")
+            QMessageBox.critical(self, "Erro", message)
+        finally:
+            self.set_busy(False, page_key=self.current_page_key)
 
     def cleanup_thread(self):
         self.worker = None
@@ -1146,13 +1286,13 @@ class MainWindow(QMainWindow):
         _, db_mss = self.ensure_databases()
         return get_historical_sync_start_info(db_mss)
 
-    def collect_order_checks(self):
+    def collect_order_checks(self, filters: dict[str, Any] | None = None):
         db_sage, db_mss = self.ensure_databases()
-        return validate_order_documents(db_sage, db_mss)
+        return validate_order_documents(db_sage, db_mss, **(filters or {}))
 
-    def collect_sales_checks(self):
+    def collect_sales_checks(self, filters: dict[str, Any] | None = None):
         db_sage, db_mss = self.ensure_databases()
-        return validate_sales_documents(db_sage, db_mss)
+        return validate_sales_documents(db_sage, db_mss, **(filters or {}))
 
     def collect_salesmen_checks(self):
         db_sage, _ = self.ensure_databases()
@@ -1280,7 +1420,7 @@ class MainWindow(QMainWindow):
 
         if "currency" in result:
             currency = result["currency"]
-            detail = "Todos os terminais têm símbolo." if not currency["missing_terminals"] else "Terminais em falta: " + ", ".join(currency["missing_terminals"])
+            detail = "Todos os terminais têm símbolo." if not currency["missing_terminals"] else "Terminais em falta: " + ", ".join(currency["missing_terminals"]) + " | Aceda ao BackOffice -> CONFIGURAÇÃO DO TERMINAL -> CONFIGURAÇÃO AVANÇADA -> DOCUMENTOS -> VISUALIZAÇÃO -> SÍMBOLO DA MOEDA."
             card_detail = detail if currency["status"] == "OK" else "Ver log de execução."
             self.cards["currency"].set_status(currency["status"], card_detail)
             self.add_table_row(
@@ -1488,9 +1628,19 @@ class MainWindow(QMainWindow):
         for item in integrated_docs:
             row = table.rowCount()
             table.insertRow(row)
-            table.setItem(row, 0, QTableWidgetItem(str(item.get("documento", ""))))
-            table.setItem(row, 1, QTableWidgetItem(str(item.get("total_documentos", 0))))
-            table.setItem(row, 2, QTableWidgetItem(self.format_currency(item.get("total_liquido"))))
+            
+            nome = item.get("nome_vendedor") or ""
+            codigo = item.get("codigo_vendedor") or ""
+            doc = item.get("documento") or ""
+            qty = item.get("total_documentos") or 0
+            val = item.get("total_liquido") or 0.0
+            
+            table.setItem(row, 0, QTableWidgetItem(str(nome)))
+            table.setItem(row, 1, QTableWidgetItem(str(codigo)))
+            table.setItem(row, 2, QTableWidgetItem(str(doc)))
+            table.setItem(row, 3, QTableWidgetItem(str(qty)))
+            table.setItem(row, 4, QTableWidgetItem(self.format_currency(val)))
+            
         table.resizeRowsToContents()
         header_height = table.horizontalHeader().height()
         rows_height = sum(table.rowHeight(r) for r in range(table.rowCount()))
@@ -1721,8 +1871,9 @@ class MainWindow(QMainWindow):
             [erp_section_title],
             *[[doc] for doc in widgets["erp_list"].toPlainText().splitlines() if doc.strip()],
             [],
+            [],
             ["3. Documentos integrados no MyTeam"],
-            ["Documento", "Quantidade", "Total Líquido"],
+            ["Vendedor", "Código Vendedor", "Documento", "Quantidade", "Total Líquido"],
         ]
 
         table = widgets["integrated_table"]
@@ -2208,6 +2359,96 @@ class MainWindow(QMainWindow):
                 background: #dceeff;
                 color: #155a9a;
                 border: 1px solid #b6d9f7;
+            }
+
+            QComboBox,
+            QDateEdit {
+                color: #20242a;
+                background-color: #ffffff;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                padding: 5px 32px 5px 10px;
+                min-height: 28px;
+            }
+            
+            QComboBox:hover,
+            QDateEdit:hover {
+                border: 1px solid #21866f;
+            }
+            
+            QComboBox::drop-down,
+            QDateEdit::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 28px;
+                border-left: 1px solid #cbd5e1;
+                background-color: #f8fafc;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+            
+            QComboBox::down-arrow,
+            QDateEdit::down-arrow {
+                image: none;
+                border: none;
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid #59636f;
+            }
+            
+            QComboBox QAbstractItemView {
+                background-color: #ffffff;
+                color: #20242a;
+                border: 1px solid #cbd5e1;
+                selection-background-color: #21866f;
+                selection-color: #ffffff;
+            }
+            
+            /* Custom styling for Calendar Widget popup matching reference */
+            QCalendarWidget QAbstractItemView {
+                background-color: #ffffff;
+                color: #20242a;
+                selection-background-color: #59636f;
+                selection-color: #ffffff;
+                alternate-background-color: #f7fafc;
+                border: none;
+            }
+            
+            QCalendarWidget QWidget {
+                alternate-background-color: #f7fafc;
+                background-color: #ffffff;
+                color: #20242a;
+            }
+            
+            QCalendarWidget QNavigationBar {
+                background-color: #f8fafc;
+                border-bottom: 1px solid #cbd5e1;
+            }
+            
+            QCalendarWidget QToolButton {
+                color: #20242a;
+                background-color: transparent;
+                border: none;
+                font-weight: bold;
+            }
+            
+            QCalendarWidget QToolButton:hover {
+                background-color: #cbd5e1;
+            }
+            
+            QCalendarWidget QMenu {
+                background-color: #ffffff;
+                color: #20242a;
+                border: 1px solid #cbd5e1;
+            }
+            
+            QCalendarWidget QSpinBox {
+                color: #20242a;
+                background-color: #ffffff;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
             }
 
             QTableWidget,

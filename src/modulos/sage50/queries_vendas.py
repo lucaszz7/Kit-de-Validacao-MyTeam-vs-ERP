@@ -12,6 +12,52 @@ def normalize_text(value):
 
     return str(value).strip()
 
+
+def sql_literal(value: str) -> str:
+    """Escapa texto usado em filtros SQL simples."""
+
+    return value.replace("'", "''")
+
+
+def get_table_columns(db: DatabaseExecutor, table_name: str) -> set[str]:
+    """Devolve as colunas existentes numa tabela da base MSS."""
+
+    rows = db.execute(
+        f"""
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = '{sql_literal(table_name)}'
+        """
+    )
+
+    return {normalize_text(row[0]).upper() for row in rows}
+
+
+def build_integrated_filters(
+    date_column: str | None,
+    salesman_column: str | None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    salesman_id: str | None = None,
+) -> str:
+    """Monta o WHERE dos documentos integrados sem misturar regras de UI."""
+
+    filters = []
+
+    if date_column and start_date:
+        filters.append(f"D.{date_column} >= '{sql_literal(start_date)}'")
+
+    if date_column and end_date:
+        filters.append(f"D.{date_column} < DATEADD(day, 1, '{sql_literal(end_date)}')")
+
+    if salesman_column and salesman_id:
+        filters.append(
+            "LTRIM(RTRIM(CAST(D."
+            f"{salesman_column} AS VARCHAR(50)))) = '{sql_literal(salesman_id)}'"
+        )
+
+    return f"WHERE {' AND '.join(filters)}" if filters else ""
+
 # ==========================================================
 # Documentos configurados no BackOffice
 # ==========================================================
@@ -66,27 +112,80 @@ def get_sale_documents_in_erp(db: DatabaseExecutor):
 # Documentos já integrados no MyTeam
 # ==========================================================
 
-def get_integrated_sales_documents(db_mss: DatabaseExecutor, allowed_documents=None):
+def get_integrated_sales_documents(
+    db_mss: DatabaseExecutor,
+    allowed_documents=None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    salesman_id: str | None = None,
+):
+
+    columns = get_table_columns(db_mss, "STMSDCC")
+    date_column = "DCCDTA" if "DCCDTA" in columns else None
+    salesman_column = None
+    for col in ["DCCVND", "DCCACL_38", "DCCCVD"]:
+        if col in columns:
+            salesman_column = col
+            break
+    where_clause = build_integrated_filters(
+        date_column,
+        salesman_column,
+        start_date,
+        end_date,
+        salesman_id,
+    )
+
+    salesman_select = (
+        f"CAST(D.{salesman_column} AS VARCHAR(50))"
+        if salesman_column
+        else "''"
+    )
+    salesman_name_select = "COALESCE(MAX(U.USRNOM), '')" if salesman_column else "''"
+    join_clause = (
+        f"""
+    LEFT JOIN MSUSR U
+        ON CAST(D.{salesman_column} AS VARCHAR(50)) = CAST(U.USRVND AS VARCHAR(50))
+        """
+        if salesman_column
+        else ""
+    )
+    group_by = (
+        f"GROUP BY D.DCCTPD, CAST(D.{salesman_column} AS VARCHAR(50))"
+        if salesman_column
+        else "GROUP BY D.DCCTPD"
+    )
 
     query = """ 
     SELECT
-        DCCTPD,
+        D.DCCTPD,
+        {salesman_select} AS CodigoVendedor,
+        {salesman_name_select} AS NomeVendedor,
         COUNT(*) AS TotalDocumentos,
-        SUM(DCCVLL) AS TotalLiquido,
-        SUM(DCCVLI) AS TotalIliquido
-    FROM STMSDCC
-    GROUP BY DCCTPD
-    ORDER BY DCCTPD
-"""
+        SUM(D.DCCVLL) AS TotalLiquido,
+        SUM(D.DCCVLI) AS TotalIliquido
+    FROM STMSDCC D
+    {join_clause}
+    {where_clause}
+    {group_by}
+    ORDER BY D.DCCTPD, CodigoVendedor
+    """.format(
+        salesman_select=salesman_select,
+        salesman_name_select=salesman_name_select,
+        join_clause=join_clause,
+        where_clause=where_clause,
+        group_by=group_by,
+    )
     rows = db_mss.execute(query)
     allowed = {normalize_text(doc) for doc in allowed_documents or []}
 
     return[
         {
             "documento": normalize_text(row[0]),
-            "total_documentos": row[1],
-            "total_liquido": row[2] or 0,
-            "total_iliquido": row[3] or 0
+            "codigo_vendedor": normalize_text(row[1]),
+            "nome_vendedor": normalize_text(row[2]),
+            "total_documentos": row[3],
+            "total_liquido": row[4] or 0,
+            "total_iliquido": row[5] or 0
         }
         for row in rows
         if not allowed or normalize_text(row[0]) in allowed
@@ -129,7 +228,13 @@ def get_sales_documents_in_sales_table(db: DatabaseExecutor):
 # VALIDAÇÃO
 # ==========================================================
 
-def validate_sales_documents(db, db_mss):
+def validate_sales_documents(
+    db,
+    db_mss,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    salesman_id: str | None = None,
+):
 
     issues = []
 
@@ -139,7 +244,13 @@ def validate_sales_documents(db, db_mss):
 
     docs_sales = get_sales_documents_in_sales_table(db)
 
-    integrated_documents = get_integrated_sales_documents(db_mss, docs_bo | docs_erp)
+    integrated_documents = get_integrated_sales_documents(
+        db_mss,
+        docs_bo | docs_erp,
+        start_date=start_date,
+        end_date=end_date,
+        salesman_id=salesman_id,
+    )
 
     docs_integrated = {
         row["documento"]
