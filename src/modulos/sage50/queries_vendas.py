@@ -225,6 +225,43 @@ def get_sales_documents_in_sales_table(db: DatabaseExecutor):
     }
 
 # ==========================================================
+# Valores do ERP (TotalNetAmount) para comparar com MSS
+# ==========================================================
+
+def get_erp_sales_values(db: DatabaseExecutor):
+    query = """
+    SELECT
+        ST.TransDocument,
+        CAST(ST.SalesmanID AS VARCHAR(50)) AS SalesmanID,
+        COALESCE(S.SalesmanName, '') AS SalesmanName,
+        COUNT(*) AS TotalQtd,
+        SUM(ST.TotalNetAmount) AS TotalLiquido
+    FROM SaleTransaction ST
+    INNER JOIN Documents DC
+        ON ST.TransDocument = DC.TransDocumentID
+    LEFT JOIN Salesman S
+        ON ST.SalesmanID = S.SalesmanID
+    WHERE DC.TransactionNatureID IN (1001, 1002, 1003, 1004, 1005)
+    GROUP BY ST.TransDocument, ST.SalesmanID, S.SalesmanName
+    """
+    rows = db.execute(query)
+    result = {}
+    for row in rows:
+        doc = normalize_text(row[0])
+        salesman_id = normalize_text(row[1])
+        salesman_name = normalize_text(row[2])
+        qtd = row[3]
+        total = row[4] or 0
+        key = (doc, salesman_id)
+        result[key] = {
+            "qtd": qtd,
+            "total": total,
+            "salesman_name": salesman_name
+        }
+    return result
+
+
+# ==========================================================
 # VALIDAÇÃO
 # ==========================================================
 
@@ -243,6 +280,8 @@ def validate_sales_documents(
     docs_erp = get_sale_documents_in_erp(db)
 
     docs_sales = get_sales_documents_in_sales_table(db)
+
+    erp_values = get_erp_sales_values(db)
 
     integrated_documents = get_integrated_sales_documents(
         db_mss,
@@ -268,8 +307,8 @@ def validate_sales_documents(
                 "type": "MISSING_IN_ERP",
                 "message":
                 (
-                    f"{doc} está configuradoo no BackOffice "
-                    "mas não existe no ERP"
+                    f"{doc} está configurado no BackOffice "
+                    "mas não existe no ERP."
                 )
             }
         )
@@ -303,7 +342,7 @@ def validate_sales_documents(
                 "message":
                 (
                     f"{doc} existe na tabela de vendas "
-                    "mas nãoo está configurado no BackOffice."
+                    "mas não está configurado no BackOffice."
                 )
             }
         )
@@ -326,5 +365,7 @@ def validate_sales_documents(
             integrated_documents,
 
         "documents_sales":
-            sorted(docs_sales)
+            sorted(docs_sales),
+
+        "erp_values": erp_values
     }

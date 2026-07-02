@@ -8,6 +8,15 @@
 - [x] Estrutura de pastas (`src/core`, `src/modulos/sage50`, `src/ui`)
 - [x] `config/config.example.json`
 - [x] `requirements.txt` (PySide6, pyodbc, requests)
+- [x] Empacotamento `.exe` com PyInstaller (`--onefile --windowed`)
+
+### Configuração e setup
+
+- [x] Diálogo de configuração SQL (testa ligação antes de aceitar)
+- [x] Verificação do ODBC Driver 17 for SQL Server ao arrancar (com proposta de download)
+- [x] `save_config()` / `load_config()` com password em texto plano
+- [x] Config (`config.json`) guardada ao lado do `.exe` quando congelado
+- [x] Botão "Reconfigurar ligação SQL" no painel Definições
 
 ### Core — ambiente e infraestrutura
 
@@ -26,7 +35,7 @@
 
 ### Interface gráfica (PySide6)
 
-- [x] Janela principal com sidebar e 4 painéis
+- [x] Janela principal com sidebar e 6 painéis (Ambiente, Encomendas, Vendedores, Vendas, Exportação, Definições)
 - [x] Painel de ambiente (10 cartões + validação completa)
 - [x] Painel de documentos de encomendas (layout com 5 secções + resumo numérico)
 - [x] Painel de vendedores (tabela MSS + log de divergências)
@@ -61,7 +70,6 @@
 
 - [ ] Seleção de ERP (atualmente só Sage 50)
 - [ ] Seleção de período para indicadores numéricos
-- [ ] Empacotamento `.exe` (PyInstaller)
 
 ### Documentação
 

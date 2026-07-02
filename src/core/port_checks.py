@@ -17,15 +17,11 @@ def is_optimizer_port_open() -> bool:
     
     try:
         
-        with urllib.request.urlopen(req, timeout=3) as response:
-            
-            return response.status in (200, 201, 204)
-            
-    except urllib.error.HTTPError as e:
-        
-        if e.code == 400:
+        with urllib.request.urlopen(req, timeout=3):
             return True
-        return False
+            
+    except urllib.error.HTTPError:
+        return True
         
     except Exception:
         

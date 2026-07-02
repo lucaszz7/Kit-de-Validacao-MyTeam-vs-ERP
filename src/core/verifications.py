@@ -341,6 +341,45 @@ def get_currency_symbol_info(db):
     }
 
 # ==========================================================================================================
+# ### VERIFICAÇÃO DA VERSÃO DE DESPESAS (V1 / V2)
+# ==========================================================================================================
+
+def get_expenses_version_info(db_mss):
+    query = """
+    SELECT CFGGRP, CFGPAR, CFGVAL
+    FROM BOMSCFG
+    WHERE CFGGRP = 'EXPENSES'
+      AND CFGPAR = 'DESPV2ACT'
+    """
+    rows = db_mss.execute(query)
+    row = rows[0] if rows else None
+    raw_value = None
+    if row is not None and row[2] is not None:
+        raw_value = str(row[2]).strip()
+    if raw_value is not None and raw_value.upper() == "S":
+        version = "V2"
+        table_name = "MSPER"
+    else:
+        version = "V1"
+        table_name = "MSDPS"
+
+    count_row = db_mss.execute(f"SELECT COUNT(*) FROM {table_name}")
+    total = count_row[0][0] if count_row else 0
+
+    return {
+        "status": "OK",
+        "version": version,
+        "table": table_name,
+        "raw_value": raw_value,
+        "total": total,
+        "message": (
+            f"O cliente usa Despesas {version}. "
+            f"As despesas estão na tabela {table_name} "
+            f"({total} registo(s))."
+        ),
+    }
+
+# ==========================================================================================================
 # Encontrar o documento mais antigo sincronizado na tabela STMSDCC
 # ==========================================================================================================
 
@@ -378,3 +417,4 @@ def get_historical_sync_start_info(db_mss):
         "start_date": start_date,
         "start_date_formatted": start_date_formatted
     }
+

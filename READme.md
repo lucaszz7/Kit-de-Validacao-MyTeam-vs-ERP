@@ -6,14 +6,16 @@ O objetivo é ajudar a equipa técnica a encontrar divergências causadas por do
 
 ## Estado Atual (V1 — Interface Gráfica)
 
-A aplicação corre em **Python + PySide6** com 4 painéis na barra lateral:
+A aplicação corre em **Python + PySide6** com 6 painéis na barra lateral:
 
 | Painel | O que valida | Estado |
-|--------|----------------|--------|
-| **Verificações de ambiente** | MyTeam, WebAPI, SQL Server, World Geometries, Google Maps, moeda, histórico | Implementado |
-| **Documentos de encomendas** | BO vs ERP vs MyTeam vs tabela de vendas | Implementado |
+|--------|--------------|--------|
+| **Ambiente** | MyTeam, WebAPI, SQL Server, World Geometries, Google Maps, moeda, histórico | Implementado |
+| **Encomendas** | BO vs ERP vs MyTeam vs tabela de vendas | Implementado |
 | **Vendas** | Comparação de vendas MyTeam vs ERP | Por implementar |
 | **Vendedores** | Mapeamento MSS ↔ Sage 50 | Implementado |
+| **Exportação** | Exportar todos os painéis para Excel | Implementado |
+| **Definições** | Reconfigurar ligação SQL | Implementado |
 
 Cada painel permite validar tudo de uma vez (botão verde) ou clicar num cartão individual. Os resultados podem ser exportados para **Excel** (.xlsx).
 
@@ -24,10 +26,16 @@ Este projeto é desenvolvido em **Python** porque:
 - permite criar a primeira versão mais rapidamente;
 - liga facilmente a SQL Server com `pyodbc`;
 - facilita exportação para Excel;
-- é mais simples de manter e explicar no relatório de estágio;
 - pode ser empacotado como `.exe` para Windows com PyInstaller.
 
 ## Funcionalidades Implementadas
+
+### Setup e configuração
+
+- **Verificação de ODBC Driver 17 for SQL Server** ao arrancar — se não estiver instalado, mostra aviso com link de download
+- **Formulário de configuração SQL** — aparece sempre ao abrir a aplicação, testa `SELECT 1` nas duas bases antes de aceitar
+- **Botão "Reconfigurar ligação SQL"** no painel Definições para reabrir o formulário de login sem fechar a app
+- Config (`config.json`) guardada ao lado do `.exe` quando executável está "congelado" (PyInstaller)
 
 ### Ambiente
 
@@ -64,21 +72,25 @@ Painel reservado — queries ainda por implementar.
 ```text
 .
 ├── config/
-│   └── config.example.json      # Modelo de ligação SQL
+│   ├── config.example.json        # Modelo de ligação SQL
+│   └── config.json                # Config local (não versionado)
+├── dist/
+│   └── KitValidacao.exe           # Executável standalone
 ├── src/
-│   ├── main.py                  # Ponto de entrada da aplicação
+│   ├── main.py                    # Ponto de entrada (check ODBC → ConfigDialog → MainWindow)
 │   ├── core/
-│   │   ├── config_loader.py     # Leitura do config.json
-│   │   ├── database.py          # Ligação ODBC ao SQL Server
-│   │   ├── verifications.py     # Verificações de ambiente e MSS
-│   │   ├── webapi_checks.py     # WebAPI e API Keys
-│   │   └── port_checks.py       # Porta do otimizador
+│   │   ├── config_loader.py       # Leitura/escrita do config.json
+│   │   ├── database.py            # Ligação ODBC ao SQL Server
+│   │   ├── verifications.py       # Verificações de ambiente e MSS
+│   │   ├── webapi_checks.py       # WebAPI e API Keys
+│   │   └── port_checks.py         # Porta do otimizador
 │   ├── modulos/
 │   │   └── sage50/
 │   │       ├── queries_encomendas.py
 │   │       └── queries_vendedores.py
 │   └── ui/
-│       └── main_window.py       # Interface gráfica (4 painéis)
+│       ├── config_dialog.py       # Diálogo de configuração SQL 
+│       └── main_window.py         # Interface gráfica (6 painéis)
 ├── READme.md
 ├── TODO.md
 └── requirements.txt
@@ -87,18 +99,11 @@ Painel reservado — queries ainda por implementar.
 ## Requisitos
 
 - Windows 10/11
-- Python 3.10+
-- Driver ODBC para SQL Server
+- ODBC Driver 17 for SQL Server ([download oficial](https://go.microsoft.com/fwlink/?linkid=2216184))
 - Acesso às bases MSS e Sage 50 do cliente
 - Ficheiro `C:\MIS\MSSV5\Backoffice\MSSBO.INI` (para verificações de serviço)
 
-## Como Começar
-
-1. Criar e ativar um ambiente virtual.
-2. Instalar dependências.
-3. Copiar `config/config.example.json` para `config/config.json`.
-4. Ajustar servidor, utilizador, password e nomes das bases.
-5. Executar a aplicação a partir da pasta `src`.
+## Como Correr (modo desenvolvimento)
 
 ```powershell
 python -m venv .venv
@@ -109,12 +114,22 @@ cd src
 python main.py
 ```
 
+## Como Distribuir
+
+O executável standalone é gerado com PyInstaller:
+
+```powershell
+python -m PyInstaller --onefile --windowed --name "KitValidacao" --paths src --hidden-import PySide6 --hidden-import pyodbc --hidden-import requests src\main.py --noconfirm --distpath dist
+```
+
+O `.exe` final está em `dist/KitValidacao.exe`. Basta enviar esse ficheiro — o utilizador só precisa de ter o ODBC Driver 17 instalado.
+
 ## Arquitetura da Interface
 
 O ficheiro `src/ui/main_window.py` está organizado em fases:
 
 1. Widgets reutilizáveis (`TaskWorker`, cartões de estado)
-2. Layout (sidebar + 4 painéis)
+2. Layout (sidebar + 6 painéis)
 3. Disparo de validações (`run_*`)
 4. Execução assíncrona em thread (UI não congela)
 5. Coleta de dados (`collect_*` → `core/` e `modulos/sage50/`)
@@ -123,10 +138,23 @@ O ficheiro `src/ui/main_window.py` está organizado em fases:
 
 A lógica de negócio **não** fica na UI — apenas consome os dicionários devolvidos pelos módulos de validação.
 
+## Fluxo de Arranque
+
+```
+main.py
+  │
+  ├─ _check_odbc_driver()  → se não instalado, avisa e sugere download
+  │
+  ├─ ConfigDialog           → sempre ao abrir, testa SELECT 1 em ambas as bases
+  │     ├─ [Aceitar]        → guarda config, cria MainWindow
+  │     └─ [Cancelar / X]   → sys.exit(0)
+  │
+  └─ MainWindow(config)     → interface principal
+```
+
 ## Roadmap
 
 - [ ] Implementar validação de **vendas**
-- [ ] Empacotamento `.exe` com PyInstaller
 - [ ] Suporte a Sage 100, Primavera e PHC
 - [ ] Manual de utilizador e artigo KB interno
 

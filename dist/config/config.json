@@ -1,0 +1,11 @@
+{
+    "sql_server": {
+        "server": "DESKTOP-SHF3NIV\\SQL2022",
+        "user": "sa",
+        "password": "07027700L"
+    },
+    "databases": {
+        "sage50": "Sage50_1",
+        "mss": "MSS"
+    }
+}

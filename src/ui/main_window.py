@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (
     QApplication,
     QComboBox,
     QDateEdit,
+    QDialog,
     QFileDialog,
     QFrame,
     QGraphicsDropShadowEffect,
@@ -46,6 +47,7 @@ from core.config_loader import load_config
 from core.database import Database
 from core.verifications import (
     get_currency_symbol_info,
+    get_expenses_version_info,
     get_google_maps_api_info,
     get_historical_sync_start_info,
     get_myteam_service_info,
@@ -125,9 +127,9 @@ class StatusCard(QFrame):
     def set_status(self, status: str, detail: str = ""):
         normalized = str(status).lower()
 
-        if normalized in {"ok", "running", "true", "online"}:
+        if normalized in {"ok", "running", "true", "online", "v1", "v2"}:
             state = "ok"
-        elif normalized in {"warning", "missing", "different", "closed", "no data", "por fazer"}:
+        elif normalized in {"warning", "missing", "different", "closed", "no data", "por fazer", "pendente"}:
             state = "warning"
         elif normalized in {"error", "stopped", "false", "offline"}:
             state = "error"
@@ -188,14 +190,14 @@ class MainWindow(QMainWindow):
       - Exportar relatórios para Excel
     """
 
-    def __init__(self):
+    def __init__(self, config: dict[str, Any] | None = None):
         super().__init__()
         self.setWindowTitle("Kit de Validação MyTeam vs ERP")
         self.resize(1180, 760)
         self.setMinimumSize(1040, 680)
 
         # As ligações SQL só são criadas quando uma validação precisa delas.
-        self.config: dict[str, Any] | None = None
+        self.config: dict[str, Any] | None = config
         self.db_sage: Database | None = None
         self.db_mss: Database | None = None
 
@@ -213,9 +215,12 @@ class MainWindow(QMainWindow):
 
         self.global_log_widget: QTextEdit | None = None
 
+        self.expenses_result: dict | None = None
+
         self.build_ui()
         self.apply_styles()
         self.show_page("environment")
+        self._refresh_settings_panel()
 
     def build_ui(self):
         """Raiz da interface: sidebar à esquerda, conteúdo à direita."""
@@ -529,7 +534,7 @@ class MainWindow(QMainWindow):
         
         info_frame = QFrame()
         info_frame.setObjectName("settingsInfoFrame")
-        info_frame.setFixedHeight(120)
+        info_frame.setFixedHeight(160)
         
         info_layout = QVBoxLayout(info_frame)
         info_layout.setContentsMargins(16, 14, 16, 14)
@@ -541,14 +546,49 @@ class MainWindow(QMainWindow):
         self.settings_erp_label.setObjectName("settingsInfoLine")
         self.settings_mss_label = QLabel("Base MSS: —")
         self.settings_mss_label.setObjectName("settingsInfoLine")
-        
         for lbl in (self.settings_sql_label, self.settings_erp_label, self.settings_mss_label):
             info_layout.addWidget(lbl)
             
         group_layout.addWidget(info_frame)
+
+        self.settings_expenses_card = StatusCard("Versão de Despesas", "Clique para verificar a versão de despesas em uso.")
+        self.settings_expenses_card.clicked.connect(self.run_expenses_version_check)
+        self.apply_soft_shadow(self.settings_expenses_card, blur=14, alpha=22, y_offset=2)
+        self.cards["expenses_version"] = self.settings_expenses_card
+        self.validation_controls.append(self.settings_expenses_card)
+        group_layout.addWidget(self.settings_expenses_card)
+
+        reconfigure_btn = QPushButton("Reconfigurar ligação SQL")
+        reconfigure_btn.setObjectName("reconfigureBtn")
+        reconfigure_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        reconfigure_btn.setFixedHeight(44)
+        reconfigure_btn.clicked.connect(self._reconfigure_sql)
+        self.validation_controls.append(reconfigure_btn)
+        group_layout.addWidget(reconfigure_btn)
+
         layout.addWidget(group)
         layout.addStretch()
         return page
+
+    def _reconfigure_sql(self):
+        from core.config_loader import save_config
+        from ui.config_dialog import ConfigDialog
+
+        existing = None
+        try:
+            existing = load_config()
+        except Exception:
+            pass
+
+        dialog = ConfigDialog(existing_config=existing)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        config = dialog.get_config()
+        save_config(config)
+        self.config = config
+        self._refresh_settings_panel()
+        self.append_global_log("Ligação SQL reconfigurada com sucesso.", level="ok")
 
     def build_logs_page(self):
         """
@@ -596,10 +636,9 @@ class MainWindow(QMainWindow):
         log_terminal.setFixedHeight(480)
         log_terminal.setPlaceholderText("Nenhuma validação executada ainda nesta sessão.")
         
-        mono_font = QFont("Consolas")
+        mono_font = QFont("Consolas", 12)
         if not mono_font.exactMatch():
-            mono_font = QFont("Courier New")
-        mono_font.setPointSize(12)
+            mono_font = QFont("Courier New", 12)
         log_terminal.setFont(mono_font)
         
         group_layout.addWidget(log_terminal)
@@ -783,8 +822,33 @@ class MainWindow(QMainWindow):
         
         section_integrated = QGroupBox("3. Tipos de documentos já integrados no MyTeam")
         integrated_layout = QVBoxLayout(section_integrated)
-        integrated_table = QTableWidget(0, 5)
-        integrated_table.setHorizontalHeaderLabels(["Vendedor", "Código Vendedor", "Documento", "Quantidade", "Total Líquido"])
+
+        if page_key == "sales":
+            info_text = (
+                "MSS: TotalDocumentos = COUNT(*) na STMSDCC (DOCS_VEN)  |  "
+                "TotalLiquido = SUM(DCCVLL) na STMSDCC<br>"
+                "ERP: TotalDocumentos = COUNT(*) na SaleTransaction  |  "
+                "TotalLiquido = SUM(TotalNetAmount) na SaleTransaction"
+            )
+        else:
+            info_text = (
+                "MSS: TotalDocumentos = COUNT(*) na STMSDCC (DOCS_ENC)  |  "
+                "TotalLiquido = SUM(DCCVLL) na STMSDCC<br>"
+                "ERP: TotalDocumentos = COUNT(*) na SaleTransaction  |  "
+                "TotalLiquido = SUM(TotalNetAmount) na SaleTransaction"
+            )
+        integrated_info = QLabel(info_text)
+        integrated_info.setObjectName("integratedInfo")
+        integrated_info.setWordWrap(True)
+        integrated_info.setStyleSheet("color: #555; font-size: 12px; padding: 4px 0;")
+        integrated_layout.addWidget(integrated_info)
+
+        integrated_table = QTableWidget(0, 8)
+        integrated_table.setHorizontalHeaderLabels([
+            "Vendedor", "Código Vendedor", "Documento",
+            "Qt. MSS", "Total Líq. MSS",
+            "Qt. ERP", "Total Líq. ERP", "Diferença"
+        ])
         integrated_table.setAlternatingRowColors(True)
         integrated_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         integrated_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -793,11 +857,11 @@ class MainWindow(QMainWindow):
         integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         integrated_table.verticalHeader().setVisible(False)
         integrated_table.verticalHeader().setDefaultSectionSize(34)
-        integrated_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        integrated_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        integrated_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
-        integrated_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
-        integrated_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
+        for col in range(8):
+            integrated_table.horizontalHeader().setSectionResizeMode(
+                col,
+                QHeaderView.ResizeMode.ResizeToContents if col != 0 else QHeaderView.ResizeMode.Stretch
+            )
         integrated_table.setFixedHeight(96)
         integrated_layout.addWidget(integrated_table)
         
@@ -1071,6 +1135,11 @@ class MainWindow(QMainWindow):
         self.settings_erp_label.setText(f"Base ERP (Sage 50): {sage}")
         self.settings_mss_label.setText(f"Base MSS: {mss}")
 
+        if self.expenses_result is None:
+            self.settings_expenses_card.set_status("Pendente", "Clique para verificar.")
+        else:
+            self._apply_expenses_result()
+
     def run_environment_checks(self):
         self.show_page("environment")
         self.run_task(
@@ -1122,6 +1191,39 @@ class MainWindow(QMainWindow):
             self.render_environment_results,
             "environment",
             [card_key],
+        )
+
+    def run_expenses_version_check(self):
+        self.show_page("settings")
+        self.run_task(
+            "versão de despesas",
+            self.collect_expenses_version_check,
+            self.render_expenses_version_result,
+            "settings",
+            ["expenses_version"],
+        )
+
+    def collect_expenses_version_check(self):
+        _, db_mss = self.ensure_databases()
+        return {"expenses_version": get_expenses_version_info(db_mss)}
+
+    def render_expenses_version_result(self, result):
+        self.expenses_result = result["expenses_version"]
+        self._apply_expenses_result()
+        self.append_global_log(f"Despesas → {self.expenses_result['version']} ({self.expenses_result['table']}, {self.expenses_result['total']} registos)", level="ok")
+
+    def _apply_expenses_result(self):
+        if self.expenses_result is None:
+            return
+        exp = self.expenses_result
+        registos = (
+            f"Não existem registos na tabela {exp['table']}."
+            if exp["total"] == 0
+            else f"Consulte a tabela {exp['table']} para visualizar registos."
+        )
+        self.settings_expenses_card.set_status(
+            exp["version"],
+            f"O cliente usa Despesas {exp['version']}. {registos}"
         )
 
     def run_order_checks(self):
@@ -1475,9 +1577,11 @@ class MainWindow(QMainWindow):
         widgets["stat_issues"].set_value(total_issues)
         widgets["stat_issues"].set_state("error" if total_issues else "ok")
 
+        erp_values = orders.get("erp_values", {})
+
         self.set_doc_list(widgets["bo_list"], bo_docs)
         self.set_doc_list(widgets["erp_list"], erp_order_docs)
-        self.populate_integrated_table(widgets["integrated_table"], integrated_docs)
+        self.populate_integrated_table(widgets["integrated_table"], integrated_docs, erp_values)
         self.set_doc_list(widgets["sales_list"], sales_docs)
 
         if orders["success"]:
@@ -1528,8 +1632,10 @@ class MainWindow(QMainWindow):
         widgets["stat_issues"].set_state("error" if total_issues else "ok")
 
         self.set_doc_list(widgets["bo_list"], bo_docs)
+        erp_values = sales.get("erp_values", {})
+
         self.set_doc_list(widgets["erp_list"], erp_docs)
-        self.populate_integrated_table(widgets["integrated_table"], integrated_docs)
+        self.populate_integrated_table(widgets["integrated_table"], integrated_docs, erp_values)
         self.set_doc_list(widgets["sales_list"], sales_docs)
 
         if sales["success"]:
@@ -1623,7 +1729,7 @@ class MainWindow(QMainWindow):
     def set_doc_list(self, widget: QTextEdit, documents: list[str]):
         widget.setPlainText("\n".join(documents) if documents else "Nenhum documento encontrado.")
 
-    def populate_integrated_table(self, table: QTableWidget, integrated_docs: list[dict[str, Any]]):
+    def populate_integrated_table(self, table: QTableWidget, integrated_docs: list[dict[str, Any]], erp_values: dict[str, dict] | None = None):
         table.setRowCount(0)
         for item in integrated_docs:
             row = table.rowCount()
@@ -1632,14 +1738,25 @@ class MainWindow(QMainWindow):
             nome = item.get("nome_vendedor") or ""
             codigo = item.get("codigo_vendedor") or ""
             doc = item.get("documento") or ""
-            qty = item.get("total_documentos") or 0
-            val = item.get("total_liquido") or 0.0
+            mss_qty = item.get("total_documentos") or 0
+            mss_val = item.get("total_liquido") or 0.0
+
+            erp_key = (doc, codigo)
+            erp_data = (erp_values or {}).get(erp_key, {})
+            erp_qty = erp_data.get("qtd") or 0
+            erp_val = float(erp_data.get("total") or 0)
+            diff = float(mss_val) - erp_val
             
             table.setItem(row, 0, QTableWidgetItem(str(nome)))
             table.setItem(row, 1, QTableWidgetItem(str(codigo)))
             table.setItem(row, 2, QTableWidgetItem(str(doc)))
-            table.setItem(row, 3, QTableWidgetItem(str(qty)))
-            table.setItem(row, 4, QTableWidgetItem(self.format_currency(val)))
+            table.setItem(row, 3, QTableWidgetItem(str(mss_qty)))
+            table.setItem(row, 4, QTableWidgetItem(self.format_currency(mss_val)))
+            table.setItem(row, 5, QTableWidgetItem(str(erp_qty)))
+            table.setItem(row, 6, QTableWidgetItem(self.format_currency(erp_val)))
+            diff_item = QTableWidgetItem(self.format_currency(diff))
+            diff_item.setForeground(QColor("#d32f2f") if diff != 0 else QColor("#388e3c"))
+            table.setItem(row, 7, diff_item)
             
         table.resizeRowsToContents()
         header_height = table.horizontalHeader().height()
@@ -1873,7 +1990,7 @@ class MainWindow(QMainWindow):
             [],
             [],
             ["3. Documentos integrados no MyTeam"],
-            ["Vendedor", "Código Vendedor", "Documento", "Quantidade", "Total Líquido"],
+            ["Vendedor", "Código Vendedor", "Documento", "Qt. MSS", "Total Líq. MSS", "Qt. ERP", "Total Líq. ERP", "Diferença"],
         ]
 
         table = widgets["integrated_table"]
@@ -2219,6 +2336,20 @@ class MainWindow(QMainWindow):
                 font-size: 13px;
                 padding: 5px 0;
                 background: transparent;
+            }
+
+            #reconfigureBtn {
+                color: #10251f;
+                border: 1px solid #9ccbb9;
+                background: #dff5ea;
+                font-weight: 700;
+                text-align: center;
+                border-radius: 8px;
+                min-height: 44px;
+            }
+
+            #reconfigureBtn:hover {
+                background: #cceedd;
             }
 
             /* ── Logs ───────────────────────────────────────────────────── */
