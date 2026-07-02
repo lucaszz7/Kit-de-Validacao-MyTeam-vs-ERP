@@ -274,9 +274,9 @@ class MainWindow(QMainWindow):
         )
 
         layout.addWidget(self.nav_buttons["environment"])
+        layout.addWidget(self.nav_buttons["salesmen"])
         layout.addWidget(self.nav_buttons["orders"])
         layout.addWidget(self.nav_buttons["sales"])
-        layout.addWidget(self.nav_buttons["salesmen"])
 
         layout.addSpacing(6)
         sep_system = QLabel("SISTEMA")
@@ -335,9 +335,9 @@ class MainWindow(QMainWindow):
 
         self.stack = QStackedWidget()
         self.stack.addWidget(self.build_environment_page())   # 0
-        self.stack.addWidget(self.build_orders_page())        # 1
-        self.stack.addWidget(self.build_sales_page())         # 2
-        self.stack.addWidget(self.build_salesmen_page())      # 3
+        self.stack.addWidget(self.build_salesmen_page())      # 1
+        self.stack.addWidget(self.build_orders_page())        # 2
+        self.stack.addWidget(self.build_sales_page())         # 3
         self.stack.addWidget(self.build_settings_page())      # 4
         self.stack.addWidget(self.build_logs_page())          # 5
 
@@ -1011,20 +1011,20 @@ class MainWindow(QMainWindow):
                 "title": "Verificações de ambiente",
                 "subtitle": "Valida serviços, WebAPI, SQL Server, World Geometries e configurações MSS.",
             },
-            "orders": {
+            "salesmen": {
                 "index": 1,
+                "title": "Vendedores",
+                "subtitle": "Valida o mapeamento entre vendedores do MSS e do Sage 50.",
+            },
+            "orders": {
+                "index": 2,
                 "title": "Documentos de encomendas",
                 "subtitle": "Valida a configuração de documentos de encomenda entre BackOffice, ERP, MyTeam e tabela de vendas.",
             },
             "sales": {
-                "index": 2,
+                "index": 3,
                 "title": "Vendas",
                 "subtitle": "Validação de vendas entre MyTeam e ERP.",
-            },
-            "salesmen": {
-                "index": 3,
-                "title": "Vendedores",
-                "subtitle": "Valida o mapeamento entre vendedores do MSS e do Sage 50.",
             },
             "settings": {
                 "index": 4,
@@ -1160,10 +1160,10 @@ class MainWindow(QMainWindow):
         self.run_environment_card("WebAPI", "webapi_service", lambda: {"webapi_service": get_webapi_service_info()})
 
     def run_webapi_status_check(self):
-        self.run_environment_card("Status WebAPI", "webapi_status", lambda: {"webapi_status": get_webapi_status_info()})
+        self.run_environment_card("Status WebAPI", "webapi_status", lambda: {"webapi_status": get_webapi_status_info(self.config.get("mss_ini_path"))})
 
     def run_apikeys_check(self):
-        self.run_environment_card("API Keys da WebAPI", "apikeys", lambda: {"apikeys": get_webapi_apikey_info()})
+        self.run_environment_card("API Keys da WebAPI", "apikeys", lambda: {"apikeys": get_webapi_apikey_info(self.config.get("mss_ini_path"), self.config.get("mss_appsettings_path"))})
 
     def run_optimizer_check(self):
         self.run_environment_card("Otimizador", "optimizer", lambda: {"optimizer": get_optimizer_port_info()})
@@ -1352,8 +1352,13 @@ class MainWindow(QMainWindow):
         return {
             "myteam": get_myteam_service_info(),
             "webapi_service": get_webapi_service_info(),
-            "apikeys": get_webapi_apikey_info(),
-            "webapi_status": get_webapi_status_info(),
+            "apikeys": get_webapi_apikey_info(
+                self.config.get("mss_ini_path"),
+                self.config.get("mss_appsettings_path")
+            ),
+            "webapi_status": get_webapi_status_info(
+                self.config.get("mss_ini_path")
+            ),
             "optimizer": get_optimizer_port_info(),
             "sql": self.collect_sql_only(),
             "world": self.collect_world_only(),
@@ -1457,24 +1462,36 @@ class MainWindow(QMainWindow):
         if "webapi_status" in result:
             status = result["webapi_status"]
             card_status = "Online" if status["online"] else "Offline"
-            detail = self.build_webapi_status_detail(status)
-            card_detail = detail if status["online"] else "Ver log de execução."
+            msg = status.get("message") or ""
+            if status["online"]:
+                card_detail = self.build_webapi_status_detail(status)
+            elif msg:
+                card_detail = msg
+            else:
+                card_detail = "O endpoint Status WebAPI está offline."
             self.cards["webapi_status"].set_status(card_status, card_detail)
             self.add_table_row(page_key, "Ambiente", "Status WebAPI", card_status, card_detail)
             level = "ok" if status["online"] else "error"
-            self.append_global_log(f"Status WebAPI → {card_status} | {detail}", level=level)
+            self.append_global_log(f"Status WebAPI → {card_status} | {card_detail}", level=level)
             if not status["online"]:
-                self.add_detail(page_key, status.get("message") or "O endpoint Status WebAPI respondeu como offline.")
+                self.add_detail(page_key, card_detail)
 
         if "apikeys" in result:
             apikeys = result["apikeys"]
-            apikey_detail = "Chaves da WebAPI consistentes." if apikeys["status"] == "OK" else "Ver log de execução."
+            if apikeys["status"] == "OK":
+                apikey_detail = "Chaves da WebAPI consistentes."
+                level = "ok"
+            elif apikeys["status"] == "Error":
+                apikey_detail = apikeys.get("message", "Erro ao verificar chaves.")
+                level = "error"
+            else:
+                apikey_detail = "Chaves diferentes entre MSSBO.INI e appsettings.json."
+                level = "warning"
             self.cards["apikeys"].set_status(apikeys["status"], apikey_detail)
             self.add_table_row(page_key, "Ambiente", "API Keys da WebAPI", apikeys["status"], apikey_detail)
-            level = "ok" if apikeys["status"] == "OK" else "warning"
             self.append_global_log(f"API Keys WebAPI → {apikeys['status']}", level=level)
             if apikeys["status"] != "OK":
-                self.add_detail(page_key, "As API Keys da WebAPI estão diferentes entre MSSBO.INI e appsettings.json.")
+                self.add_detail(page_key, apikey_detail)
 
         if "optimizer" in result:
             optimizer = result["optimizer"]

@@ -9,12 +9,13 @@ APPSETTINGS_PATH = r"C:\MIS\MSSV5\MSSWebAPI\appsettings.json"
 GET_STATUS_URL = "http://localhost:19080/MSSWebApi/MSSClient/Authentication/GetStatus"
 
 
-def get_ini_keys():
+def get_ini_keys(ini_path: str | None = None):
 
+    path = ini_path or INI_PATH
     config = configparser.ConfigParser()
 
     config.read(
-        INI_PATH,
+        path,
         encoding="cp1252"
     )
 
@@ -32,10 +33,12 @@ def get_ini_keys():
     }
 
 
-def get_json_keys():
+def get_json_keys(json_path: str | None = None):
+
+    path = json_path or APPSETTINGS_PATH
 
     with open(
-        APPSETTINGS_PATH,
+        path,
         encoding="utf-8"
     ) as file:
 
@@ -55,11 +58,11 @@ def get_json_keys():
     }
 
 
-def are_api_keys_equal():
+def are_api_keys_equal(ini_path: str | None = None, json_path: str | None = None):
 
-    ini_keys = get_ini_keys()
+    ini_keys = get_ini_keys(ini_path)
 
-    json_keys = get_json_keys()
+    json_keys = get_json_keys(json_path)
 
     return (
 
@@ -82,10 +85,10 @@ def are_api_keys_equal():
     )
 
 
-def get_webapi_status():
+def get_webapi_status(ini_path: str | None = None):
 
     try:
-        api_key = get_ini_keys()["ApiKey"]
+        api_key = get_ini_keys(ini_path)["ApiKey"]
 
         response = requests.post(
             GET_STATUS_URL,
@@ -140,6 +143,11 @@ def get_webapi_status():
             friendly = "Não foi possível ligar à WebAPI (ligação recusada). Verifique se o serviço MSSWebAPI está em execução."
         elif "Name or service not known" in msg or "[Errno -2]" in msg or "[Errno 11001]" in msg:
             friendly = "Não foi possível resolver o endereço da WebAPI. Verifique a configuração de rede."
+        elif "No such file" in msg or "No such file or directory" in msg or "FileNotFoundError" in msg or "section" in msg.lower() or "WebApi" in msg:
+            friendly = (
+                "O caminho do MSSBO.INI não é válido ou o ficheiro está incorreto. "
+                "Reconfigure o caminho no formulário de login."
+            )
         else:
             friendly = f"Erro ao contactar a WebAPI: {msg}"
 

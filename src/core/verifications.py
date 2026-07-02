@@ -201,28 +201,57 @@ def get_webapi_service_info():
     }
 
 
-def get_webapi_apikey_info():
+def get_webapi_apikey_info(ini_path: str | None = None, json_path: str | None = None):
 
-    if are_api_keys_equal():
+    try:
+
+        if are_api_keys_equal(ini_path, json_path):
+
+            return {
+                "status": "OK",
+                "ApiKey": True,
+                "ApiKeyLog": True,
+                "ApiKeyInternal": True
+            }
 
         return {
-            "status": "OK",
-            "ApiKey": True,
-            "ApiKeyLog": True,
-            "ApiKeyInternal": True
+            "status": "Different",
+            "ApiKey": False,
+            "ApiKeyLog": False,
+            "ApiKeyInternal": False
         }
 
-    return {
-        "status": "Different",
-        "ApiKey": False,
-        "ApiKeyLog": False,
-        "ApiKeyInternal": False
-    }
+    except Exception as e:
+
+        msg = str(e).strip()
+        if "No such file" in msg or "No such file or directory" in msg or "FileNotFoundError" in msg:
+            detail = (
+                "O caminho para o MSSBO.INI ou appsettings.json não é válido. "
+                "Reconfigure os caminhos no formulário de login."
+            )
+        elif "section" in msg.lower() or "key" in msg.lower() or "WebApi" in msg:
+            detail = (
+                "O ficheiro MSSBO.INI parece não estar correto. "
+                "Reconfigure o caminho no formulário de login."
+            )
+        else:
+            detail = (
+                "Erro ao ler os ficheiros de configuração da WebAPI. "
+                "Verifique os caminhos no formulário de login."
+            )
+
+        return {
+            "status": "Error",
+            "message": detail,
+            "ApiKey": False,
+            "ApiKeyLog": False,
+            "ApiKeyInternal": False
+        }
 
 
-def get_webapi_status_info():
+def get_webapi_status_info(ini_path: str | None = None):
 
-    status = get_webapi_status()
+    status = get_webapi_status(ini_path)
     date_on_server = status.get(
         "dateOnServer",
         ""

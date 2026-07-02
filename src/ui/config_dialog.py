@@ -1,16 +1,21 @@
 """Diálogo de configuração — testa a ligação SQL antes de aceitar."""
 from __future__ import annotations
+import os
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QMoveEvent
 from PySide6.QtWidgets import (
     QDialog,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QPushButton,
     QVBoxLayout,
 )
+
+import configparser
+import json
 
 from core.database import Database
 
@@ -20,13 +25,22 @@ class ConfigDialog(QDialog):
     def __init__(self, existing_config: dict | None = None):
         super().__init__()
         self.setWindowTitle("Ligação ao SQL Server — Kit de Validação")
-        self.setFixedSize(540, 480)
+        self.setFixedSize(580, 620)
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
         self.setModal(True)
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet(_STYLE)
 
         self._result: dict | None = None
+
+        self.ini_path = (
+            existing_config.get("mss_ini_path", "C:\\MIS\\MSSV5\\Backoffice\\MSSBO.INI")
+            if existing_config else "C:\\MIS\\MSSV5\\Backoffice\\MSSBO.INI"
+        )
+        self.appsettings_path = (
+            existing_config.get("mss_appsettings_path", "C:\\MIS\\MSSV5\\MSSWebAPI\\appsettings.json")
+            if existing_config else "C:\\MIS\\MSSV5\\MSSWebAPI\\appsettings.json"
+        )
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(24, 24, 24, 24)
@@ -62,6 +76,34 @@ class ConfigDialog(QDialog):
         self.mss_edit = self._add_field(layout, "Base MSS:")
         self.mss_edit.setPlaceholderText("ex: MSS")
 
+        # ── Caminho do MSSBO.INI ──
+        ini_label = QLabel("Ficheiro MSSBO.INI:")
+        ini_label.setObjectName("fieldLabel")
+        layout.addWidget(ini_label)
+        ini_row = QHBoxLayout()
+        self.ini_edit = QLineEdit(self.ini_path)
+        self.ini_edit.setPlaceholderText("C:\\MIS\\MSSV5\\Backoffice\\MSSBO.INI")
+        ini_browse = QPushButton("Procurar...")
+        ini_browse.setObjectName("browseBtn")
+        ini_browse.clicked.connect(self._browse_ini)
+        ini_row.addWidget(self.ini_edit, 1)
+        ini_row.addWidget(ini_browse)
+        layout.addLayout(ini_row)
+
+        # ── Caminho do appsettings.json ──
+        app_label = QLabel("Ficheiro appsettings.json da WebAPI:")
+        app_label.setObjectName("fieldLabel")
+        layout.addWidget(app_label)
+        app_row = QHBoxLayout()
+        self.app_edit = QLineEdit(self.appsettings_path)
+        self.app_edit.setPlaceholderText("C:\\MIS\\MSSV5\\MSSWebAPI\\appsettings.json")
+        app_browse = QPushButton("Procurar...")
+        app_browse.setObjectName("browseBtn")
+        app_browse.clicked.connect(self._browse_appsettings)
+        app_row.addWidget(self.app_edit, 1)
+        app_row.addWidget(app_browse)
+        layout.addLayout(app_row)
+
         self.feedback_label = QLabel("")
         self.feedback_label.setObjectName("errorLabel")
         self.feedback_label.setWordWrap(True)
@@ -96,6 +138,26 @@ class ConfigDialog(QDialog):
         layout.addWidget(edit)
         return edit
 
+    def _browse_ini(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Selecionar ficheiro MSSBO.INI",
+            os.path.dirname(self.ini_edit.text()) or "C:\\MIS",
+            "INI files (*.ini);;All files (*.*)"
+        )
+        if path:
+            self.ini_edit.setText(path)
+
+    def _browse_appsettings(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Selecionar ficheiro appsettings.json",
+            os.path.dirname(self.app_edit.text()) or "C:\\MIS",
+            "JSON files (*.json);;All files (*.*)"
+        )
+        if path:
+            self.app_edit.setText(path)
+
     def _populate(self, cfg: dict):
         sql = cfg.get("sql_server", {})
         dbs = cfg.get("databases", {})
@@ -109,6 +171,64 @@ class ConfigDialog(QDialog):
             self.sage_edit.setText(dbs["sage50"])
         if dbs.get("mss"):
             self.mss_edit.setText(dbs["mss"])
+        if cfg.get("mss_ini_path"):
+            self.ini_edit.setText(cfg["mss_ini_path"])
+        if cfg.get("mss_appsettings_path"):
+            self.app_edit.setText(cfg["mss_appsettings_path"])
+
+    def _validate_ini_file(self, path: str) -> str | None:
+        label = "MSSBO.INI"
+        try:
+            if not os.path.exists(path):
+                return f"{label} — ficheiro não encontrado:\n{path}"
+
+            config = configparser.ConfigParser()
+            config.read(path, encoding="cp1252")
+
+            if "WebApi" not in config:
+                return (
+                    f"{label} — não tem a secção [WebApi].\n{path}\n\n"
+                    "Certifique-se de que escolheu o MSSBO.INI correto."
+                )
+
+            for key in ("apikey", "apikeylog", "apikeyinternal"):
+                if key not in config["WebApi"]:
+                    return (
+                        f"{label} — falta a chave '{key}' em [WebApi].\n{path}\n\n"
+                        "O MSSBO.INI pode estar corrompido ou incompleto."
+                    )
+            return None
+
+        except configparser.Error as e:
+            return f"{label} — erro ao ler o INI:\n{path}\n\n{e}"
+        except PermissionError:
+            return f"{label} — sem permissão para ler:\n{path}"
+        except Exception as e:
+            return f"{label} — erro inesperado:\n{path}\n\n{e}"
+
+    def _validate_appsettings_file(self, path: str) -> str | None:
+        label = "appsettings.json"
+        try:
+            if not os.path.exists(path):
+                return f"{label} — ficheiro não encontrado:\n{path}"
+
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+
+            for key in ("ApiKey", "ApiKeyLog", "ApiKeyInternal"):
+                if key not in data:
+                    return (
+                        f"{label} — falta a chave '{key}'.\n{path}\n\n"
+                        "O appsettings.json pode estar incompleto."
+                    )
+            return None
+
+        except json.JSONDecodeError as e:
+            return f"{label} — não é um JSON válido:\n{path}\n\n{e}"
+        except PermissionError:
+            return f"{label} — sem permissão para ler:\n{path}"
+        except Exception as e:
+            return f"{label} — erro inesperado:\n{path}\n\n{e}"
 
     def _on_save(self):
         server = self.server_edit.text().strip()
@@ -137,9 +257,26 @@ class ConfigDialog(QDialog):
             self._show_error(f"{friendly}\n\n{msg}")
             return
 
+        ini_path = self.ini_edit.text().strip()
+        app_path = self.app_edit.text().strip()
+
+        ini_error = self._validate_ini_file(ini_path)
+        if ini_error:
+            self._set_busy(False)
+            self._show_error(ini_error)
+            return
+
+        app_error = self._validate_appsettings_file(app_path)
+        if app_error:
+            self._set_busy(False)
+            self._show_error(app_error)
+            return
+
         self._result = {
             "sql_server": {"server": server, "user": user, "password": password},
             "databases": {"sage50": sage, "mss": mss},
+            "mss_ini_path": ini_path,
+            "mss_appsettings_path": app_path,
         }
         self._set_busy(False)
         self.accept()
@@ -256,6 +393,18 @@ QPushButton#cancelBtn {
     font-size: 14px;
 }
 QPushButton#cancelBtn:hover {
+    background: #e2e8f0;
+}
+QPushButton#browseBtn {
+    background: #edf2f7;
+    color: #2d3748;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-weight: 600;
+    font-size: 12px;
+}
+QPushButton#browseBtn:hover {
     background: #e2e8f0;
 }
 """

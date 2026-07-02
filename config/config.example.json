@@ -8,5 +8,9 @@
     "databases": {
         "sage50": "NOME_BASE_SAGE",
         "mss": "NOME_BASE_MSS"
-    }
+    },
+
+    "mss_ini_path": "C:\\MIS\\MSSV5\\Backoffice\\MSSBO.INI",
+
+    "mss_appsettings_path": "C:\\MIS\\MSSV5\\MSSWebAPI\\appsettings.json"
 }
