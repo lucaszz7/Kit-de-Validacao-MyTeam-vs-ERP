@@ -163,8 +163,8 @@ def get_unmapped_salesmen(db: DatabaseExecutor) -> list[ValidationIssue]:
             "salesman_id": normalize_text(row[0]),
             "salesman_name": normalize_text(row[1]),
             "message": (
-                f"{normalize_text(row[1])} existe no ERP, "
-                "mas nao esta associado no MSS."
+                f"O Vendedor [{normalize_text(row[0])}] {normalize_text(row[1])} existe no ERP, "
+                "mas nao esta associado a nenhum utilizador/vendedor no MSS."
             ),
         }
         for row in rows

@@ -6,6 +6,7 @@ import requests
 INI_PATH = r"C:\MIS\MSSV5\Backoffice\MSSBO.INI"
 
 APPSETTINGS_PATH = r"C:\MIS\MSSV5\MSSWebAPI\appsettings.json"
+
 GET_STATUS_URL = "http://localhost:19080/MSSWebApi/MSSClient/Authentication/GetStatus"
 
 
@@ -14,21 +15,15 @@ def get_ini_keys(ini_path: str | None = None):
     path = ini_path or INI_PATH
     config = configparser.ConfigParser()
 
-    config.read(
-        path,
-        encoding="cp1252"
-    )
+    config.read(path, encoding = "cp1252")
 
     return {
 
-        "ApiKey":
-        config["WebApi"]["apikey"],
+        "ApiKey": config["WebApi"]["apikey"],
 
-        "ApiKeyLog":
-        config["WebApi"]["apikeylog"],
+        "ApiKeyLog": config["WebApi"]["apikeylog"],
 
-        "ApiKeyInternal":
-        config["WebApi"]["apikeyinternal"]
+        "ApiKeyInternal": config["WebApi"]["apikeyinternal"]
 
     }
 
@@ -37,23 +32,17 @@ def get_json_keys(json_path: str | None = None):
 
     path = json_path or APPSETTINGS_PATH
 
-    with open(
-        path,
-        encoding="utf-8"
-    ) as file:
+    with open(path, encoding = "utf-8") as file:
 
         data = json.load(file)
 
     return {
 
-        "ApiKey":
-        data["ApiKey"],
+        "ApiKey": data["ApiKey"],
 
-        "ApiKeyLog":
-        data["ApiKeyLog"],
+        "ApiKeyLog": data["ApiKeyLog"],
 
-        "ApiKeyInternal":
-        data["ApiKeyInternal"]
+        "ApiKeyInternal": data["ApiKeyInternal"]
 
     }
 

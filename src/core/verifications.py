@@ -22,8 +22,8 @@ def get_myteam_status():
     return service_info["status"]
 
 
-def get_myteam_service_info():
-    service_name = get_myteam_service_name()
+def get_myteam_service_info(ini_path: str | None = None):
+    service_name = get_myteam_service_name(ini_path)
 
     if not service_name:
         return {
@@ -37,13 +37,14 @@ def get_myteam_service_info():
     }
 
 
-def get_myteam_service_name():
-    ini_path = Path(INI_PATH)
+def get_myteam_service_name(ini_path: str | None = None):
+    path = ini_path or INI_PATH
+    ini_path_obj = Path(path)
 
-    if not ini_path.exists():
+    if not ini_path_obj.exists():
         return None
 
-    config = read_ini_file(ini_path)
+    config = read_ini_file(ini_path_obj)
 
     if not config.has_section("MyTeam"):
         return None

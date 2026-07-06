@@ -261,7 +261,7 @@ class MainWindow(QMainWindow):
             lambda: self.show_page("environment"),
         )
         self.nav_buttons["orders"] = self.create_nav_button(
-            "Documentos de encomendas",
+            "Encomendas",
             lambda: self.show_page("orders"),
         )
         self.nav_buttons["sales"] = self.create_nav_button(
@@ -395,14 +395,14 @@ class MainWindow(QMainWindow):
         layout.setSpacing(16)
 
         cards = [
-            ("orders", "Documentos de encomendas", self.run_order_checks),
+            ("orders", "Encomendas", self.run_order_checks),
         ]
 
         layout.addWidget(self.build_filter_bar("orders", include_salesman=True))
-        layout.addWidget(self.build_cards_group("Documentos de encomendas", cards, "orders"))
+        layout.addWidget(self.build_cards_group("Encomendas", cards, "orders"))
 
         validate_button = self.create_validation_button(
-            "Validar documentos de encomendas",
+            "Validar encomendas",
             self.run_order_checks,
             primary=True,
         )
@@ -1154,7 +1154,7 @@ class MainWindow(QMainWindow):
         )
 
     def run_myteam_check(self):
-        self.run_environment_card("MyTeam", "myteam", lambda: {"myteam": get_myteam_service_info()})
+        self.run_environment_card("MyTeam", "myteam", lambda: {"myteam": get_myteam_service_info(self.config.get("mss_ini_path"))})
 
     def run_webapi_service_check(self):
         self.run_environment_card("WebAPI", "webapi_service", lambda: {"webapi_service": get_webapi_service_info()})
@@ -1350,7 +1350,7 @@ class MainWindow(QMainWindow):
 
     def collect_environment_checks(self):
         return {
-            "myteam": get_myteam_service_info(),
+            "myteam": get_myteam_service_info(self.config.get("mss_ini_path")),
             "webapi_service": get_webapi_service_info(),
             "apikeys": get_webapi_apikey_info(
                 self.config.get("mss_ini_path"),
@@ -1706,7 +1706,8 @@ class MainWindow(QMainWindow):
 
         summary_text = (
             f"Validação de vendedores concluída com {total_issues} divergência(s). "
-            f"Foram analisados {len(mapping)} utilizadores MSS. Consulte o log de execução para o detalhe."
+            f"Existem no ERP, {total_issues} vendedor(es) sem relação com utilizador/vendedor no MSS, "
+            f"valide se é necessário alguma retificação."
             if total_issues
             else f"Validação de vendedores concluída sem divergências. Foram analisados {len(mapping)} utilizadores MSS."
         )

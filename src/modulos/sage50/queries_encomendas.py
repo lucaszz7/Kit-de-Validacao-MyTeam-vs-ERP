@@ -59,10 +59,7 @@ def build_integrated_filters(
         filters.append(f"D.{date_column} < DATEADD(day, 1, '{sql_literal(end_date)}')")
 
     if salesman_column and salesman_id:
-        filters.append(
-            "LTRIM(RTRIM(CAST(D."
-            f"{salesman_column} AS VARCHAR(50)))) = '{sql_literal(salesman_id)}'"
-        )
+        filters.append("LTRIM(RTRIM(CAST(D." f"{salesman_column} AS VARCHAR(50)))) = '{sql_literal(salesman_id)}'")
 
     return f"WHERE {' AND '.join(filters)}" if filters else ""
 
