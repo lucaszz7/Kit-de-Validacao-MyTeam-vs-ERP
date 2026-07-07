@@ -7,7 +7,7 @@ INI_PATH = r"C:\MIS\MSSV5\Backoffice\MSSBO.INI"
 
 APPSETTINGS_PATH = r"C:\MIS\MSSV5\MSSWebAPI\appsettings.json"
 
-GET_STATUS_URL = "http://localhost:19080/MSSWebApi/MSSClient/Authentication/GetStatus"
+GET_STATUS_PATH = "/MSSWebApi/MSSClient/Authentication/GetStatus"
 
 
 def get_ini_keys(ini_path: str | None = None):
@@ -77,10 +77,16 @@ def are_api_keys_equal(ini_path: str | None = None, json_path: str | None = None
 def get_webapi_status(ini_path: str | None = None):
 
     try:
-        api_key = get_ini_keys(ini_path)["ApiKey"]
+        path = ini_path or INI_PATH
+        config = configparser.ConfigParser()
+        config.read(path, encoding="cp1252")
+        http_port = config.get("WebApi", "HttpPort", fallback="19080")
+
+        api_key = config["WebApi"]["apikey"]
+        url = f"http://localhost:{http_port}{GET_STATUS_PATH}"
 
         response = requests.post(
-            GET_STATUS_URL,
+            url,
 
             headers={
                 "X-Api-Key": api_key
@@ -115,7 +121,7 @@ def get_webapi_status(ini_path: str | None = None):
 
         return {
             "online": False,
-            "message": "Não foi possível ligar à WebAPI. Verifique se o serviço MSSWebAPI está em execução e se a porta 19080 está acessível."
+            "message": "Não foi possível ligar à WebAPI. Verifique se o serviço MSSWebAPI está em execução e se a porta está acessível."
         }
 
     except requests.exceptions.Timeout:

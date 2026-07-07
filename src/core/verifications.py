@@ -192,13 +192,32 @@ def get_optimizer_port_info():
 WEBAPI_SERVICE_NAME = "MSSWebAPI"
 
 
-def get_webapi_service_info():
+def get_webapi_service_name(ini_path: str | None = None):
+    path = ini_path or INI_PATH
+    ini_path_obj = Path(path)
+
+    if not ini_path_obj.exists():
+        return None
+
+    config = read_ini_file(ini_path_obj)
+
+    if not config.has_section("WebApi"):
+        return None
+
+    service_name = config.get("WebApi", "instanceName", fallback=None)
+
+    if not service_name:
+        return None
+
+    return service_name.strip()
+
+
+def get_webapi_service_info(ini_path: str | None = None):
+    service_name = get_webapi_service_name(ini_path) or WEBAPI_SERVICE_NAME
 
     return {
-        "service_name": WEBAPI_SERVICE_NAME,
-        "status": get_windows_service_status(
-            WEBAPI_SERVICE_NAME
-        )
+        "service_name": service_name,
+        "status": get_windows_service_status(service_name)
     }
 
 
@@ -253,16 +272,13 @@ def get_webapi_apikey_info(ini_path: str | None = None, json_path: str | None = 
 def get_webapi_status_info(ini_path: str | None = None):
 
     status = get_webapi_status(ini_path)
-    date_on_server = status.get(
-        "dateOnServer",
-        ""
-    )
+    date_on_server = status.get("dateOnServer", "")
 
     return {
         "online": status.get(
             "online",
             False
-        ),
+  ),
         "message": status.get(
             "message",
             ""

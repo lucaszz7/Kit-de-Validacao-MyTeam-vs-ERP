@@ -60,8 +60,6 @@ from core.verifications import (
 from modulos.sage50.queries_encomendas import validate_order_documents
 from modulos.sage50.queries_vendedores import get_erp_salesmen, get_integrated_salesmen, get_salesmen_mapping, validate_salesmen
 from modulos.sage50.queries_vendas import validate_sales_documents
-
-
 class TaskWorker(QObject):
     """
     Worker que corre numa QThread.
@@ -358,9 +356,9 @@ class MainWindow(QMainWindow):
         layout.setSpacing(16)
 
         cards = [
-            ("myteam", "MyTeam", self.run_myteam_check),
-            ("webapi_service", "WebAPI", self.run_webapi_service_check),
-            ("webapi_status", "Status WebAPI", self.run_webapi_status_check),
+            ("myteam", "Serviço MyTeam", self.run_myteam_check),
+            ("webapi_service", "Serviço WebAPI", self.run_webapi_service_check),
+            ("webapi_status", "Status Porta WebAPI", self.run_webapi_status_check),
             ("apikeys", "API Keys da WebAPI", self.run_apikeys_check),
             ("optimizer", "Otimizador", self.run_optimizer_check),
             ("sql", "SQL Server", self.run_sql_check),
@@ -411,7 +409,7 @@ class MainWindow(QMainWindow):
         return page
 
     def build_sales_page(self):
-        """Painel 2: vendas (ainda por implementar)."""
+        """Painel 2: vendas"""
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1157,7 +1155,7 @@ class MainWindow(QMainWindow):
         self.run_environment_card("MyTeam", "myteam", lambda: {"myteam": get_myteam_service_info(self.config.get("mss_ini_path"))})
 
     def run_webapi_service_check(self):
-        self.run_environment_card("WebAPI", "webapi_service", lambda: {"webapi_service": get_webapi_service_info()})
+        self.run_environment_card("WebAPI", "webapi_service", lambda: {"webapi_service": get_webapi_service_info(self.config.get("mss_ini_path"))})
 
     def run_webapi_status_check(self):
         self.run_environment_card("Status WebAPI", "webapi_status", lambda: {"webapi_status": get_webapi_status_info(self.config.get("mss_ini_path"))})
@@ -1351,7 +1349,7 @@ class MainWindow(QMainWindow):
     def collect_environment_checks(self):
         return {
             "myteam": get_myteam_service_info(self.config.get("mss_ini_path")),
-            "webapi_service": get_webapi_service_info(),
+            "webapi_service": get_webapi_service_info(self.config.get("mss_ini_path")),
             "apikeys": get_webapi_apikey_info(
                 self.config.get("mss_ini_path"),
                 self.config.get("mss_appsettings_path")

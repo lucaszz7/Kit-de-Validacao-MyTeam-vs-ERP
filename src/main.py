@@ -1,7 +1,9 @@
 import sys
 import webbrowser
+from pathlib import Path
 
 import pyodbc
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from core.config_loader import load_config, save_config
@@ -35,6 +37,7 @@ def _check_odbc_driver():
 
 def main():
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(str(Path(__file__).resolve().parent / "resources" / "icon.png")))
 
     _check_odbc_driver()
 
