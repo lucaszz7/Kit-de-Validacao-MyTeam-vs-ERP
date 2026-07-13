@@ -76,6 +76,13 @@ class ConfigDialog(QDialog):
         self.mss_edit = self._add_field(layout, "Base MSS:")
         self.mss_edit.setPlaceholderText("ex: MSS")
 
+        # ── Guardar credenciais ──
+        from PySide6.QtWidgets import QCheckBox
+        self.save_checkbox = QCheckBox("Guardar credenciais para o próximo login")
+        self.save_checkbox.setChecked(True)
+        layout.addWidget(self.save_checkbox)
+        layout.addSpacing(4)
+
         # ── Caminho do MSSBO.INI ──
         ini_label = QLabel("Ficheiro MSSBO.INI:")
         ini_label.setObjectName("fieldLabel")
@@ -175,6 +182,7 @@ class ConfigDialog(QDialog):
             self.ini_edit.setText(cfg["mss_ini_path"])
         if cfg.get("mss_appsettings_path"):
             self.app_edit.setText(cfg["mss_appsettings_path"])
+        self.save_checkbox.setChecked(cfg.get("save_credentials", False))
 
     def _validate_ini_file(self, path: str) -> str | None:
         label = "MSSBO.INI"
@@ -277,6 +285,7 @@ class ConfigDialog(QDialog):
             "databases": {"sage50": sage, "mss": mss},
             "mss_ini_path": ini_path,
             "mss_appsettings_path": app_path,
+            "save_credentials": self.save_checkbox.isChecked(),
         }
         self._set_busy(False)
         self.accept()
@@ -367,6 +376,11 @@ QLineEdit:focus {
 QLineEdit:disabled {
     background: #f7fafc;
     color: #a0aec0;
+}
+QCheckBox {
+    color: #1a202c;
+    font-size: 13px;
+    spacing: 6px;
 }
 QPushButton#saveBtn {
     background: #21866f;

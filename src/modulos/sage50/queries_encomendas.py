@@ -51,12 +51,13 @@ def build_integrated_filters(
     """Monta o WHERE dos documentos integrados sem misturar regras de UI."""
 
     filters = []
+    dt = date_column or "DCCDTA"
 
-    if date_column and start_date:
-        filters.append(f"D.{date_column} >= '{sql_literal(start_date)}'")
+    if start_date:
+        filters.append(f"D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'")
 
-    if date_column and end_date:
-        filters.append(f"D.{date_column} < DATEADD(day, 1, '{sql_literal(end_date)}')")
+    if end_date:
+        filters.append(f"D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'")
 
     if salesman_column and salesman_id:
         filters.append("LTRIM(RTRIM(CAST(D." f"{salesman_column} AS VARCHAR(50)))) = '{sql_literal(salesman_id)}'")
@@ -258,6 +259,101 @@ def get_erp_order_values(db: DatabaseExecutor):
 # # VALIDAÇÃO AUTOMÁTICA
 # ==========================================================
 
+# ==========================================================
+# Validação do campo vendedor (DCCACL_38) nos documentos
+# ==========================================================
+
+def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set | None = None, start_date: str | None = None, end_date: str | None = None, salesman_id: str | None = None):
+    columns = get_table_columns(db_mss, "STMSDCC")
+    date_column = "DCCDTA" if "DCCDTA" in columns else None
+    salesman_column = None
+    for col in ["DCCVND", "DCCACL_38", "DCCCVD"]:
+        if col in columns:
+            salesman_column = col
+            break
+
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND D.DCCTPD IN ({docs_list})"
+
+    date_filter = ""
+    dt = date_column or "DCCDTA"
+    if start_date:
+        date_filter += f" AND D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'"
+    if end_date:
+        date_filter += f" AND D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'"
+
+    salesman_filter = ""
+    if salesman_column and salesman_id:
+        salesman_filter = f"AND CAST(D.{salesman_column} AS VARCHAR(50)) = '{sql_literal(salesman_id)}'"
+
+    query = f"""
+    SELECT
+        COUNT(*) AS TotalDocumentos,
+        SUM(CASE
+            WHEN D.DCCACL_38 IS NULL
+              OR LTRIM(RTRIM(CAST(D.DCCACL_38 AS VARCHAR(50)))) = ''
+              OR CAST(D.DCCACL_38 AS VARCHAR(50)) = '0'
+            THEN 1
+            ELSE 0
+        END) AS SemVendedor
+    FROM STMSDCC D
+    WHERE D.DCCANU = 'N'
+      AND D.DCCCLI <> ''
+      AND D.DCCTSF <> 'FC'
+      {docs_filter}
+      {date_filter}
+      {salesman_filter}
+    """
+    row = db_mss.execute(query)
+    if not row:
+        return None
+
+    total = row[0][0] or 0
+    sem_vendedor = row[0][1] or 0
+
+    if total == 0:
+        return None
+
+    percentagem = round((sem_vendedor / total) * 100, 1)
+
+    docs_problematicos = []
+    if sem_vendedor > 0:
+        query_exemplos = f"""
+        SELECT TOP 20
+            D.DCCTPD AS Documento,
+            D.DCCSER AS Serie,
+            D.DCCNDC AS Numero,
+            ISNULL(CAST(D.DCCACL_38 AS VARCHAR(50)), '(vazio)') AS Vendedor
+        FROM STMSDCC D
+        WHERE D.DCCANU = 'N'
+          AND D.DCCCLI <> ''
+          AND D.DCCTSF <> 'FC'
+          AND (
+              D.DCCACL_38 IS NULL
+              OR LTRIM(RTRIM(CAST(D.DCCACL_38 AS VARCHAR(50)))) = ''
+              OR CAST(D.DCCACL_38 AS VARCHAR(50)) = '0'
+          )
+          {docs_filter}
+          {date_filter}
+          {salesman_filter}
+        ORDER BY D.DCCDTA DESC
+        """
+        exemplos = db_mss.execute(query_exemplos)
+        for ex in exemplos:
+            docs_problematicos.append(f"{ex[0]} Série {ex[1]} N.º {ex[2]} (vendedor: {ex[3]})")
+
+    status = "OK" if sem_vendedor == 0 else "Warning"
+    mensagem = (
+        f"{sem_vendedor} de {total} documentos sem código de vendedor ({percentagem}%)."
+        if sem_vendedor > 0
+        else f"Todos os {total} documentos têm código de vendedor preenchido."
+    )
+
+    return {"status": status, "total": total, "sem_vendedor": sem_vendedor, "percentagem": percentagem, "mensagem": mensagem, "exemplos": docs_problematicos}
+
+
 def validate_order_documents(
     db,
     db_mss,
@@ -353,6 +449,8 @@ def validate_order_documents(
             }
         )
 
+    salesman_field = check_salesman_field_filled(db_mss, allowed_documents=docs_bo | docs_erp, start_date=start_date, end_date=end_date, salesman_id=salesman_id)
+
     return {
 
         "success": len(issues) == 0,
@@ -369,5 +467,7 @@ def validate_order_documents(
 
         "documents_sales": sorted(docs_sales),
 
-        "erp_values": erp_values
+        "erp_values": erp_values,
+
+        "salesman_field": salesman_field,
     }

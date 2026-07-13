@@ -425,6 +425,36 @@ def get_expenses_version_info(db_mss):
         ),
     }
 
+
+# ==========================================================================================================
+# ### VERIFICAÇÃO DA VERSÃO DAS ENTREGAS (V1 / V2)
+# ==========================================================================================================
+
+def get_delivery_version_info(db_mss):
+
+    query = """
+    SELECT TERVAL, TERTER
+    FROM MSTER
+    WHERE TERPAR = 'ENTVS'
+    ORDER BY TERTER
+    """
+    rows = db_mss.execute(query)
+    if not rows:
+        return {"status": "Warning", "message": "Nenhum terminal configurado para entregas (ENTVS).", "terminais": []}
+    
+    terminals = []
+
+    for row in rows:
+        val = str(row[0] or "").strip()
+        ter = str(row[1] or "").strip()
+        version = "V1" if val == "1" else "V2" if val == "2" else f"Valor desconhecido ({val})"
+        terminals.append ({"terminal": ter, "valor": val, "versao": version})
+
+    info = "; ".join(f"Terminal {t['terminal']}: {t['versao']}" for t in terminals)
+    status = "OK" if all (t["valor"] in ("1", "2") for t in terminals) else "Warning"
+    return {"status": status, "message": info, "terminais": terminals}
+
+
 # ==========================================================================================================
 # Encontrar o documento mais antigo sincronizado na tabela STMSDCC
 # ==========================================================================================================

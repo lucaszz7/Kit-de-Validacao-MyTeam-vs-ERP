@@ -1,31 +1,27 @@
-import sys
-import json
-from pathlib import Path
-
-
-def _config_dir() -> Path:
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).resolve().parent / "config"
-    return Path(__file__).resolve().parents[2] / "config"
-
-
-def _config_path() -> Path:
-    return _config_dir() / "config.json"
+from core.credentials import (
+    save_secure_config,
+    load_secure_config,
+    clear_secure_config,
+    clear_key,
+)
 
 
 def config_exists() -> bool:
-    return _config_path().exists()
+    return load_secure_config() is not None
 
 
-def load_config():
-    config_path = _config_path()
-    with config_path.open("r", encoding="utf-8") as file:
-        return json.load(file)
+def load_config() -> dict:
+    data = load_secure_config()
+    if data is None:
+        raise FileNotFoundError("Nenhuma configuração guardada no Cofre do Windows")
+    return data
 
 
 def save_config(data: dict) -> None:
-    config_dir = _config_dir()
-    config_dir.mkdir(parents=True, exist_ok=True)
-    config_path = _config_dir() / "config.json"
-    with config_path.open("w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
+    save_creds = data.get("save_credentials", False)
+
+    if save_creds:
+        save_secure_config(data)
+    else:
+        clear_secure_config()
+        clear_key()

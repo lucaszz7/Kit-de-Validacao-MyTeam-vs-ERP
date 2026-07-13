@@ -1,5 +1,6 @@
 from typing import Any, Protocol 
 
+
 class DatabaseExecutor(Protocol):
 
     def execute(self, query: str) -> Any:
@@ -43,12 +44,13 @@ def build_integrated_filters(
     """Monta o WHERE dos documentos integrados sem misturar regras de UI."""
 
     filters = []
+    dt = date_column or "DCCDTA"
 
-    if date_column and start_date:
-        filters.append(f"D.{date_column} >= '{sql_literal(start_date)}'")
+    if start_date:
+        filters.append(f"D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'")
 
-    if date_column and end_date:
-        filters.append(f"D.{date_column} < DATEADD(day, 1, '{sql_literal(end_date)}')")
+    if end_date:
+        filters.append(f"D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'")
 
     if salesman_column and salesman_id:
         filters.append(
@@ -262,6 +264,219 @@ def get_erp_sales_values(db: DatabaseExecutor):
 
 
 # ==========================================================
+# Validação do campo vendedor (DCCACL_38) nos documentos
+# ==========================================================
+
+def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set | None = None, start_date: str | None = None, end_date: str | None = None, salesman_id: str | None = None):
+    """
+    Verifica se o campo de vendedor (DCCACL_38 ou similar) está preenchido
+    nos documentos de venda da STMSDCC.
+
+    Se estiver vazio/nulo/zero, o dashboard mostra 0 porque não consegue
+    associar o documento a um vendedor.
+
+    allowed_documents: se fornecido, filtra apenas esses tipos de documento (DCCTPD).
+    salesman_id: se fornecido, filtra apenas documentos desse vendedor.
+    """
+    columns = get_table_columns(db_mss, "STMSDCC")
+    date_column = "DCCDTA" if "DCCDTA" in columns else None
+    salesman_column = None
+    for col in ["DCCVND", "DCCACL_38", "DCCCVD"]:
+        if col in columns:
+            salesman_column = col
+            break
+
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND D.DCCTPD IN ({docs_list})"
+
+    date_filter = ""
+    dt = date_column or "DCCDTA"
+    if start_date:
+        date_filter += f" AND D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'"
+    if end_date:
+        date_filter += f" AND D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'"
+
+    salesman_filter = ""
+    if salesman_column and salesman_id:
+        salesman_filter = f"AND CAST(D.{salesman_column} AS VARCHAR(50)) = '{sql_literal(salesman_id)}'"
+
+    query = f"""
+    SELECT
+        COUNT(*) AS TotalDocumentos,
+        SUM(CASE
+            WHEN D.DCCACL_38 IS NULL
+              OR LTRIM(RTRIM(CAST(D.DCCACL_38 AS VARCHAR(50)))) = ''
+              OR CAST(D.DCCACL_38 AS VARCHAR(50)) = '0'
+            THEN 1
+            ELSE 0
+        END) AS SemVendedor
+    FROM STMSDCC D
+    WHERE D.DCCANU = 'N'
+      AND D.DCCCLI <> ''
+      AND D.DCCTSF <> 'FC'
+      {docs_filter}
+      {date_filter}
+      {salesman_filter}
+    """
+    row = db_mss.execute(query)
+    if not row:
+        return None
+
+    total = row[0][0] or 0
+    sem_vendedor = row[0][1] or 0
+
+    if total == 0:
+        return None
+
+    percentagem = round((sem_vendedor / total) * 100, 1)
+
+    docs_problematicos = []
+    if sem_vendedor > 0:
+        query_exemplos = f"""
+        SELECT TOP 20
+            D.DCCTPD AS Documento,
+            D.DCCSER AS Serie,
+            D.DCCNDC AS Numero,
+            ISNULL(CAST(D.DCCACL_38 AS VARCHAR(50)), '(vazio)') AS Vendedor
+        FROM STMSDCC D
+        WHERE D.DCCANU = 'N'
+          AND D.DCCCLI <> ''
+          AND D.DCCTSF <> 'FC'
+          AND (
+              D.DCCACL_38 IS NULL
+              OR LTRIM(RTRIM(CAST(D.DCCACL_38 AS VARCHAR(50)))) = ''
+              OR CAST(D.DCCACL_38 AS VARCHAR(50)) = '0'
+          )
+          {docs_filter}
+          {date_filter}
+          {salesman_filter}
+        ORDER BY D.DCCDTA DESC
+        """
+        exemplos = db_mss.execute(query_exemplos)
+        for ex in exemplos:
+            docs_problematicos.append(
+                f"{ex[0]} Série {ex[1]} N.º {ex[2]} (vendedor: {ex[3]})"
+            )
+
+    status = "OK" if sem_vendedor == 0 else "Warning"
+    mensagem = (
+        f"{sem_vendedor} de {total} documentos sem código de vendedor ({percentagem}%)."
+        if sem_vendedor > 0
+        else f"Todos os {total} documentos têm código de vendedor preenchido."
+    )
+
+    return {
+        "status": status,
+        "total": total,
+        "sem_vendedor": sem_vendedor,
+        "percentagem": percentagem,
+        "mensagem": mensagem,
+        "exemplos": docs_problematicos,
+    }
+
+
+# ==========================================================
+# Monthly sales breakdown (nova query)
+# ==========================================================
+
+def get_monthly_sales_breakdown(db_mss: DatabaseExecutor, allowed_documents: set | None = None, start_date: str | None = None, end_date: str | None = None, salesman_id: str | None = None):
+    ano_atual = 2026
+
+    columns = get_table_columns(db_mss, "STMSDCC")
+    date_column = "DCCDTA" if "DCCDTA" in columns else None
+    salesman_column = None
+    for col in ["DCCVND", "DCCACL_38", "DCCCVD"]:
+        if col in columns:
+            salesman_column = col
+            break
+
+    salesman_filter = ""
+    if salesman_column and salesman_id:
+        salesman_filter = f"AND CAST(D.{salesman_column} AS VARCHAR(50)) = '{sql_literal(salesman_id)}'"
+
+    salesman_select = (
+        f"CAST(D.{salesman_column} AS VARCHAR(50))"
+        if salesman_column
+        else "''"
+    )
+    salesman_name_select = "COALESCE(MAX(U.USRNOM), '')" if salesman_column else "''"
+    join_clause = (
+        f"LEFT JOIN MSUSR U ON CAST(D.{salesman_column} AS VARCHAR(50)) = CAST(U.USRVND AS VARCHAR(50))"
+        if salesman_column
+        else ""
+    )
+    group_by_cols = (
+        f"SUBSTRING(D.{date_column}, 5, 2), CAST(D.{salesman_column} AS VARCHAR(50)), D.DCCTPD"
+        if date_column and salesman_column
+        else "SUBSTRING(D.DCCDTA, 5, 2), D.DCCTPD"
+    )
+    order_by_cols = group_by_cols
+
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND D.DCCTPD IN ({docs_list})"
+
+    date_filter = ""
+    dt = date_column or "DCCDTA"
+    if start_date:
+        date_filter += f" AND D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'"
+    if end_date:
+        date_filter += f" AND D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'"
+
+    query = f"""
+    SELECT
+        CASE SUBSTRING(D.{date_column or 'DCCDTA'}, 5, 2)
+            WHEN '01' THEN 'Janeiro' WHEN '02' THEN 'Fevereiro'
+            WHEN '03' THEN 'Marco' WHEN '04' THEN 'Abril'
+            WHEN '05' THEN 'Maio' WHEN '06' THEN 'Junho'
+            WHEN '07' THEN 'Julho' WHEN '08' THEN 'Agosto'
+            WHEN '09' THEN 'Setembro' WHEN '10' THEN 'Outubro'
+            WHEN '11' THEN 'Novembro' WHEN '12' THEN 'Dezembro'
+            ELSE ''
+        END AS MES,
+        {salesman_name_select} AS VENDEDOR,
+        {salesman_select} AS CODIGO_VENDEDOR,
+        D.DCCTPD AS DOCUMENTO,
+        SUM(CASE WHEN LEFT(D.{date_column or 'DCCDTA'}, 4) = {ano_atual} - 1
+            THEN CASE WHEN D.DCCACL_27 <> 'S' THEN D.DCCVLL ELSE -D.DCCVLL END
+            ELSE 0 END) AS VENDAS_ANO_ANTERIOR,
+        SUM(CASE WHEN LEFT(D.{date_column or 'DCCDTA'}, 4) = {ano_atual}
+            THEN CASE WHEN D.DCCACL_27 <> 'S' THEN D.DCCVLL ELSE -D.DCCVLL END
+            ELSE 0 END) AS VENDAS_ANO_ATUAL
+    FROM STMSDCC D
+    {join_clause}
+    WHERE D.DCCANU = 'N'
+      AND D.DCCCLI <> ''
+      AND LEFT(D.{date_column or 'DCCDTA'}, 4) BETWEEN {ano_atual} - 1 AND {ano_atual}
+      {docs_filter}
+      {date_filter}
+      AND D.DCCTSF <> 'FC'
+      {salesman_filter}
+    GROUP BY {group_by_cols}
+    ORDER BY {order_by_cols}
+    """
+    rows = db_mss.execute(query)
+
+    results = []
+    for row in rows:
+        ant = row[4] or 0
+        act = row[5] or 0
+        results.append({
+            "mes": normalize_text(row[0]),
+            "vendedor": normalize_text(row[1]),
+            "codigo_vendedor": normalize_text(row[2]),
+            "documento": normalize_text(row[3]),
+            "vendas_ano_anterior": ant,
+            "vendas_ano_atual": act,
+            "vendas_totais": ant + act,
+        })
+    return results
+
+
+# ==========================================================
 # VALIDAÇÃO
 # ==========================================================
 
@@ -347,6 +562,10 @@ def validate_sales_documents(
             }
         )
 
+    monthly = get_monthly_sales_breakdown(db_mss, allowed_documents=docs_bo | docs_erp, start_date=start_date, end_date=end_date, salesman_id=salesman_id)
+
+    salesman_field = check_salesman_field_filled(db_mss, allowed_documents=docs_bo | docs_erp, start_date=start_date, end_date=end_date, salesman_id=salesman_id)
+
     return {
 
         "success": len(issues) == 0,
@@ -367,5 +586,8 @@ def validate_sales_documents(
         "documents_sales":
             sorted(docs_sales),
 
-        "erp_values": erp_values
+        "erp_values": erp_values,
+
+        "monthly_breakdown": monthly,
+        "salesman_field": salesman_field,
     }

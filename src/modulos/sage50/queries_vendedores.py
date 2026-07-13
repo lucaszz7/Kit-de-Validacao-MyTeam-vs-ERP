@@ -42,7 +42,8 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
         'MSS' AS Origem,
         CAST(USRUSR AS VARCHAR(50)) AS CodigoVendedor,
         USRNOM AS NomeVendedor,
-        CAST(USRVND AS VARCHAR(50)) AS CodigoVendedorERP
+        CAST(USRVND AS VARCHAR(50)) AS CodigoVendedorERP,
+        {mss_db}.dbo.EXTRACTSTRING(USRACL,15,7) AS UtilizadorEVendedor
     FROM {mss_db}.dbo.MSUSR
     WHERE UPPER(LTRIM(RTRIM(USRUSR))) <> 'ADMIN'
     
@@ -52,7 +53,8 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
         'ERP' AS Origem,
         CAST(SalesmanID AS VARCHAR(50)) AS CodigoVendedor,
         SalesmanName AS NomeVendedor,
-        '' AS CodigoVendedorERP
+        '' AS CodigoVendedorERP,
+        'N' AS UtilizadorEVendedor
     FROM {sage_db}.dbo.Salesman
     """
 
@@ -64,6 +66,7 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
             "codigo_vendedor": normalize_text(row[1]),
             "nome_vendedor": normalize_text(row[2]),
             "codigo_vendedor_erp": normalize_text(row[3]),
+            "utilizador_vendedor": normalize_text(row[4]),
         }
         for row in rows
     ]

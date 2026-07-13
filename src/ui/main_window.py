@@ -47,6 +47,7 @@ from core.config_loader import load_config
 from core.database import Database
 from core.verifications import (
     get_currency_symbol_info,
+    get_delivery_version_info,
     get_expenses_version_info,
     get_google_maps_api_info,
     get_historical_sync_start_info,
@@ -212,6 +213,8 @@ class MainWindow(QMainWindow):
         self.validation_controls: list[QWidget] = []
 
         self.global_log_widget: QTextEdit | None = None
+        self._log_entries: list[tuple[str, str, str]] = []
+        self._log_errors_only: bool = False
 
         self.expenses_result: dict | None = None
 
@@ -355,14 +358,17 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(16)
 
-        cards = [
+        myteam_cards = [
             ("myteam", "Serviço MyTeam", self.run_myteam_check),
+            ("optimizer", "Otimizador de Rotas MyTeam", self.run_optimizer_check),
+            ("world", "World Geometries", self.run_world_check),
+        ]
+
+        mss_cards = [
             ("webapi_service", "Serviço WebAPI", self.run_webapi_service_check),
             ("webapi_status", "Status Porta WebAPI", self.run_webapi_status_check),
             ("apikeys", "API Keys da WebAPI", self.run_apikeys_check),
-            ("optimizer", "Otimizador", self.run_optimizer_check),
             ("sql", "SQL Server", self.run_sql_check),
-            ("world", "World Geometries", self.run_world_check),
             ("maps", "Google Maps API", self.run_maps_check),
             ("currency", "Moeda", self.run_currency_check),
             ("historical", "Histórico", self.run_historical_check),
@@ -374,10 +380,14 @@ class MainWindow(QMainWindow):
             primary=True,
         )
         validate_button.setMinimumHeight(82)
+
+        layout.addWidget(
+            self.build_cards_group("MyTeam", myteam_cards, "environment")
+        )
         layout.addWidget(
             self.build_cards_group(
-                "Verificações de ambiente",
-                cards,
+                "MSS",
+                mss_cards,
                 "environment",
                 action_widget=validate_button,
             )
@@ -398,6 +408,8 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.build_filter_bar("orders", include_salesman=True))
         layout.addWidget(self.build_cards_group("Encomendas", cards, "orders"))
+
+
 
         validate_button = self.create_validation_button(
             "Validar encomendas",
@@ -421,6 +433,8 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.build_filter_bar("sales", include_salesman=True))
         layout.addWidget(self.build_cards_group("Vendas", cards, "sales"))
+
+
 
         validate_button = self.create_validation_button(
             "Validar vendas",
@@ -554,7 +568,15 @@ class MainWindow(QMainWindow):
         self.apply_soft_shadow(self.settings_expenses_card, blur=14, alpha=22, y_offset=2)
         self.cards["expenses_version"] = self.settings_expenses_card
         self.validation_controls.append(self.settings_expenses_card)
+
         group_layout.addWidget(self.settings_expenses_card)
+        
+        self.settings_delivery_card = StatusCard("Versão das Entregas", "Clique para verificar a versão do módulo de entregas por terminal.")
+        self.settings_delivery_card.clicked.connect(self.run_delivery_version_check)
+        self.apply_soft_shadow(self.settings_delivery_card, blur=14, alpha=22, y_offset=2)
+        self.cards["delivery_version"] = self.settings_delivery_card
+        self.validation_controls.append(self.settings_delivery_card)
+        group_layout.addWidget(self.settings_delivery_card)
 
         reconfigure_btn = QPushButton("Reconfigurar ligação SQL")
         reconfigure_btn.setObjectName("reconfigureBtn")
@@ -611,6 +633,13 @@ class MainWindow(QMainWindow):
         subtitle.setObjectName("logsSubtitle")
         subtitle.setWordWrap(True)
         top_row.addWidget(subtitle, 1)
+        
+        from PySide6.QtWidgets import QCheckBox
+        self.errors_checkbox = QCheckBox("Mostrar apenas erros")
+        self.errors_checkbox.setObjectName("errorsCheckbox")
+        self.errors_checkbox.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.errors_checkbox.toggled.connect(self._on_errors_filter_toggled)
+        top_row.addWidget(self.errors_checkbox)
         
         clear_btn = QPushButton("Limpar logs")
         clear_btn.setObjectName("clearLogsButton")
@@ -821,13 +850,44 @@ class MainWindow(QMainWindow):
         section_integrated = QGroupBox("3. Tipos de documentos já integrados no MyTeam")
         integrated_layout = QVBoxLayout(section_integrated)
 
+        salesman_label = QLabel("")
+        salesman_label.setObjectName("salesmanFieldLabel")
+        salesman_label.setWordWrap(True)
+        salesman_label.setStyleSheet("color: #555; font-size: 12px; padding: 4px 0;")
+        salesman_label.setVisible(False)
+
         if page_key == "sales":
-            info_text = (
-                "MSS: TotalDocumentos = COUNT(*) na STMSDCC (DOCS_VEN)  |  "
-                "TotalLiquido = SUM(DCCVLL) na STMSDCC<br>"
-                "ERP: TotalDocumentos = COUNT(*) na SaleTransaction  |  "
-                "TotalLiquido = SUM(TotalNetAmount) na SaleTransaction"
+            integrated_info = QLabel(
+                "Vendas do ano atual vs ano anterior, agrupadas por mês, vendedor e documento."
             )
+            integrated_info.setObjectName("integratedInfo")
+            integrated_info.setWordWrap(True)
+            integrated_info.setStyleSheet("color: #555; font-size: 12px; padding: 4px 0;")
+            integrated_layout.addWidget(integrated_info)
+            section_integrated.setTitle("3. Desagregação mensal de vendas")
+
+            integrated_table = QTableWidget(0, 7)
+            integrated_table.setHorizontalHeaderLabels([
+                "Mês", "Vendedor", "Código Vendedor", "Documento",
+                "Vendas Ano Anterior", "Vendas Ano Atual", "Vendas Totais"
+            ])
+            integrated_table.setAlternatingRowColors(True)
+            integrated_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+            integrated_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+            integrated_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            integrated_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            integrated_table.verticalHeader().setVisible(False)
+            integrated_table.verticalHeader().setDefaultSectionSize(34)
+            for col in range(7):
+                integrated_table.horizontalHeader().setSectionResizeMode(
+                    col,
+                    QHeaderView.ResizeMode.ResizeToContents if col != 0 else QHeaderView.ResizeMode.Stretch
+                )
+            integrated_table.setFixedHeight(96)
+            integrated_layout.addWidget(integrated_table)
+
+            integrated_layout.addWidget(salesman_label)
         else:
             info_text = (
                 "MSS: TotalDocumentos = COUNT(*) na STMSDCC (DOCS_ENC)  |  "
@@ -835,33 +895,35 @@ class MainWindow(QMainWindow):
                 "ERP: TotalDocumentos = COUNT(*) na SaleTransaction  |  "
                 "TotalLiquido = SUM(TotalNetAmount) na SaleTransaction"
             )
-        integrated_info = QLabel(info_text)
-        integrated_info.setObjectName("integratedInfo")
-        integrated_info.setWordWrap(True)
-        integrated_info.setStyleSheet("color: #555; font-size: 12px; padding: 4px 0;")
-        integrated_layout.addWidget(integrated_info)
+            integrated_info = QLabel(info_text)
+            integrated_info.setObjectName("integratedInfo")
+            integrated_info.setWordWrap(True)
+            integrated_info.setStyleSheet("color: #555; font-size: 12px; padding: 4px 0;")
+            integrated_layout.addWidget(integrated_info)
 
-        integrated_table = QTableWidget(0, 8)
-        integrated_table.setHorizontalHeaderLabels([
-            "Vendedor", "Código Vendedor", "Documento",
-            "Qt. MSS", "Total Líq. MSS",
-            "Qt. ERP", "Total Líq. ERP", "Diferença"
-        ])
-        integrated_table.setAlternatingRowColors(True)
-        integrated_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        integrated_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        integrated_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        integrated_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        integrated_table.verticalHeader().setVisible(False)
-        integrated_table.verticalHeader().setDefaultSectionSize(34)
-        for col in range(8):
-            integrated_table.horizontalHeader().setSectionResizeMode(
-                col,
-                QHeaderView.ResizeMode.ResizeToContents if col != 0 else QHeaderView.ResizeMode.Stretch
-            )
-        integrated_table.setFixedHeight(96)
-        integrated_layout.addWidget(integrated_table)
+            integrated_table = QTableWidget(0, 8)
+            integrated_table.setHorizontalHeaderLabels([
+                "Vendedor", "Código Vendedor", "Documento",
+                "Qt. MSS", "Total Líq. MSS",
+                "Qt. ERP", "Total Líq. ERP", "Diferença"
+            ])
+            integrated_table.setAlternatingRowColors(True)
+            integrated_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+            integrated_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+            integrated_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            integrated_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            integrated_table.verticalHeader().setVisible(False)
+            integrated_table.verticalHeader().setDefaultSectionSize(34)
+            for col in range(8):
+                integrated_table.horizontalHeader().setSectionResizeMode(
+                    col,
+                    QHeaderView.ResizeMode.ResizeToContents if col != 0 else QHeaderView.ResizeMode.Stretch
+                )
+            integrated_table.setFixedHeight(96)
+            integrated_layout.addWidget(integrated_table)
+
+            integrated_layout.addWidget(salesman_label)
         
         section_sales, sales_list = self.build_doc_list_section(
             "4. Tipos de documentos existentes na tabela de vendas"
@@ -895,6 +957,7 @@ class MainWindow(QMainWindow):
             "integrated_table": integrated_table,
             "sales_list": sales_list,
             "issues": issues_box,
+            "salesman_label": salesman_label,
             "has_results": False,
         }
         return group
@@ -914,7 +977,7 @@ class MainWindow(QMainWindow):
 
     def get_table_headers(self, page_key: str) -> list[str]:
         if page_key == "salesmen":
-            return ["Origem", "Código", "Nome", "Código ERP"]
+            return ["Origem", "Código", "Nome", "Código ERP", "Utilizador-Vendedor"]
         return ["Área", "Item", "Estado", "Detalhe"]
 
     def create_nav_button(self, text: str, callback: Callable[[], None]):
@@ -1137,6 +1200,11 @@ class MainWindow(QMainWindow):
             self.settings_expenses_card.set_status("Pendente", "Clique para verificar.")
         else:
             self._apply_expenses_result()
+        
+        if getattr(self, "delivery_result", None) is None:
+            self.settings_delivery_card.set_status("Pendente", "Clique para verificar.")
+        else:
+            self._apply_delivery_result()    
 
     def run_environment_checks(self):
         self.show_page("environment")
@@ -1204,6 +1272,31 @@ class MainWindow(QMainWindow):
     def collect_expenses_version_check(self):
         _, db_mss = self.ensure_databases()
         return {"expenses_version": get_expenses_version_info(db_mss)}
+
+    def run_delivery_version_check(self):
+        self.show_page("settings")
+        self.run_task(
+            "versão de entregas",
+            self.collect_delivery_version_check,
+            self.render_delivery_version_result,
+            "settings",
+            ["delivery_version"],
+        )
+
+    def collect_delivery_version_check(self):
+        _, db_mss = self.ensure_databases()
+        return {"delivery_version": get_delivery_version_info(db_mss)}
+    
+    def render_delivery_version_result(self, result):
+        self.delivery_result = result["delivery_version"]
+        self._apply_delivery_result()
+        self.append_global_log(f"Entregas → {self.delivery_result['status']} | {self.delivery_result['message']}", level="ok" if self.delivery_result["status"] == "OK" else "warning")
+
+    def _apply_delivery_result(self):
+        if self.delivery_result is None:
+            return
+        self.settings_delivery_card.set_status(self.delivery_result["status"], self.delivery_result["message"])
+
 
     def render_expenses_version_result(self, result):
         self.expenses_result = result["expenses_version"]
@@ -1607,6 +1700,16 @@ class MainWindow(QMainWindow):
 
         widgets["has_results"] = True
 
+        sf = orders.get("salesman_field")
+        if sf:
+            icon = "✅" if sf["status"] == "OK" else "⚠️"
+            widgets["salesman_label"].setText(f"{icon} {sf['mensagem']}")
+            widgets["salesman_label"].setVisible(True)
+            if sf.get("sem_vendedor", 0) > 0:
+                self.append_global_log(f"  ⚠ {sf['mensagem']}", level="warning")
+                for ex in sf.get("exemplos", []):
+                    self.add_detail(page_key, f"Sem vendedor: {ex}")
+
         level = "ok" if orders["success"] else "warning"
         self.append_global_log(f"Encomendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_order_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues}", level=level)
         if not orders["success"]:
@@ -1650,7 +1753,31 @@ class MainWindow(QMainWindow):
         erp_values = sales.get("erp_values", {})
 
         self.set_doc_list(widgets["erp_list"], erp_docs)
-        self.populate_integrated_table(widgets["integrated_table"], integrated_docs, erp_values)
+
+        # Monthly breakdown na integrated_table
+        monthly = sales.get("monthly_breakdown", [])
+        table = widgets["integrated_table"]
+        table.setRowCount(0)
+        for line in monthly:
+            row = table.rowCount()
+            table.insertRow(row)
+            table.setItem(row, 0, QTableWidgetItem(line["mes"]))
+            table.setItem(row, 1, QTableWidgetItem(line["vendedor"]))
+            table.setItem(row, 2, QTableWidgetItem(line["codigo_vendedor"]))
+            table.setItem(row, 3, QTableWidgetItem(line["documento"]))
+            table.setItem(row, 4, QTableWidgetItem(f"{line['vendas_ano_anterior']:,.2f}€"))
+            table.setItem(row, 5, QTableWidgetItem(f"{line['vendas_ano_atual']:,.2f}€"))
+            total_item = QTableWidgetItem(f"{line['vendas_totais']:,.2f}€")
+            total_item.setForeground(QColor("#1a7f37"))
+            table.setItem(row, 6, total_item)
+
+        table.resizeRowsToContents()
+        header_height = table.horizontalHeader().height()
+        rows_height = sum(table.rowHeight(r) for r in range(table.rowCount()))
+        frame = table.frameWidth() * 2
+        total_height = max(header_height + rows_height + frame + 6, header_height + 50)
+        table.setFixedHeight(total_height)
+
         self.set_doc_list(widgets["sales_list"], sales_docs)
 
         if sales["success"]:
@@ -1661,8 +1788,18 @@ class MainWindow(QMainWindow):
 
         widgets["has_results"] = True
 
+        sf = sales.get("salesman_field")
+        if sf:
+            icon = "✅" if sf["status"] == "OK" else "⚠️"
+            widgets["salesman_label"].setText(f"{icon} {sf['mensagem']}")
+            widgets["salesman_label"].setVisible(True)
+            if sf.get("sem_vendedor", 0) > 0:
+                self.append_global_log(f"  ⚠ {sf['mensagem']}", level="warning")
+                for ex in sf.get("exemplos", []):
+                    self.add_detail(page_key, f"Sem vendedor: {ex}")
+
         level = "ok" if sales["success"] else "warning"
-        self.append_global_log(f"Vendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues}", level=level)
+        self.append_global_log(f"Vendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues} | Mensal: {len(monthly)} linhas", level=level)
         if not sales["success"]:
             for issue in sales["issues"]:
                 self.append_global_log(f"  ⚠ {issue['message']}", level="warning")
@@ -1798,6 +1935,8 @@ class MainWindow(QMainWindow):
             widgets["integrated_table"].setRowCount(0)
             widgets["integrated_table"].setFixedHeight(96)
             widgets["issues"].clear()
+            widgets["salesman_label"].setText("")
+            widgets["salesman_label"].setVisible(False)
             widgets["has_results"] = False
             return
 
@@ -1864,7 +2003,7 @@ class MainWindow(QMainWindow):
     def add_salesman_mapping_row(self, page_key: str, row: dict[str, str]):
         self.add_table_values(
             page_key,
-            [row["origem"], row["codigo_vendedor"], row["nome_vendedor"], row["codigo_vendedor_erp"]],
+            [row["origem"], row["codigo_vendedor"], row["nome_vendedor"], row["codigo_vendedor_erp"], row.get("utilizador_vendedor", "")],
         )
 
     def add_table_values(
@@ -1915,6 +2054,11 @@ class MainWindow(QMainWindow):
             return
 
         timestamp = datetime.now().strftime("%H:%M:%S")
+        self._log_entries.append((timestamp, text, level))
+
+        if self._log_errors_only and level not in ("error", "warning", "section"):
+            return
+
         cursor = self.global_log_widget.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
 
@@ -1945,6 +2089,54 @@ class MainWindow(QMainWindow):
         """Limpa o terminal global de logs."""
         if self.global_log_widget is not None:
             self.global_log_widget.clear()
+        self._log_entries.clear()
+
+    def _on_errors_filter_toggled(self, checked: bool):
+        self._log_errors_only = checked
+        self._reapply_log_filter()
+
+    def _reapply_log_filter(self):
+        if self.global_log_widget is None:
+            return
+        self.global_log_widget.clear()
+        found = False
+        for timestamp, text, level in self._log_entries:
+            if self._log_errors_only and level not in ("error", "warning", "section"):
+                continue
+            if level in ("error", "warning"):
+                found = True
+            cursor = self.global_log_widget.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.End)
+
+            def write(txt: str, color: str, bold: bool = False):
+                fmt = QTextCharFormat()
+                fmt.setForeground(QColor(color))
+                if bold:
+                    fmt.setFontWeight(700)
+                cursor.setCharFormat(fmt)
+                cursor.insertText(txt)
+
+            write(f"[{timestamp}] ", self._LOG_COLORS["timestamp"])
+            if level == "section":
+                write(text, self._LOG_COLORS["section"], bold=True)
+            else:
+                write(text, self._LOG_COLORS.get(level, self._LOG_COLORS["info"]))
+
+            plain_fmt = QTextCharFormat()
+            plain_fmt.setForeground(QColor(self._LOG_COLORS["info"]))
+            cursor.setCharFormat(plain_fmt)
+            cursor.insertText("\n")
+
+            self.global_log_widget.setTextCursor(cursor)
+        if self._log_errors_only and not found:
+            cursor = self.global_log_widget.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.End)
+            fmt = QTextCharFormat()
+            fmt.setForeground(QColor("#4EC9B0"))
+            fmt.setFontWeight(700)
+            cursor.setCharFormat(fmt)
+            cursor.insertText("Nenhum erro ou aviso encontrado nos logs.")
+        self.global_log_widget.ensureCursorVisible()
 
     def export_logs_to_txt(self):
         if self.global_log_widget is None:
@@ -2235,6 +2427,11 @@ class MainWindow(QMainWindow):
                 background: #1b6f5c;
             }
 
+            #errorsCheckbox {
+                color: #1a202c;
+                font-size: 13px;
+                spacing: 6px;
+            }
             #clearLogsButton,
             #exportLogsButton {
                 background: #0e639c;
