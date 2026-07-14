@@ -144,6 +144,7 @@ def get_integrated_documents(
         else "''"
     )
     salesman_name_select = "COALESCE(MAX(U.USRNOM), '')" if salesman_column else "''"
+    erp_salesman_select = "COALESCE(MAX(CAST(U.USRVND AS VARCHAR(50))), '')" if salesman_column else "''"
     join_clause = (
         f"""
     LEFT JOIN MSUSR U
@@ -153,7 +154,7 @@ def get_integrated_documents(
         else ""
     )
     group_by = (
-        f"GROUP BY D.DCCTPD, CAST(D.{salesman_column} AS VARCHAR(50))"
+        f"GROUP BY D.DCCTPD, CAST(D.{salesman_column} AS VARCHAR(50)), COALESCE(CAST(U.USRVND AS VARCHAR(50)), '')"
         if salesman_column
         else "GROUP BY D.DCCTPD"
     )
@@ -163,6 +164,7 @@ def get_integrated_documents(
         D.DCCTPD,
         {salesman_select} AS CodigoVendedor,
         {salesman_name_select} AS NomeVendedor,
+        {erp_salesman_select} AS ErpSalesmanId,
         COUNT(*) AS TotalDocumentos,
         SUM(D.DCCVLL) AS TotalLiquido
     FROM STMSDCC D
@@ -173,6 +175,7 @@ def get_integrated_documents(
     """.format(
         salesman_select=salesman_select,
         salesman_name_select=salesman_name_select,
+        erp_salesman_select=erp_salesman_select,
         join_clause=join_clause,
         where_clause=where_clause,
         group_by=group_by,
@@ -186,8 +189,9 @@ def get_integrated_documents(
             "documento": normalize_text(row[0]),
             "codigo_vendedor": normalize_text(row[1]),
             "nome_vendedor": normalize_text(row[2]),
-            "total_documentos": row[3],
-            "total_liquido": row[4] or 0
+            "erp_salesman_id": normalize_text(row[3]),
+            "total_documentos": row[4],
+            "total_liquido": row[5] or 0
         }
         for row in rows
         if not allowed or normalize_text(row[0]) in allowed

@@ -316,6 +316,8 @@ def format_webapi_date(value):
 # VERIFICAÇÃO SE A API GOOGLE MAPS EXISTE OU NAO
 # ==========================================================================================================
 
+GOOGLE_MAPS_API_SUPPORT_LINK = "https://msssupport.sysdevmobile.com/portal/pt/kb/articles/configurar-o-uso-do-google-places"
+
 def get_google_maps_api_info(db):
 
     query = """
@@ -343,7 +345,8 @@ def get_google_maps_api_info(db):
 
         "configured": len(configured_parameters) > 0,
 
-        "parameters": configured_parameters
+        "parameters": configured_parameters,
+        "support_link": None if configured_parameters else GOOGLE_MAPS_API_SUPPORT_LINK
     }
 
 # ==========================================================================================================

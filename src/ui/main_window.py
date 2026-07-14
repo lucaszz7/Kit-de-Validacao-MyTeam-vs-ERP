@@ -369,7 +369,7 @@ class MainWindow(QMainWindow):
             ("webapi_status", "Status Porta WebAPI", self.run_webapi_status_check),
             ("apikeys", "API Keys da WebAPI", self.run_apikeys_check),
             ("sql", "SQL Server", self.run_sql_check),
-            ("maps", "Google Maps API", self.run_maps_check),
+            ("maps", "Google/Bing Maps API", self.run_maps_check),
             ("currency", "Moeda", self.run_currency_check),
             ("historical", "Histórico", self.run_historical_check),
         ]
@@ -431,7 +431,6 @@ class MainWindow(QMainWindow):
             ("sales", "Vendas", self.run_sales_checks),
         ]
 
-        layout.addWidget(self.build_filter_bar("sales", include_salesman=True))
         layout.addWidget(self.build_cards_group("Vendas", cards, "sales"))
 
 
@@ -797,11 +796,6 @@ class MainWindow(QMainWindow):
 
     def build_orders_results_section(self, page_key: str = "orders"):
         """Layout de validação documental usado por encomendas e vendas."""
-        erp_section_title = (
-            "2. Documentos de venda existentes no ERP"
-            if page_key == "sales"
-            else "2. Documentos de encomenda existentes no ERP"
-        )
 
         group = QGroupBox("Resultados da validação")
         group.setObjectName("resultsGroup")
@@ -833,21 +827,18 @@ class MainWindow(QMainWindow):
         stats_row = QHBoxLayout()
         stats_row.setSpacing(12)
         stat_bo = CountStatCard("BackOffice")
-        stat_erp = CountStatCard("ERP")
         stat_integrated = CountStatCard("Integrados")
         stat_issues = CountStatCard("Divergências")
-        for stat_card in (stat_bo, stat_erp, stat_integrated, stat_issues):
+        for stat_card in (stat_bo, stat_integrated, stat_issues):
             self.apply_soft_shadow(stat_card, blur=14, alpha=22, y_offset=2)
         stats_row.addWidget(stat_bo)
-        stats_row.addWidget(stat_erp)
         stats_row.addWidget(stat_integrated)
         stats_row.addWidget(stat_issues)
         section_bo, bo_list = self.build_doc_list_section(
             "1. Documentos configurados no BackOffice para os Dashboards"
         )
-        section_erp, erp_list = self.build_doc_list_section(erp_section_title)
-        
-        section_integrated = QGroupBox("3. Tipos de documentos já integrados no MyTeam")
+
+        section_integrated = QGroupBox("2. Tipos de documentos já integrados no MyTeam")
         integrated_layout = QVBoxLayout(section_integrated)
 
         salesman_label = QLabel("")
@@ -864,7 +855,44 @@ class MainWindow(QMainWindow):
             integrated_info.setWordWrap(True)
             integrated_info.setStyleSheet("color: #555; font-size: 12px; padding: 4px 0;")
             integrated_layout.addWidget(integrated_info)
-            section_integrated.setTitle("3. Desagregação mensal de vendas")
+            section_integrated.setTitle("2. Desagregação mensal de vendas")
+
+            filter_row = QWidget()
+            filter_row.setObjectName("salesFilterRow")
+            filter_row.setStyleSheet(
+                "#salesFilterRow { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 12px; }"
+            )
+            filter_row_layout = QHBoxLayout(filter_row)
+            filter_row_layout.setContentsMargins(12, 8, 12, 8)
+            filter_row_layout.setSpacing(20)
+
+            combo_style = """
+                QComboBox { border: 1px solid #b0b0b0; border-radius: 4px; padding: 4px 8px;
+                            background: #fff; font-size: 12px; min-height: 22px; }
+                QComboBox:hover { border-color: #888; }
+                QComboBox::drop-down { width: 20px; border: none; }
+            """
+
+            filter_mes_combo = QComboBox()
+            filter_mes_combo.setStyleSheet(combo_style)
+            filter_mes_combo.addItem("Todos", "")
+            filter_mes_combo.setMinimumWidth(130)
+
+            filter_vendedor_combo = QComboBox()
+            filter_vendedor_combo.setStyleSheet(combo_style)
+            filter_vendedor_combo.addItem("Todos", "")
+            filter_vendedor_combo.setMinimumWidth(130)
+
+            filter_documento_combo = QComboBox()
+            filter_documento_combo.setStyleSheet(combo_style)
+            filter_documento_combo.addItem("Todos", "")
+            filter_documento_combo.setMinimumWidth(130)
+
+            filter_row_layout.addWidget(self.create_labeled_control("Mês", filter_mes_combo))
+            filter_row_layout.addWidget(self.create_labeled_control("Vendedor", filter_vendedor_combo))
+            filter_row_layout.addWidget(self.create_labeled_control("Documento", filter_documento_combo))
+            filter_row_layout.addStretch()
+            integrated_layout.addWidget(filter_row)
 
             integrated_table = QTableWidget(0, 7)
             integrated_table.setHorizontalHeaderLabels([
@@ -926,9 +954,9 @@ class MainWindow(QMainWindow):
             integrated_layout.addWidget(salesman_label)
         
         section_sales, sales_list = self.build_doc_list_section(
-            "4. Tipos de documentos existentes na tabela de vendas"
+            "3. Tipos de documentos existentes na tabela de vendas"
         )
-        section_issues = QGroupBox("5. Divergências encontradas")
+        section_issues = QGroupBox("4. Divergências encontradas")
         issues_layout = QVBoxLayout(section_issues)
         issues_box = QTextEdit()
         issues_box.setReadOnly(True)
@@ -940,7 +968,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(progress)
         layout.addLayout(stats_row)
         layout.addWidget(section_bo)
-        layout.addWidget(section_erp)
         layout.addWidget(section_integrated)
         layout.addWidget(section_sales)
         layout.addWidget(section_issues)
@@ -949,17 +976,19 @@ class MainWindow(QMainWindow):
             "updated_label": updated_label,
             "progress": progress,
             "stat_bo": stat_bo,
-            "stat_erp": stat_erp,
             "stat_integrated": stat_integrated,
             "stat_issues": stat_issues,
             "bo_list": bo_list,
-            "erp_list": erp_list,
             "integrated_table": integrated_table,
             "sales_list": sales_list,
             "issues": issues_box,
             "salesman_label": salesman_label,
             "has_results": False,
         }
+        if page_key == "sales":
+            self.result_widgets[page_key]["filter_mes_combo"] = filter_mes_combo
+            self.result_widgets[page_key]["filter_vendedor_combo"] = filter_vendedor_combo
+            self.result_widgets[page_key]["filter_documento_combo"] = filter_documento_combo
         return group
 
     def build_doc_list_section(self, title: str) -> tuple[QGroupBox, QTextEdit]:
@@ -979,6 +1008,30 @@ class MainWindow(QMainWindow):
         if page_key == "salesmen":
             return ["Origem", "Código", "Nome", "Código ERP", "Utilizador-Vendedor"]
         return ["Área", "Item", "Estado", "Detalhe"]
+
+    def _apply_sales_table_filter(self):
+        widgets = self.result_widgets.get("sales", {})
+        table = widgets.get("integrated_table")
+        if not table:
+            return
+        mes = widgets["filter_mes_combo"].currentData() or ""
+        vendedor = widgets["filter_vendedor_combo"].currentData() or ""
+        documento = widgets["filter_documento_combo"].currentData() or ""
+        for row in range(table.rowCount()):
+            show = True
+            if mes:
+                item = table.item(row, 0)
+                if mes.lower() not in (item.text() if item else "").lower():
+                    show = False
+            if show and vendedor:
+                item = table.item(row, 1)
+                if vendedor.lower() not in (item.text() if item else "").lower():
+                    show = False
+            if show and documento:
+                item = table.item(row, 3)
+                if documento.lower() not in (item.text() if item else "").lower():
+                    show = False
+            table.setRowHidden(row, not show)
 
     def create_nav_button(self, text: str, callback: Callable[[], None]):
         button = QPushButton(text)
@@ -1241,7 +1294,7 @@ class MainWindow(QMainWindow):
         self.run_environment_card("World Geometries", "world", lambda: {"world": self.collect_world_only()})
 
     def run_maps_check(self):
-        self.run_environment_card("Google Maps API", "maps", lambda: {"maps": self.collect_maps_only()})
+        self.run_environment_card("Google/Bing Maps API", "maps", lambda: {"maps": self.collect_maps_only()})
 
     def run_currency_check(self):
         self.run_environment_card("Moeda", "currency", lambda: {"currency": self.collect_currency_only()})
@@ -1620,13 +1673,14 @@ class MainWindow(QMainWindow):
             card_detail = detail if maps["status"] == "OK" else "Ver log de execução."
             self.cards["maps"].set_status(maps["status"], card_detail)
             self.add_table_row(
-                page_key, "MSS", "Google Maps API", maps["status"],
+                page_key, "MSS", "Google/Bing Maps API", maps["status"],
                 ", ".join(maps["parameters"]) if maps["status"] == "OK" else "Ver log de execução.",
             )
             level = "ok" if maps["status"] == "OK" else "warning"
-            self.append_global_log(f"Google Maps API → {maps['status']} | {detail}", level=level)
+            self.append_global_log(f"Google/Bing Maps API → {maps['status']} | {detail}", level=level)
             if maps["status"] != "OK":
-                self.add_detail(page_key, "A configuração da Google Maps API não foi encontrada no MSS.")
+                link = maps.get("support_link") or "https://msssupport.sysdevmobile.com/portal/pt/kb/articles/configurar-o-uso-do-google-places"
+                self.add_detail(page_key, f"A configuração da Google/Bing Maps API não foi encontrada no MSS. Suporte: {link}")
 
         if "currency" in result:
             currency = result["currency"]
@@ -1680,7 +1734,6 @@ class MainWindow(QMainWindow):
 
         widgets = self.result_widgets[page_key]
         widgets["stat_bo"].set_value(len(bo_docs))
-        widgets["stat_erp"].set_value(len(erp_order_docs))
         widgets["stat_integrated"].set_value(len(integrated_docs))
         widgets["stat_issues"].set_value(total_issues)
         widgets["stat_issues"].set_state("error" if total_issues else "ok")
@@ -1688,7 +1741,6 @@ class MainWindow(QMainWindow):
         erp_values = orders.get("erp_values", {})
 
         self.set_doc_list(widgets["bo_list"], bo_docs)
-        self.set_doc_list(widgets["erp_list"], erp_order_docs)
         self.populate_integrated_table(widgets["integrated_table"], integrated_docs, erp_values)
         self.set_doc_list(widgets["sales_list"], sales_docs)
 
@@ -1711,7 +1763,7 @@ class MainWindow(QMainWindow):
                     self.add_detail(page_key, f"Sem vendedor: {ex}")
 
         level = "ok" if orders["success"] else "warning"
-        self.append_global_log(f"Encomendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_order_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues}", level=level)
+        self.append_global_log(f"Encomendas → BackOffice: {len(bo_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues}", level=level)
         if not orders["success"]:
             for issue in orders["issues"]:
                 self.append_global_log(f"  ⚠ {issue['message']}", level="warning")
@@ -1719,7 +1771,7 @@ class MainWindow(QMainWindow):
         summary_text = (
             "Validação de documentos de encomendas concluída sem divergências."
             if orders["success"]
-            else f"Validação concluída com {total_issues} divergência(s). Consulte a secção 5 para o detalhe."
+            else f"Validação concluída com {total_issues} divergência(s). Consulte a secção 4 para o detalhe."
         )
         self.set_summary(page_key, summary_text)
         self.mark_updated(page_key)
@@ -1738,21 +1790,17 @@ class MainWindow(QMainWindow):
         self.cards["sales"].set_status(status, detail)
 
         bo_docs = sorted(sales.get("documents_configured_bo", []))
-        erp_docs = sorted(sales.get("documents_erp", []))
         integrated_docs = sales.get("documents_integrated", [])
         sales_docs = sorted(sales.get("documents_sales", []))
 
         widgets = self.result_widgets[page_key]
         widgets["stat_bo"].set_value(len(bo_docs))
-        widgets["stat_erp"].set_value(len(erp_docs))
         widgets["stat_integrated"].set_value(len(integrated_docs))
         widgets["stat_issues"].set_value(total_issues)
         widgets["stat_issues"].set_state("error" if total_issues else "ok")
 
         self.set_doc_list(widgets["bo_list"], bo_docs)
         erp_values = sales.get("erp_values", {})
-
-        self.set_doc_list(widgets["erp_list"], erp_docs)
 
         # Monthly breakdown na integrated_table
         monthly = sales.get("monthly_breakdown", [])
@@ -1778,6 +1826,24 @@ class MainWindow(QMainWindow):
         total_height = max(header_height + rows_height + frame + 6, header_height + 50)
         table.setFixedHeight(total_height)
 
+        filter_mes = widgets.get("filter_mes_combo")
+        filter_vendedor = widgets.get("filter_vendedor_combo")
+        filter_documento = widgets.get("filter_documento_combo")
+        if filter_mes and monthly:
+            mes_vals = sorted({line["mes"] for line in monthly if line.get("mes")})
+            vend_vals = sorted({line["vendedor"] for line in monthly if line.get("vendedor")})
+            doc_vals = sorted({line["documento"] for line in monthly if line.get("documento")})
+            for combo, vals in [(filter_mes, mes_vals), (filter_vendedor, vend_vals), (filter_documento, doc_vals)]:
+                combo.blockSignals(True)
+                combo.clear()
+                combo.addItem("Todos", "")
+                for v in vals:
+                    combo.addItem(v, v)
+                combo.blockSignals(False)
+            filter_mes.currentIndexChanged.connect(lambda: self._apply_sales_table_filter())
+            filter_vendedor.currentIndexChanged.connect(lambda: self._apply_sales_table_filter())
+            filter_documento.currentIndexChanged.connect(lambda: self._apply_sales_table_filter())
+
         self.set_doc_list(widgets["sales_list"], sales_docs)
 
         if sales["success"]:
@@ -1799,7 +1865,7 @@ class MainWindow(QMainWindow):
                     self.add_detail(page_key, f"Sem vendedor: {ex}")
 
         level = "ok" if sales["success"] else "warning"
-        self.append_global_log(f"Vendas → BackOffice: {len(bo_docs)} | ERP: {len(erp_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues} | Mensal: {len(monthly)} linhas", level=level)
+        self.append_global_log(f"Vendas → BackOffice: {len(bo_docs)} | Integrados: {len(integrated_docs)} | Divergências: {total_issues} | Mensal: {len(monthly)} linhas", level=level)
         if not sales["success"]:
             for issue in sales["issues"]:
                 self.append_global_log(f"  ⚠ {issue['message']}", level="warning")
@@ -1807,7 +1873,7 @@ class MainWindow(QMainWindow):
         summary_text = (
             "Validação de vendas concluída sem divergências."
             if sales["success"]
-            else f"Validação de vendas concluída com {total_issues} divergência(s). Consulte a secção 5 para o detalhe."
+            else f"Validação de vendas concluída com {total_issues} divergência(s). Consulte a secção 4 para o detalhe."
         )
         self.set_summary(page_key, summary_text)
         self.mark_updated(page_key)
@@ -1925,12 +1991,10 @@ class MainWindow(QMainWindow):
 
         if page_key in ("orders", "sales"):
             widgets["stat_bo"].set_value(0)
-            widgets["stat_erp"].set_value(0)
             widgets["stat_integrated"].set_value(0)
             widgets["stat_issues"].set_value(0)
             widgets["stat_issues"].set_state(None)
             widgets["bo_list"].clear()
-            widgets["erp_list"].clear()
             widgets["sales_list"].clear()
             widgets["integrated_table"].setRowCount(0)
             widgets["integrated_table"].setFixedHeight(96)
@@ -2179,25 +2243,15 @@ class MainWindow(QMainWindow):
 
     def export_orders_to_excel(self, file_path: str, page_key: str = "orders"):
         widgets = self.result_widgets[page_key]
-        erp_section_title = (
-            "2. Documentos de venda no ERP"
-            if page_key == "sales"
-            else "2. Documentos de encomenda no ERP"
-        )
         rows = [
             ["BackOffice", widgets["stat_bo"].value_label.text()],
-            ["ERP", widgets["stat_erp"].value_label.text()],
             ["Integrados", widgets["stat_integrated"].value_label.text()],
             ["Divergências", widgets["stat_issues"].value_label.text()],
             [],
             ["1. Documentos configurados no BackOffice"],
             *[[doc] for doc in widgets["bo_list"].toPlainText().splitlines() if doc.strip()],
             [],
-            [erp_section_title],
-            *[[doc] for doc in widgets["erp_list"].toPlainText().splitlines() if doc.strip()],
-            [],
-            [],
-            ["3. Documentos integrados no MyTeam"],
+            ["2. Documentos integrados no MyTeam"],
             ["Vendedor", "Código Vendedor", "Documento", "Qt. MSS", "Total Líq. MSS", "Qt. ERP", "Total Líq. ERP", "Diferença"],
         ]
 
@@ -2210,10 +2264,10 @@ class MainWindow(QMainWindow):
 
         rows.extend([
             [],
-            ["4. Documentos na tabela de vendas"],
+            ["3. Documentos na tabela de vendas"],
             *[[doc] for doc in widgets["sales_list"].toPlainText().splitlines() if doc.strip()],
             [],
-            ["5. Divergências"],
+            ["4. Divergências"],
             *[[line] for line in widgets["issues"].toPlainText().splitlines() if line.strip()],
         ])
 
