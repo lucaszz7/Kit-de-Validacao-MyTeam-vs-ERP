@@ -16,12 +16,6 @@ RUNNING = "Running"
 STOPPED = "Stopped"
 
 
-def get_myteam_status():
-    service_info = get_myteam_service_info()
-
-    return service_info["status"]
-
-
 def get_myteam_service_info(ini_path: str | None = None):
     service_name = get_myteam_service_name(ini_path)
 

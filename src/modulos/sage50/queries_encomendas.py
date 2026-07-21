@@ -1,72 +1,16 @@
-from typing import Any, Protocol, TypedDict
+from typing import Any
 
-
-class DatabaseExecutor(Protocol):
-
-    def execute(self, query: str) -> Any:
-        ...
-
-
-class ValidationIssue(TypedDict):
-
-    type: str
-    message: str
-
-
-def normalize_text(value):
-
-    if value is None:
-        return ""
-
-    return str(value).strip()
-
-
-def sql_literal(value: str) -> str:
-    """Escapa texto usado em filtros SQL simples."""
-
-    return value.replace("'", "''")
-
-
-def get_table_columns(db: DatabaseExecutor, table_name: str) -> set[str]:
-    """Devolve as colunas existentes numa tabela da base MSS."""
-
-    rows = db.execute(
-        f"""
-        SELECT COLUMN_NAME
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = '{sql_literal(table_name)}'
-        """
-    )
-
-    return {normalize_text(row[0]).upper() for row in rows}
-
-
-def build_integrated_filters(
-    date_column: str | None,
-    salesman_column: str | None,
-    start_date: str | None = None,
-    end_date: str | None = None,
-    salesman_id: str | None = None,
-) -> str:
-    """Monta o WHERE dos documentos integrados sem misturar regras de UI."""
-
-    filters = []
-    dt = date_column or "DCCDTA"
-
-    if start_date:
-        filters.append(f"D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'")
-
-    if end_date:
-        filters.append(f"D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'")
-
-    if salesman_column and salesman_id:
-        filters.append("LTRIM(RTRIM(CAST(D." f"{salesman_column} AS VARCHAR(50)))) = '{sql_literal(salesman_id)}'")
-
-    return f"WHERE {' AND '.join(filters)}" if filters else ""
-
+from modulos.sage50.queries_base import (
+    DatabaseExecutor,
+    build_docs_filter,
+    build_salesman_filter,
+    detect_salesman_column,
+    normalize_text,
+    sql_literal,
+)
 
 # ==========================================================
-# Documentos configurados no Backoffice
+# Documentos configurados no BackOffice
 # ==========================================================
 
 def get_documents_configured_in_bo(db_mss: DatabaseExecutor):
@@ -76,7 +20,6 @@ def get_documents_configured_in_bo(db_mss: DatabaseExecutor):
     FROM BOMYTTET
     WHERE TETPAR = 'DOCS_ENC'
     """
-
     rows = db_mss.execute(query)
 
     if not rows:
@@ -94,14 +37,19 @@ def get_documents_configured_in_bo(db_mss: DatabaseExecutor):
 # Documentos de encomenda existentes no ERP
 # ==========================================================
 
-def get_order_documents_in_erp(db: DatabaseExecutor):
+def get_order_documents_in_erp(db: DatabaseExecutor, allowed_documents: set | None = None):
 
-    query = """
-    SELECT TransDocumentID
-    FROM Documents
-    WHERE TransactionNatureID = 1060
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"WHERE DC.TransDocumentID IN ({docs_list})"
+
+    query = f"""
+    SELECT DISTINCT
+        DC.TransDocumentID
+    FROM Documents DC
+    {docs_filter}
     """
-
     rows = db.execute(query)
 
     return {
@@ -110,107 +58,81 @@ def get_order_documents_in_erp(db: DatabaseExecutor):
         if row[0]
     }
 
-
 # ==========================================================
-# Documentos já integrados no MyTeam
+# Documentos ja integrados no MyTeam
 # ==========================================================
 
-def get_integrated_documents(
-    db_mss: DatabaseExecutor,
-    allowed_documents=None,
-    start_date: str | None = None,
-    end_date: str | None = None,
-    salesman_id: str | None = None,
-):
+def get_integrated_order_documents(db_mss: DatabaseExecutor, allowed_documents: set | None = None):
 
-    columns = get_table_columns(db_mss, "STMSDCC")
-    date_column = "DCCDTA" if "DCCDTA" in columns else None
-    salesman_column = None
-    for col in ["DCCVND", "DCCACL_38", "DCCCVD"]:
-        if col in columns:
-            salesman_column = col
-            break
-    where_clause = build_integrated_filters(
-        date_column,
-        salesman_column,
-        start_date,
-        end_date,
-        salesman_id,
-    )
+    salesman_column = detect_salesman_column(db_mss)
 
     salesman_select = (
-        f"CAST(D.{salesman_column} AS VARCHAR(50))"
+        f"LTRIM(RTRIM(CAST(D.{salesman_column} AS VARCHAR(50))))"
         if salesman_column
         else "''"
     )
     salesman_name_select = "COALESCE(MAX(U.USRNOM), '')" if salesman_column else "''"
-    erp_salesman_select = "COALESCE(MAX(CAST(U.USRVND AS VARCHAR(50))), '')" if salesman_column else "''"
     join_clause = (
-        f"""
-    LEFT JOIN MSUSR U
-        ON CAST(D.{salesman_column} AS VARCHAR(50)) = CAST(U.USRVND AS VARCHAR(50))
-        """
+        f"LEFT JOIN MSUSR U ON LTRIM(RTRIM(CAST(D.{salesman_column} AS VARCHAR(50)))) = LTRIM(RTRIM(CAST(U.USRVND AS VARCHAR(50))))"
         if salesman_column
         else ""
     )
     group_by = (
-        f"GROUP BY D.DCCTPD, CAST(D.{salesman_column} AS VARCHAR(50)), COALESCE(CAST(U.USRVND AS VARCHAR(50)), '')"
+        f"GROUP BY D.DCCTPD, LTRIM(RTRIM(CAST(D.{salesman_column} AS VARCHAR(50))))"
         if salesman_column
         else "GROUP BY D.DCCTPD"
     )
 
-    query = """
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND D.DCCTPD IN ({docs_list})"
+
+    query = f"""
     SELECT
         D.DCCTPD,
         {salesman_select} AS CodigoVendedor,
         {salesman_name_select} AS NomeVendedor,
-        {erp_salesman_select} AS ErpSalesmanId,
         COUNT(*) AS TotalDocumentos,
         SUM(D.DCCVLL) AS TotalLiquido
     FROM STMSDCC D
     {join_clause}
-    {where_clause}
+    WHERE D.DCCANU = 'N'
+      AND D.DCCCLI <> ''
+      AND D.DCCTSF <> 'FC'
+      {docs_filter}
     {group_by}
     ORDER BY D.DCCTPD, CodigoVendedor
-    """.format(
-        salesman_select=salesman_select,
-        salesman_name_select=salesman_name_select,
-        erp_salesman_select=erp_salesman_select,
-        join_clause=join_clause,
-        where_clause=where_clause,
-        group_by=group_by,
-    )
-
+    """
     rows = db_mss.execute(query)
-    allowed = {normalize_text(doc) for doc in allowed_documents or []}
 
     return [
         {
             "documento": normalize_text(row[0]),
             "codigo_vendedor": normalize_text(row[1]),
             "nome_vendedor": normalize_text(row[2]),
-            "erp_salesman_id": normalize_text(row[3]),
-            "total_documentos": row[4],
-            "total_liquido": row[5] or 0
+            "total_documentos": row[3],
+            "total_liquido": row[4] or 0,
         }
         for row in rows
-        if not allowed or normalize_text(row[0]) in allowed
     ]
 
-
 # ==========================================================
-# Documentos existentes na tabela de vendas
+# Documentos existentes na tabela de encomendas
 # ==========================================================
 
-def get_documents_in_sales_table(db: DatabaseExecutor):
+def get_order_documents_in_sales_table(db: DatabaseExecutor, allowed_documents: set | None = None):
 
-    query = """
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"WHERE ST.TransDocument IN ({docs_list})"
+
+    query = f"""
     SELECT DISTINCT
         ST.TransDocument
     FROM SaleTransaction ST
-    INNER JOIN Documents DC
-        ON ST.TransDocument = DC.TransDocumentID
-    WHERE DC.TransactionNatureID = 1060
+    {docs_filter}
     """
 
     rows = db.execute(query)
@@ -221,13 +143,18 @@ def get_documents_in_sales_table(db: DatabaseExecutor):
         if row[0]
     }
 
-
 # ==========================================================
 # Valores do ERP (TotalNetAmount) para comparar com MSS
 # ==========================================================
 
-def get_erp_order_values(db: DatabaseExecutor):
-    query = """
+def get_erp_order_values(db: DatabaseExecutor, allowed_documents: set | None = None):
+
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"WHERE ST.TransDocument IN ({docs_list})"
+
+    query = f"""
     SELECT
         ST.TransDocument,
         CAST(ST.SalesmanID AS VARCHAR(50)) AS SalesmanID,
@@ -235,11 +162,9 @@ def get_erp_order_values(db: DatabaseExecutor):
         COUNT(*) AS TotalQtd,
         SUM(ST.TotalNetAmount) AS TotalLiquido
     FROM SaleTransaction ST
-    INNER JOIN Documents DC
-        ON ST.TransDocument = DC.TransDocumentID
     LEFT JOIN Salesman S
         ON ST.SalesmanID = S.SalesmanID
-    WHERE DC.TransactionNatureID = 1060
+    {docs_filter}
     GROUP BY ST.TransDocument, ST.SalesmanID, S.SalesmanName
     """
     rows = db.execute(query)
@@ -259,46 +184,64 @@ def get_erp_order_values(db: DatabaseExecutor):
     return result
 
 
-# ==========================================================
-# # VALIDAÇÃO AUTOMÁTICA
-# ==========================================================
+def get_erp_order_values_by_year(db: DatabaseExecutor, allowed_documents: set | None = None, ano_atual: int = 2026):
+
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND ST.TransDocument IN ({docs_list})"
+
+    query = f"""
+    SELECT
+        ST.TransDocument,
+        LTRIM(RTRIM(CAST(ST.SalesmanID AS VARCHAR(50)))) AS SalesmanID,
+        MONTH(ST.CreateDate) AS MES,
+        CASE WHEN YEAR(ST.CreateDate) = {ano_atual - 1} THEN COUNT(*) ELSE 0 END AS QT_ANO_ANT,
+        CASE WHEN YEAR(ST.CreateDate) = {ano_atual - 1} THEN SUM(ST.TotalNetAmount) ELSE 0 END AS TOTAL_ANO_ANT,
+        CASE WHEN YEAR(ST.CreateDate) = {ano_atual} THEN COUNT(*) ELSE 0 END AS QT_ANO_ATU,
+        CASE WHEN YEAR(ST.CreateDate) = {ano_atual} THEN SUM(ST.TotalNetAmount) ELSE 0 END AS TOTAL_ANO_ATU
+    FROM SaleTransaction ST
+    WHERE YEAR(ST.CreateDate) IN ({ano_atual - 1}, {ano_atual})
+      {docs_filter}
+    GROUP BY ST.TransDocument, ST.SalesmanID, MONTH(ST.CreateDate), YEAR(ST.CreateDate)
+    """
+    rows = db.execute(query)
+    result = {}
+    for row in rows:
+        doc = normalize_text(row[0])
+        salesman_id = normalize_text(row[1])
+        month = int(row[2])
+        key = (doc, salesman_id, month)
+        existing = result.get(key, {"qtd_ano_ant": 0, "total_ano_ant": 0.0, "qtd_ano_atu": 0, "total_ano_atu": 0.0})
+        existing["qtd_ano_ant"] += row[3] or 0
+        existing["total_ano_ant"] += float(row[4] or 0)
+        existing["qtd_ano_atu"] += row[5] or 0
+        existing["total_ano_atu"] += float(row[6] or 0)
+        result[key] = existing
+    return result
+
 
 # ==========================================================
-# Validação do campo vendedor (DCCACL_38) nos documentos
+# Validacao do campo vendedor nos documentos
 # ==========================================================
 
-def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set | None = None, start_date: str | None = None, end_date: str | None = None, salesman_id: str | None = None):
-    columns = get_table_columns(db_mss, "STMSDCC")
-    date_column = "DCCDTA" if "DCCDTA" in columns else None
-    salesman_column = None
-    for col in ["DCCVND", "DCCACL_38", "DCCCVD"]:
-        if col in columns:
-            salesman_column = col
-            break
+def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set | None = None):
+
+    salesman_column = detect_salesman_column(db_mss)
+    sc = salesman_column or "DCCACL_38"
 
     docs_filter = ""
     if allowed_documents:
         docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
         docs_filter = f"AND D.DCCTPD IN ({docs_list})"
 
-    date_filter = ""
-    dt = date_column or "DCCDTA"
-    if start_date:
-        date_filter += f" AND D.{dt} >= '{sql_literal(start_date.replace('-', ''))}'"
-    if end_date:
-        date_filter += f" AND D.{dt} <= '{sql_literal(end_date.replace('-', ''))}'"
-
-    salesman_filter = ""
-    if salesman_column and salesman_id:
-        salesman_filter = f"AND CAST(D.{salesman_column} AS VARCHAR(50)) = '{sql_literal(salesman_id)}'"
-
     query = f"""
     SELECT
         COUNT(*) AS TotalDocumentos,
         SUM(CASE
-            WHEN D.DCCACL_38 IS NULL
-              OR LTRIM(RTRIM(CAST(D.DCCACL_38 AS VARCHAR(50)))) = ''
-              OR CAST(D.DCCACL_38 AS VARCHAR(50)) = '0'
+            WHEN D.{sc} IS NULL
+              OR LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))) = ''
+              OR LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))) = '0'
             THEN 1
             ELSE 0
         END) AS SemVendedor
@@ -307,8 +250,6 @@ def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set
       AND D.DCCCLI <> ''
       AND D.DCCTSF <> 'FC'
       {docs_filter}
-      {date_filter}
-      {salesman_filter}
     """
     row = db_mss.execute(query)
     if not row:
@@ -329,149 +270,289 @@ def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set
             D.DCCTPD AS Documento,
             D.DCCSER AS Serie,
             D.DCCNDC AS Numero,
-            ISNULL(CAST(D.DCCACL_38 AS VARCHAR(50)), '(vazio)') AS Vendedor
+            ISNULL(LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))), '(vazio)') AS Vendedor
         FROM STMSDCC D
         WHERE D.DCCANU = 'N'
           AND D.DCCCLI <> ''
           AND D.DCCTSF <> 'FC'
           AND (
-              D.DCCACL_38 IS NULL
-              OR LTRIM(RTRIM(CAST(D.DCCACL_38 AS VARCHAR(50)))) = ''
-              OR CAST(D.DCCACL_38 AS VARCHAR(50)) = '0'
+              D.{sc} IS NULL
+              OR LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))) = ''
+              OR LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))) = '0'
           )
           {docs_filter}
-          {date_filter}
-          {salesman_filter}
         ORDER BY D.DCCDTA DESC
         """
         exemplos = db_mss.execute(query_exemplos)
         for ex in exemplos:
-            docs_problematicos.append(f"{ex[0]} Série {ex[1]} N.º {ex[2]} (vendedor: {ex[3]})")
+            docs_problematicos.append(
+                f"{ex[0]} Serie {ex[1]} N.o {ex[2]} (vendedor: {ex[3]})"
+            )
 
     status = "OK" if sem_vendedor == 0 else "Warning"
     mensagem = (
-        f"{sem_vendedor} de {total} documentos sem código de vendedor ({percentagem}%)."
+        f"{sem_vendedor} de {total} documentos sem codigo de vendedor ({percentagem}%)."
         if sem_vendedor > 0
-        else f"Todos os {total} documentos têm código de vendedor preenchido."
+        else f"Todos os {total} documentos tem codigo de vendedor preenchido."
     )
 
-    return {"status": status, "total": total, "sem_vendedor": sem_vendedor, "percentagem": percentagem, "mensagem": mensagem, "exemplos": docs_problematicos}
+    return {
+        "status": status,
+        "total": total,
+        "sem_vendedor": sem_vendedor,
+        "percentagem": percentagem,
+        "mensagem": mensagem,
+        "exemplos": docs_problematicos,
+    }
 
+
+# ==========================================================
+# Contagem de documentos MSS (Qt. MSS na grelha — encomendas)
+# ==========================================================
+
+def get_mss_order_doc_counts(
+    db_mss: DatabaseExecutor,
+    allowed_documents: set | None = None,
+    ano_atual: int = 2026,
+):
+    sc = detect_salesman_column(db_mss)
+    ss = f"LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50))))" if sc else "''"
+    df = build_docs_filter(allowed_documents)
+
+    query = f"""
+    SELECT
+        SUBSTRING(D.DCCDTA, 5, 2) AS MES_NUM,
+        {ss} AS CODIGO_VENDEDOR,
+        D.DCCTPD AS DOCUMENTO,
+        COUNT(*) AS QUANTIDADE
+    FROM STMSDCC D
+    WHERE D.DCCANU = 'N'
+      AND D.DCCCLI <> ''
+      AND D.DCCTSF <> 'FC'
+      AND YEAR(D.DCCDTA) IN ({ano_atual} - 1, {ano_atual})
+      {df}
+    GROUP BY SUBSTRING(D.DCCDTA, 5, 2), {ss}, D.DCCTPD
+    """
+    rows = db_mss.execute(query)
+    return [
+        {
+            "mes_num": normalize_text(row[0]),
+            "codigo_vendedor": normalize_text(row[1]),
+            "documento": normalize_text(row[2]),
+            "quantidade": row[3] or 0,
+        }
+        for row in rows
+    ]
+
+
+# ==========================================================
+# Contagem de documentos ERP (Qt. ERP na grelha — encomendas)
+# ==========================================================
+
+def get_erp_order_doc_counts(
+    db: DatabaseExecutor,
+    allowed_documents: set | None = None,
+    ano_atual: int = 2026,
+):
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND ST.TransDocument IN ({docs_list})"
+
+    query = f"""
+    SELECT
+        ST.TransDocument,
+        LTRIM(RTRIM(CAST(ST.SalesmanID AS VARCHAR(50)))) AS SalesmanID,
+        MONTH(ST.CreateDate) AS MES,
+        COUNT(*) AS QUANTIDADE
+    FROM SaleTransaction ST
+    WHERE YEAR(ST.CreateDate) IN ({ano_atual} - 1, {ano_atual})
+      {docs_filter}
+    GROUP BY ST.TransDocument, ST.SalesmanID, MONTH(ST.CreateDate)
+    """
+    rows = db.execute(query)
+    result = {}
+    for row in rows:
+        doc = normalize_text(row[0])
+        salesman_id = normalize_text(row[1])
+        month = int(row[2])
+        key = (doc, salesman_id, month)
+        result[key] = (result.get(key) or 0) + (row[3] or 0)
+    return result
+
+
+# ==========================================================
+# Monthly order breakdown (ano anterior vs atual)
+# ==========================================================
+
+def get_monthly_order_breakdown(db_mss: DatabaseExecutor, allowed_documents: set | None = None):
+    ano_atual = 2026
+
+    salesman_column = detect_salesman_column(db_mss)
+
+    salesman_select = (
+        f"LTRIM(RTRIM(CAST(D.{salesman_column} AS VARCHAR(50))))"
+        if salesman_column
+        else "''"
+    )
+    salesman_name_select = "COALESCE(MAX(U.USRNOM), '')" if salesman_column else "''"
+    join_clause = (
+        f"LEFT JOIN MSUSR U ON LTRIM(RTRIM(CAST(D.{salesman_column} AS VARCHAR(50)))) = LTRIM(RTRIM(CAST(U.USRVND AS VARCHAR(50))))"
+        if salesman_column
+        else ""
+    )
+    group_by_cols = (
+        f"SUBSTRING(D.DCCDTA, 5, 2), LTRIM(RTRIM(CAST(D.{salesman_column} AS VARCHAR(50)))), D.DCCTPD"
+        if salesman_column
+        else "SUBSTRING(D.DCCDTA, 5, 2), D.DCCTPD"
+    )
+
+    docs_filter = ""
+    if allowed_documents:
+        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
+        docs_filter = f"AND D.DCCTPD IN ({docs_list})"
+
+    query = f"""
+    SELECT
+        CASE SUBSTRING(D.DCCDTA, 5, 2)
+            WHEN '01' THEN 'Janeiro' WHEN '02' THEN 'Fevereiro'
+            WHEN '03' THEN 'Marco' WHEN '04' THEN 'Abril'
+            WHEN '05' THEN 'Maio' WHEN '06' THEN 'Junho'
+            WHEN '07' THEN 'Julho' WHEN '08' THEN 'Agosto'
+            WHEN '09' THEN 'Setembro' WHEN '10' THEN 'Outubro'
+            WHEN '11' THEN 'Novembro' WHEN '12' THEN 'Dezembro'
+            ELSE ''
+        END AS MES,
+        SUBSTRING(D.DCCDTA, 5, 2) AS MES_NUM,
+        {salesman_name_select} AS VENDEDOR,
+        {salesman_select} AS CODIGO_VENDEDOR,
+        D.DCCTPD AS DOCUMENTO,
+        SUM(CASE WHEN LEFT(D.DCCDTA, 4) = {ano_atual} - 1
+            THEN 1 ELSE 0 END) AS QT_MSS_ANO_ANT,
+        SUM(CASE WHEN LEFT(D.DCCDTA, 4) = {ano_atual} - 1
+            THEN CASE WHEN D.DCCACL_27 <> 'S' THEN D.DCCVLL ELSE -D.DCCVLL END
+            ELSE 0 END) AS VENDAS_ANO_ANTERIOR,
+        SUM(CASE WHEN LEFT(D.DCCDTA, 4) = {ano_atual}
+            THEN 1 ELSE 0 END) AS QT_MSS_ANO_ATU,
+        SUM(CASE WHEN LEFT(D.DCCDTA, 4) = {ano_atual}
+            THEN CASE WHEN D.DCCACL_27 <> 'S' THEN D.DCCVLL ELSE -D.DCCVLL END
+            ELSE 0 END) AS VENDAS_ANO_ATUAL
+    FROM STMSDCC D
+    {join_clause}
+    WHERE D.DCCANU = 'N'
+      AND D.DCCCLI <> ''
+      AND LEFT(D.DCCDTA, 4) BETWEEN {ano_atual} - 1 AND {ano_atual}
+      {docs_filter}
+      AND D.DCCTSF <> 'FC'
+    GROUP BY {group_by_cols}
+    ORDER BY {group_by_cols}
+    """
+    rows = db_mss.execute(query)
+
+    results = []
+    for row in rows:
+        ant = row[6] or 0
+        act = row[8] or 0
+        results.append({
+            "mes": normalize_text(row[0]),
+            "mes_num": normalize_text(row[1]),
+            "vendedor": normalize_text(row[2]),
+            "codigo_vendedor": normalize_text(row[3]),
+            "documento": normalize_text(row[4]),
+            "qt_mss_ano_ant": row[5] or 0,
+            "vendas_ano_anterior": ant,
+            "qt_mss_ano_atu": row[7] or 0,
+            "vendas_ano_atual": act,
+            "vendas_totais": ant + act,
+        })
+    return results
+
+
+# ==========================================================
+# VALIDACAO
+# ==========================================================
 
 def validate_order_documents(
     db,
     db_mss,
-    start_date: str | None = None,
-    end_date: str | None = None,
-    salesman_id: str | None = None,
 ):
 
     issues = []
 
     docs_bo = get_documents_configured_in_bo(db_mss)
 
-    docs_erp = get_order_documents_in_erp(db)
+    docs_erp = get_order_documents_in_erp(db, allowed_documents=docs_bo)
 
-    docs_sales = get_documents_in_sales_table(db)
+    docs_sales = get_order_documents_in_sales_table(db, allowed_documents=docs_bo)
 
-    erp_values = get_erp_order_values(db)
+    erp_values = get_erp_order_values(db, allowed_documents=docs_bo)
 
-    integrated_documents = get_integrated_documents(
-        db_mss,
-        docs_bo | docs_erp,
-        start_date=start_date,
-        end_date=end_date,
-        salesman_id=salesman_id,
-    )
+    integrated_documents = get_integrated_order_documents(db_mss, allowed_documents=docs_bo | docs_erp)
 
     docs_integrated = {
         row["documento"]
         for row in integrated_documents
     }
 
-# -------------------------------------------------------------------
-# Configurados no BO mas não existem no ERP
-# -------------------------------------------------------------------
-
     for doc in sorted(docs_bo - docs_erp):
-
         issues.append(
             {
                 "type": "MISSING_IN_ERP",
-                "message": (
-                    f"{doc} está configurado no Backoffice "
-                    "mas não existe no ERP."
-                )
+                "message": f"{doc} esta configurado no Backoffice mas nao existe no ERP."
             }
         )
-
-# -------------------------------------------------------------------
-# Existem no ERP mas não estão configurados no BO
-# -------------------------------------------------------------------
-
-    for doc in sorted(docs_erp - docs_bo):
-
-        issues.append(
-            {
-                "type": "MISSING_IN_BO",
-                "message": (
-                    f"{doc} existe no ERP "
-                    "mas não está configurado no Backoffice."
-                )
-            }
-        )
-
-# -------------------------------------------------------------------
-# Integrados no MyTeam mas não existem no ERP
-# -------------------------------------------------------------------
 
     for doc in sorted(docs_integrated - docs_erp):
-
         issues.append(
             {
                 "type": "INTEGRATED_NOT_IN_ERP",
-                "message": (
-                    f"{doc} já foi integrado no MyTeam "
-                    "mas não existe no ERP."
-                )
+                "message": f"{doc} ja foi integrado no MyTeam mas nao existe no ERP."
             }
         )
 
-# -------------------------------------------------------------------
-# Existem na tabela de vendas mas não estão configurados no BO
-# -------------------------------------------------------------------
-
     for doc in sorted(docs_sales - docs_bo):
-
         issues.append(
             {
                 "type": "SALES_NOT_CONFIGURED",
-                "message": (
-                    f"{doc} existe na tabela de vendas "
-                    "mas não está configurado no Backoffice."
-                )
+                "message": f"{doc} existe na tabela de encomendas mas nao esta configurado no Backoffice."
             }
         )
 
-    salesman_field = check_salesman_field_filled(db_mss, allowed_documents=docs_bo | docs_erp, start_date=start_date, end_date=end_date, salesman_id=salesman_id)
+    monthly = get_monthly_order_breakdown(db_mss, allowed_documents=docs_bo | docs_erp)
+
+    erp_values_by_year = get_erp_order_values_by_year(db, allowed_documents=docs_bo)
+
+    mss_counts = get_mss_order_doc_counts(db_mss, allowed_documents=docs_bo | docs_erp)
+    mss_count_map = {}
+    for mc in mss_counts:
+        key = (mc["documento"], mc["codigo_vendedor"], int(mc["mes_num"]))
+        mss_count_map[key] = mc["quantidade"]
+
+    erp_counts = get_erp_order_doc_counts(db, allowed_documents=docs_bo | docs_erp)
+
+    for line in monthly:
+        mes_num = int(line.get("mes_num", 0))
+        key = (line["documento"], line["codigo_vendedor"], mes_num)
+        erp = erp_values_by_year.get(key, {})
+        line["qt_erp_ano_ant"] = erp.get("qtd_ano_ant", 0)
+        line["erp_ano_ant"] = erp.get("total_ano_ant", 0.0)
+        line["qt_erp_ano_atu"] = erp.get("qtd_ano_atu", 0)
+        line["erp_ano_atu"] = erp.get("total_ano_atu", 0.0)
+        line["qt_mss"] = mss_count_map.get(key, 0)
+        line["qt_erp"] = erp_counts.get(key, 0)
+
+    salesman_field = check_salesman_field_filled(db_mss, allowed_documents=docs_bo | docs_erp)
 
     return {
-
         "success": len(issues) == 0,
-
         "total_issues": len(issues),
-
         "issues": issues,
-
         "documents_configured_bo": sorted(docs_bo),
-
         "documents_erp": sorted(docs_erp),
-
         "documents_integrated": integrated_documents,
-
         "documents_sales": sorted(docs_sales),
-
         "erp_values": erp_values,
-
+        "erp_values_by_year": erp_values_by_year,
+        "monthly_breakdown": monthly,
         "salesman_field": salesman_field,
     }
