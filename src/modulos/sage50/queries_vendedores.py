@@ -98,49 +98,6 @@ def get_erp_salesmen(db: DatabaseExecutor) -> list[dict[str, str]]:
     ]
 
 
-def get_integrated_salesmen(db_mss: DatabaseExecutor) -> list[dict[str, str]]:
-    """Retorna os vendedores que existem na tabela de documentos integrados (STMSDCC).
-
-    Consulta diretamente a tabela STMSDCC para obter os códigos de vendedor (DCCVND)
-    que realmente possuem documentos integrados, com o nome obtido via MSUSR.
-    Isto garante que o filtro da interface mostra apenas vendedores com dados.
-    """
-
-    # Verificar se a coluna DCCVND existe na tabela
-    col_check = db_mss.execute("""
-        SELECT COLUMN_NAME
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = 'STMSDCC'
-          AND COLUMN_NAME = 'DCCVND'
-    """)
-
-    if not col_check:
-        return []
-
-    query = """
-    SELECT DISTINCT
-        LTRIM(RTRIM(CAST(D.DCCVND AS VARCHAR(50)))) AS CodigoVendedor,
-        COALESCE(U.USRNOM, '') AS NomeVendedor
-    FROM STMSDCC D
-    LEFT JOIN MSUSR U
-        ON CAST(D.DCCVND AS VARCHAR(50)) = CAST(U.USRVND AS VARCHAR(50))
-    WHERE D.DCCVND IS NOT NULL
-      AND LTRIM(RTRIM(CAST(D.DCCVND AS VARCHAR(50)))) <> ''
-    ORDER BY NomeVendedor, CodigoVendedor
-    """
-
-    rows = db_mss.execute(query)
-
-    return [
-        {
-            "salesman_id": normalize_text(row[0]),
-            "salesman_name": normalize_text(row[1]),
-        }
-        for row in rows
-        if normalize_text(row[0])
-    ]
-
-
 def get_unmapped_salesmen(db: DatabaseExecutor) -> list[ValidationIssue]:
     """Identifica vendedores do ERP que nao estao mapeados em nenhum utilizador MSS."""
 

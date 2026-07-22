@@ -49,5 +49,4 @@ def build_salesman_filter(sc: str | None, salesman_id: str | None) -> str:
     return f"AND LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))) = '{sql_literal(salesman_id)}'"
 
 
-def salesman_select(sc: str | None) -> str:
-    return f"LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50))))" if sc else "''"
+

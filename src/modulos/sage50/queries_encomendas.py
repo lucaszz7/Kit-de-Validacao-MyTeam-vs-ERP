@@ -1,9 +1,6 @@
-from typing import Any
-
 from modulos.sage50.queries_base import (
     DatabaseExecutor,
     build_docs_filter,
-    build_salesman_filter,
     detect_salesman_column,
     normalize_text,
     sql_literal,
@@ -142,47 +139,6 @@ def get_order_documents_in_sales_table(db: DatabaseExecutor, allowed_documents: 
         for row in rows
         if row[0]
     }
-
-# ==========================================================
-# Valores do ERP (TotalNetAmount) para comparar com MSS
-# ==========================================================
-
-def get_erp_order_values(db: DatabaseExecutor, allowed_documents: set | None = None):
-
-    docs_filter = ""
-    if allowed_documents:
-        docs_list = ", ".join(f"'{sql_literal(d)}'" for d in sorted(allowed_documents))
-        docs_filter = f"WHERE ST.TransDocument IN ({docs_list})"
-
-    query = f"""
-    SELECT
-        ST.TransDocument,
-        CAST(ST.SalesmanID AS VARCHAR(50)) AS SalesmanID,
-        COALESCE(S.SalesmanName, '') AS SalesmanName,
-        COUNT(*) AS TotalQtd,
-        SUM(ST.TotalNetAmount) AS TotalLiquido
-    FROM SaleTransaction ST
-    LEFT JOIN Salesman S
-        ON ST.SalesmanID = S.SalesmanID
-    {docs_filter}
-    GROUP BY ST.TransDocument, ST.SalesmanID, S.SalesmanName
-    """
-    rows = db.execute(query)
-    result = {}
-    for row in rows:
-        doc = normalize_text(row[0])
-        salesman_id = normalize_text(row[1])
-        salesman_name = normalize_text(row[2])
-        qtd = row[3]
-        total = row[4] or 0
-        key = (doc, salesman_id)
-        result[key] = {
-            "qtd": qtd,
-            "total": total,
-            "salesman_name": salesman_name
-        }
-    return result
-
 
 def get_erp_order_values_by_year(db: DatabaseExecutor, allowed_documents: set | None = None, ano_atual: int = 2026):
 
@@ -485,8 +441,6 @@ def validate_order_documents(
 
     docs_sales = get_order_documents_in_sales_table(db, allowed_documents=docs_bo)
 
-    erp_values = get_erp_order_values(db, allowed_documents=docs_bo)
-
     integrated_documents = get_integrated_order_documents(db_mss, allowed_documents=docs_bo | docs_erp)
 
     docs_integrated = {
@@ -551,7 +505,6 @@ def validate_order_documents(
         "documents_erp": sorted(docs_erp),
         "documents_integrated": integrated_documents,
         "documents_sales": sorted(docs_sales),
-        "erp_values": erp_values,
         "erp_values_by_year": erp_values_by_year,
         "monthly_breakdown": monthly,
         "salesman_field": salesman_field,

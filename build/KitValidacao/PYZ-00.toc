@@ -1,13 +1,16 @@
 ('C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
  'ERP\\build\\KitValidacao\\PYZ-00.pyz',
  [('PySide6',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\PySide6\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\PySide6\\__init__.py',
    'PYMODULE'),
   ('PySide6.support',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\PySide6\\support\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\PySide6\\support\\__init__.py',
    'PYMODULE'),
   ('PySide6.support.deprecated',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\PySide6\\support\\deprecated.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\PySide6\\support\\deprecated.py',
    'PYMODULE'),
   ('__future__',
    'C:\\Program '
@@ -30,10 +33,12 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\_compression.py',
    'PYMODULE'),
   ('_distutils_hack',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\_distutils_hack\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\_distutils_hack\\__init__.py',
    'PYMODULE'),
   ('_distutils_hack.override',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\_distutils_hack\\override.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\_distutils_hack\\override.py',
    'PYMODULE'),
   ('_opcode_metadata',
    'C:\\Program '
@@ -52,10 +57,12 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\_pydecimal.py',
    'PYMODULE'),
   ('_pyi_rth_utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\__init__.py',
    'PYMODULE'),
   ('_pyi_rth_utils.qt',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\qt.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\qt.py',
    'PYMODULE'),
   ('_pyrepl',
    'C:\\Program '
@@ -318,82 +325,104 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\calendar.py',
    'PYMODULE'),
   ('certifi',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\certifi\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\certifi\\__init__.py',
    'PYMODULE'),
   ('certifi.core',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\certifi\\core.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\certifi\\core.py',
    'PYMODULE'),
   ('cffi',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\__init__.py',
    'PYMODULE'),
   ('cffi._imp_emulation',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\_imp_emulation.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\_imp_emulation.py',
    'PYMODULE'),
   ('cffi._shimmed_dist_utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\_shimmed_dist_utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\_shimmed_dist_utils.py',
    'PYMODULE'),
   ('cffi.api',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\api.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\api.py',
    'PYMODULE'),
   ('cffi.cffi_opcode',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\cffi_opcode.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\cffi_opcode.py',
    'PYMODULE'),
   ('cffi.commontypes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\commontypes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\commontypes.py',
    'PYMODULE'),
   ('cffi.cparser',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\cparser.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\cparser.py',
    'PYMODULE'),
   ('cffi.error',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\error.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\error.py',
    'PYMODULE'),
   ('cffi.ffiplatform',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\ffiplatform.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\ffiplatform.py',
    'PYMODULE'),
   ('cffi.lock',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\lock.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\lock.py',
    'PYMODULE'),
   ('cffi.model',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\model.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\model.py',
    'PYMODULE'),
   ('cffi.pkgconfig',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\pkgconfig.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\pkgconfig.py',
    'PYMODULE'),
   ('cffi.recompiler',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\recompiler.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\recompiler.py',
    'PYMODULE'),
   ('cffi.vengine_cpy',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\vengine_cpy.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\vengine_cpy.py',
    'PYMODULE'),
   ('cffi.vengine_gen',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\vengine_gen.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\vengine_gen.py',
    'PYMODULE'),
   ('cffi.verifier',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cffi\\verifier.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cffi\\verifier.py',
    'PYMODULE'),
   ('charset_normalizer',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\__init__.py',
    'PYMODULE'),
   ('charset_normalizer.api',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\api.py',
-   'PYMODULE'),
-  ('charset_normalizer.cd',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\cd.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\api.py',
    'PYMODULE'),
   ('charset_normalizer.constant',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\constant.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\constant.py',
    'PYMODULE'),
   ('charset_normalizer.legacy',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\legacy.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\legacy.py',
    'PYMODULE'),
   ('charset_normalizer.models',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\models.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\models.py',
    'PYMODULE'),
   ('charset_normalizer.utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\utils.py',
    'PYMODULE'),
   ('charset_normalizer.version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\charset_normalizer\\version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\charset_normalizer\\version.py',
    'PYMODULE'),
   ('code',
    'C:\\Program '
@@ -465,172 +494,228 @@
    'ERP\\src\\core\\webapi_checks.py',
    'PYMODULE'),
   ('cryptography',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\__init__.py',
    'PYMODULE'),
   ('cryptography.__about__',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\__about__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\__about__.py',
    'PYMODULE'),
   ('cryptography.exceptions',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\exceptions.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\exceptions.py',
    'PYMODULE'),
   ('cryptography.fernet',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\fernet.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\fernet.py',
    'PYMODULE'),
   ('cryptography.hazmat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat._oid',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\_oid.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\_oid.py',
    'PYMODULE'),
   ('cryptography.hazmat.backends',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\backends\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.backends.openssl',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\backends\\openssl\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.backends.openssl.backend',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\backends\\openssl\\backend.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\backend.py',
    'PYMODULE'),
   ('cryptography.hazmat.bindings',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\bindings\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.bindings.openssl',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.bindings.openssl._conditional',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\_conditional.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\_conditional.py',
    'PYMODULE'),
   ('cryptography.hazmat.bindings.openssl.binding',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\binding.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\binding.py',
    'PYMODULE'),
   ('cryptography.hazmat.decrepit',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\decrepit\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\decrepit\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.decrepit.ciphers',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\decrepit\\ciphers\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\decrepit\\ciphers\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.decrepit.ciphers.algorithms',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\decrepit\\ciphers\\algorithms.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\decrepit\\ciphers\\algorithms.py',
    'PYMODULE'),
   ('cryptography.hazmat.decrepit.ciphers.modes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\decrepit\\ciphers\\modes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\decrepit\\ciphers\\modes.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives._asymmetric',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\_asymmetric.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_asymmetric.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives._cipheralgorithm',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\_cipheralgorithm.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_cipheralgorithm.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives._modes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\_modes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_modes.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives._serialization',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\_serialization.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_serialization.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.dh',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dh.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dh.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.dsa',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dsa.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dsa.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.ec',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ec.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ec.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.ed25519',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed25519.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed25519.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.ed448',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed448.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed448.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.mldsa',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\mldsa.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\mldsa.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.mlkem',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\mlkem.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\mlkem.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.padding',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\padding.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\padding.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.rsa',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\rsa.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\rsa.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.types',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\types.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\types.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\utils.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.x25519',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x25519.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x25519.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.asymmetric.x448',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x448.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x448.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.ciphers',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.ciphers.algorithms',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\algorithms.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\algorithms.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.ciphers.base',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\base.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\base.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.ciphers.modes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\modes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\modes.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.constant_time',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\constant_time.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\constant_time.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.hashes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\hashes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\hashes.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.hmac',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\hmac.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\hmac.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.padding',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\padding.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\padding.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.serialization',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\__init__.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.serialization.base',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\base.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\base.py',
    'PYMODULE'),
   ('cryptography.hazmat.primitives.serialization.ssh',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\ssh.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\ssh.py',
    'PYMODULE'),
   ('cryptography.utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\utils.py',
    'PYMODULE'),
   ('cryptography.x509',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\__init__.py',
    'PYMODULE'),
   ('cryptography.x509.base',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\base.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\base.py',
    'PYMODULE'),
   ('cryptography.x509.certificate_transparency',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\certificate_transparency.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\certificate_transparency.py',
    'PYMODULE'),
   ('cryptography.x509.extensions',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\extensions.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\extensions.py',
    'PYMODULE'),
   ('cryptography.x509.general_name',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\general_name.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\general_name.py',
    'PYMODULE'),
   ('cryptography.x509.name',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\name.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\name.py',
    'PYMODULE'),
   ('cryptography.x509.oid',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\oid.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\oid.py',
    'PYMODULE'),
   ('cryptography.x509.verification',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\cryptography\\x509\\verification.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\cryptography\\x509\\verification.py',
    'PYMODULE'),
   ('csv',
    'C:\\Program '
@@ -849,22 +934,28 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\http\\server.py',
    'PYMODULE'),
   ('idna',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\idna\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\idna\\__init__.py',
    'PYMODULE'),
   ('idna.core',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\idna\\core.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\idna\\core.py',
    'PYMODULE'),
   ('idna.idnadata',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\idna\\idnadata.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\idna\\idnadata.py',
    'PYMODULE'),
   ('idna.intranges',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\idna\\intranges.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\idna\\intranges.py',
    'PYMODULE'),
   ('idna.package_data',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\idna\\package_data.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\idna\\package_data.py',
    'PYMODULE'),
   ('idna.uts46data',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\idna\\uts46data.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\idna\\uts46data.py',
    'PYMODULE'),
   ('importlib',
    'C:\\Program '
@@ -964,16 +1055,20 @@
    'PYMODULE'),
   ('jaraco', '-', 'PYMODULE'),
   ('jaraco.classes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\jaraco\\classes\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\jaraco\\classes\\__init__.py',
    'PYMODULE'),
   ('jaraco.classes.properties',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\jaraco\\classes\\properties.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\jaraco\\classes\\properties.py',
    'PYMODULE'),
   ('jaraco.context',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\jaraco\\context\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\jaraco\\context\\__init__.py',
    'PYMODULE'),
   ('jaraco.functools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\jaraco\\functools\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\jaraco\\functools\\__init__.py',
    'PYMODULE'),
   ('json',
    'C:\\Program '
@@ -992,64 +1087,84 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\json\\scanner.py',
    'PYMODULE'),
   ('keyring',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\__init__.py',
    'PYMODULE'),
   ('keyring.backend',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backend.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backend.py',
    'PYMODULE'),
   ('keyring.backends',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\__init__.py',
    'PYMODULE'),
   ('keyring.backends.SecretService',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\SecretService.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\SecretService.py',
    'PYMODULE'),
   ('keyring.backends.Windows',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\Windows.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\Windows.py',
    'PYMODULE'),
   ('keyring.backends.chainer',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\chainer.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\chainer.py',
    'PYMODULE'),
   ('keyring.backends.fail',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\fail.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\fail.py',
    'PYMODULE'),
   ('keyring.backends.kwallet',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\kwallet.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\kwallet.py',
    'PYMODULE'),
   ('keyring.backends.libsecret',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\libsecret.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\libsecret.py',
    'PYMODULE'),
   ('keyring.backends.macOS',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\macOS\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\macOS\\__init__.py',
    'PYMODULE'),
   ('keyring.backends.macOS.api',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\macOS\\api.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\macOS\\api.py',
    'PYMODULE'),
   ('keyring.backends.null',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\backends\\null.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\backends\\null.py',
    'PYMODULE'),
   ('keyring.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\compat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\compat\\__init__.py',
    'PYMODULE'),
   ('keyring.compat.properties',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\compat\\properties.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\compat\\properties.py',
    'PYMODULE'),
   ('keyring.compat.py312',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\compat\\py312.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\compat\\py312.py',
    'PYMODULE'),
   ('keyring.core',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\core.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\core.py',
    'PYMODULE'),
   ('keyring.credentials',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\credentials.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\credentials.py',
    'PYMODULE'),
   ('keyring.errors',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\errors.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\errors.py',
    'PYMODULE'),
   ('keyring.util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\util\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\util\\__init__.py',
    'PYMODULE'),
   ('keyring.util.platform_',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\keyring\\util\\platform_.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\keyring\\util\\platform_.py',
    'PYMODULE'),
   ('logging',
    'C:\\Program '
@@ -1082,13 +1197,16 @@
    'ERP\\src\\modulos\\sage50\\queries_vendedores.py',
    'PYMODULE'),
   ('more_itertools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\more_itertools\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\more_itertools\\__init__.py',
    'PYMODULE'),
   ('more_itertools.more',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\more_itertools\\more.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\more_itertools\\more.py',
    'PYMODULE'),
   ('more_itertools.recipes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\more_itertools\\recipes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\more_itertools\\recipes.py',
    'PYMODULE'),
   ('multiprocessing',
    'C:\\Program '
@@ -1199,46 +1317,60 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\opcode.py',
    'PYMODULE'),
   ('packaging',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\__init__.py',
    'PYMODULE'),
   ('packaging._elffile',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\_elffile.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\_elffile.py',
    'PYMODULE'),
   ('packaging._manylinux',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\_manylinux.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\_manylinux.py',
    'PYMODULE'),
   ('packaging._musllinux',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\_musllinux.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\_musllinux.py',
    'PYMODULE'),
   ('packaging._parser',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\_parser.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\_parser.py',
    'PYMODULE'),
   ('packaging._tokenizer',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\_tokenizer.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\_tokenizer.py',
    'PYMODULE'),
   ('packaging.licenses',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\licenses\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\licenses\\__init__.py',
    'PYMODULE'),
   ('packaging.licenses._spdx',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\licenses\\_spdx.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\licenses\\_spdx.py',
    'PYMODULE'),
   ('packaging.markers',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\markers.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\markers.py',
    'PYMODULE'),
   ('packaging.requirements',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\requirements.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\requirements.py',
    'PYMODULE'),
   ('packaging.specifiers',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\specifiers.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\specifiers.py',
    'PYMODULE'),
   ('packaging.tags',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\tags.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\tags.py',
    'PYMODULE'),
   ('packaging.utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\utils.py',
    'PYMODULE'),
   ('packaging.version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\packaging\\version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\packaging\\version.py',
    'PYMODULE'),
   ('pathlib',
    'C:\\Program '
@@ -1273,19 +1405,24 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\py_compile.py',
    'PYMODULE'),
   ('pycparser',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\pycparser\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\pycparser\\__init__.py',
    'PYMODULE'),
   ('pycparser.ast_transforms',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\pycparser\\ast_transforms.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\pycparser\\ast_transforms.py',
    'PYMODULE'),
   ('pycparser.c_ast',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\pycparser\\c_ast.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\pycparser\\c_ast.py',
    'PYMODULE'),
   ('pycparser.c_lexer',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\pycparser\\c_lexer.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\pycparser\\c_lexer.py',
    'PYMODULE'),
   ('pycparser.c_parser',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\pycparser\\c_parser.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\pycparser\\c_parser.py',
    'PYMODULE'),
   ('pydoc',
    'C:\\Program '
@@ -1303,10 +1440,6 @@
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\pydoc_data\\topics.py',
    'PYMODULE'),
-  ('pywin32_system32', '-', 'PYMODULE'),
-  ('pywintypes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32\\lib\\pywintypes.py',
-   'PYMODULE'),
   ('queue',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\queue.py',
@@ -1320,55 +1453,76 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\random.py',
    'PYMODULE'),
   ('requests',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\__init__.py',
    'PYMODULE'),
   ('requests.__version__',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\__version__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\__version__.py',
    'PYMODULE'),
   ('requests._internal_utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\_internal_utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\_internal_utils.py',
+   'PYMODULE'),
+  ('requests._types',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\_types.py',
    'PYMODULE'),
   ('requests.adapters',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\adapters.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\adapters.py',
    'PYMODULE'),
   ('requests.api',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\api.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\api.py',
    'PYMODULE'),
   ('requests.auth',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\auth.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\auth.py',
    'PYMODULE'),
   ('requests.certs',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\certs.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\certs.py',
    'PYMODULE'),
   ('requests.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\compat.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\compat.py',
    'PYMODULE'),
   ('requests.cookies',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\cookies.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\cookies.py',
    'PYMODULE'),
   ('requests.exceptions',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\exceptions.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\exceptions.py',
    'PYMODULE'),
   ('requests.hooks',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\hooks.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\hooks.py',
    'PYMODULE'),
   ('requests.models',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\models.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\models.py',
    'PYMODULE'),
   ('requests.packages',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\packages.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\packages.py',
    'PYMODULE'),
   ('requests.sessions',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\sessions.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\sessions.py',
    'PYMODULE'),
   ('requests.status_codes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\status_codes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\status_codes.py',
    'PYMODULE'),
   ('requests.structures',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\structures.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\structures.py',
    'PYMODULE'),
   ('requests.utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\requests\\utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\requests\\utils.py',
    'PYMODULE'),
   ('rlcompleter',
    'C:\\Program '
@@ -1387,398 +1541,528 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\selectors.py',
    'PYMODULE'),
   ('setuptools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\__init__.py',
    'PYMODULE'),
   ('setuptools._core_metadata',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_core_metadata.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_core_metadata.py',
    'PYMODULE'),
   ('setuptools._discovery',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_discovery.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_discovery.py',
    'PYMODULE'),
   ('setuptools._distutils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\__init__.py',
    'PYMODULE'),
   ('setuptools._distutils._log',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\_log.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\_log.py',
    'PYMODULE'),
   ('setuptools._distutils._modified',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\_modified.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\_modified.py',
    'PYMODULE'),
   ('setuptools._distutils._msvccompiler',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\_msvccompiler.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\_msvccompiler.py',
    'PYMODULE'),
   ('setuptools._distutils.archive_util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\archive_util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\archive_util.py',
    'PYMODULE'),
   ('setuptools._distutils.ccompiler',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\ccompiler.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\ccompiler.py',
    'PYMODULE'),
   ('setuptools._distutils.cmd',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\cmd.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\cmd.py',
    'PYMODULE'),
   ('setuptools._distutils.command',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\command\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\command\\__init__.py',
    'PYMODULE'),
   ('setuptools._distutils.command.bdist',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\command\\bdist.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\command\\bdist.py',
    'PYMODULE'),
   ('setuptools._distutils.command.build',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\command\\build.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\command\\build.py',
    'PYMODULE'),
   ('setuptools._distutils.command.build_ext',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\command\\build_ext.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\command\\build_ext.py',
    'PYMODULE'),
   ('setuptools._distutils.command.sdist',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\command\\sdist.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\command\\sdist.py',
    'PYMODULE'),
   ('setuptools._distutils.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\compat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\compat\\__init__.py',
    'PYMODULE'),
   ('setuptools._distutils.compat.numpy',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\compat\\numpy.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\compat\\numpy.py',
    'PYMODULE'),
   ('setuptools._distutils.compat.py39',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\compat\\py39.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\compat\\py39.py',
    'PYMODULE'),
   ('setuptools._distutils.compilers', '-', 'PYMODULE'),
   ('setuptools._distutils.compilers.C', '-', 'PYMODULE'),
   ('setuptools._distutils.compilers.C.base',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\compilers\\C\\base.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\compilers\\C\\base.py',
    'PYMODULE'),
   ('setuptools._distutils.compilers.C.errors',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\compilers\\C\\errors.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\compilers\\C\\errors.py',
    'PYMODULE'),
   ('setuptools._distutils.compilers.C.msvc',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\compilers\\C\\msvc.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\compilers\\C\\msvc.py',
    'PYMODULE'),
   ('setuptools._distutils.core',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\core.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\core.py',
    'PYMODULE'),
   ('setuptools._distutils.debug',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\debug.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\debug.py',
    'PYMODULE'),
   ('setuptools._distutils.dir_util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\dir_util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\dir_util.py',
    'PYMODULE'),
   ('setuptools._distutils.dist',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\dist.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\dist.py',
    'PYMODULE'),
   ('setuptools._distutils.errors',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\errors.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\errors.py',
    'PYMODULE'),
   ('setuptools._distutils.extension',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\extension.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\extension.py',
    'PYMODULE'),
   ('setuptools._distutils.fancy_getopt',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\fancy_getopt.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\fancy_getopt.py',
    'PYMODULE'),
   ('setuptools._distutils.file_util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\file_util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\file_util.py',
    'PYMODULE'),
   ('setuptools._distutils.filelist',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\filelist.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\filelist.py',
    'PYMODULE'),
   ('setuptools._distutils.log',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\log.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\log.py',
    'PYMODULE'),
   ('setuptools._distutils.spawn',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\spawn.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\spawn.py',
    'PYMODULE'),
   ('setuptools._distutils.sysconfig',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\sysconfig.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\sysconfig.py',
    'PYMODULE'),
   ('setuptools._distutils.text_file',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\text_file.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\text_file.py',
    'PYMODULE'),
   ('setuptools._distutils.util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\util.py',
    'PYMODULE'),
   ('setuptools._distutils.version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\version.py',
    'PYMODULE'),
   ('setuptools._distutils.versionpredicate',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_distutils\\versionpredicate.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_distutils\\versionpredicate.py',
    'PYMODULE'),
   ('setuptools._entry_points',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_entry_points.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_entry_points.py',
    'PYMODULE'),
   ('setuptools._imp',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_imp.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_imp.py',
    'PYMODULE'),
   ('setuptools._importlib',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_importlib.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_importlib.py',
    'PYMODULE'),
   ('setuptools._itertools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_itertools.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_itertools.py',
    'PYMODULE'),
   ('setuptools._normalization',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_normalization.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_normalization.py',
    'PYMODULE'),
   ('setuptools._path',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_path.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_path.py',
    'PYMODULE'),
   ('setuptools._reqs',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_reqs.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_reqs.py',
    'PYMODULE'),
   ('setuptools._shutil',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_shutil.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_shutil.py',
    'PYMODULE'),
   ('setuptools._static',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_static.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_static.py',
    'PYMODULE'),
   ('setuptools._vendor', '-', 'PYMODULE'),
   ('setuptools._vendor.backports',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\backports\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\backports\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.backports.tarfile',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\backports\\tarfile\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\backports\\tarfile\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.backports.tarfile.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\backports\\tarfile\\compat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\backports\\tarfile\\compat\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.backports.tarfile.compat.py38',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\backports\\tarfile\\compat\\py38.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\backports\\tarfile\\compat\\py38.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._adapters',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_adapters.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_adapters.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._collections',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_collections.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_collections.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_compat.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_compat.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._functools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_functools.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_functools.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._itertools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_itertools.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_itertools.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._meta',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_meta.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_meta.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._text',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_text.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_text.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata._typing',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_typing.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\_typing.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\compat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\compat\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata.compat.py311',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\compat\\py311.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\compat\\py311.py',
    'PYMODULE'),
   ('setuptools._vendor.importlib_metadata.compat.py39',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\importlib_metadata\\compat\\py39.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata\\compat\\py39.py',
    'PYMODULE'),
   ('setuptools._vendor.jaraco', '-', 'PYMODULE'),
   ('setuptools._vendor.jaraco.text',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\jaraco\\text\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\jaraco\\text\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging._elffile',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\_elffile.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_elffile.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging._manylinux',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\_manylinux.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_manylinux.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging._musllinux',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\_musllinux.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_musllinux.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging._parser',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\_parser.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_parser.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging._structures',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\_structures.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_structures.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging._tokenizer',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\_tokenizer.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_tokenizer.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging.markers',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\markers.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\markers.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging.requirements',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\requirements.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\requirements.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging.specifiers',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\specifiers.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\specifiers.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging.tags',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\tags.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\tags.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging.utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\utils.py',
    'PYMODULE'),
   ('setuptools._vendor.packaging.version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\packaging\\version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\version.py',
    'PYMODULE'),
   ('setuptools._vendor.tomli',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\tomli\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\tomli\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.tomli._parser',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\tomli\\_parser.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\tomli\\_parser.py',
    'PYMODULE'),
   ('setuptools._vendor.tomli._re',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\tomli\\_re.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\tomli\\_re.py',
    'PYMODULE'),
   ('setuptools._vendor.tomli._types',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\tomli\\_types.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\tomli\\_types.py',
    'PYMODULE'),
   ('setuptools._vendor.wheel',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\wheel\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\wheel\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.wheel.macosx_libfile',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\wheel\\macosx_libfile.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\wheel\\macosx_libfile.py',
    'PYMODULE'),
   ('setuptools._vendor.wheel.wheelfile',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\wheel\\wheelfile.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\wheel\\wheelfile.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp._functools',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\_functools.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\_functools.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\compat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\compat\\__init__.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp.compat.overlay',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\compat\\overlay.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\compat\\overlay.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp.compat.py310',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\compat\\py310.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\compat\\py310.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp.compat.py313',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\compat\\py313.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\compat\\py313.py',
    'PYMODULE'),
   ('setuptools._vendor.zipp.glob',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\_vendor\\zipp\\glob.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\_vendor\\zipp\\glob.py',
    'PYMODULE'),
   ('setuptools.archive_util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\archive_util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\archive_util.py',
    'PYMODULE'),
   ('setuptools.command',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\__init__.py',
    'PYMODULE'),
   ('setuptools.command._requirestxt',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\_requirestxt.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\_requirestxt.py',
    'PYMODULE'),
   ('setuptools.command.bdist_egg',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\bdist_egg.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\bdist_egg.py',
    'PYMODULE'),
   ('setuptools.command.bdist_wheel',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\bdist_wheel.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\bdist_wheel.py',
    'PYMODULE'),
   ('setuptools.command.build',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\build.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\build.py',
    'PYMODULE'),
   ('setuptools.command.egg_info',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\egg_info.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\egg_info.py',
    'PYMODULE'),
   ('setuptools.command.sdist',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\sdist.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\sdist.py',
    'PYMODULE'),
   ('setuptools.command.setopt',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\command\\setopt.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\command\\setopt.py',
    'PYMODULE'),
   ('setuptools.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\compat\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\compat\\__init__.py',
    'PYMODULE'),
   ('setuptools.compat.py310',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\compat\\py310.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\compat\\py310.py',
    'PYMODULE'),
   ('setuptools.compat.py311',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\compat\\py311.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\compat\\py311.py',
    'PYMODULE'),
   ('setuptools.compat.py39',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\compat\\py39.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\compat\\py39.py',
    'PYMODULE'),
   ('setuptools.config',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\__init__.py',
    'PYMODULE'),
   ('setuptools.config._apply_pyprojecttoml',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_apply_pyprojecttoml.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_apply_pyprojecttoml.py',
    'PYMODULE'),
   ('setuptools.config._validate_pyproject',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_validate_pyproject\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_validate_pyproject\\__init__.py',
    'PYMODULE'),
   ('setuptools.config._validate_pyproject.error_reporting',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_validate_pyproject\\error_reporting.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_validate_pyproject\\error_reporting.py',
    'PYMODULE'),
   ('setuptools.config._validate_pyproject.extra_validations',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_validate_pyproject\\extra_validations.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_validate_pyproject\\extra_validations.py',
    'PYMODULE'),
   ('setuptools.config._validate_pyproject.fastjsonschema_exceptions',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_validate_pyproject\\fastjsonschema_exceptions.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_validate_pyproject\\fastjsonschema_exceptions.py',
    'PYMODULE'),
   ('setuptools.config._validate_pyproject.fastjsonschema_validations',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_validate_pyproject\\fastjsonschema_validations.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_validate_pyproject\\fastjsonschema_validations.py',
    'PYMODULE'),
   ('setuptools.config._validate_pyproject.formats',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\_validate_pyproject\\formats.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\_validate_pyproject\\formats.py',
    'PYMODULE'),
   ('setuptools.config.expand',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\expand.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\expand.py',
    'PYMODULE'),
   ('setuptools.config.pyprojecttoml',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\pyprojecttoml.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\pyprojecttoml.py',
    'PYMODULE'),
   ('setuptools.config.setupcfg',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\config\\setupcfg.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\config\\setupcfg.py',
    'PYMODULE'),
   ('setuptools.depends',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\depends.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\depends.py',
    'PYMODULE'),
   ('setuptools.discovery',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\discovery.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\discovery.py',
    'PYMODULE'),
   ('setuptools.dist',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\dist.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\dist.py',
    'PYMODULE'),
   ('setuptools.errors',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\errors.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\errors.py',
    'PYMODULE'),
   ('setuptools.extension',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\extension.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\extension.py',
    'PYMODULE'),
   ('setuptools.glob',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\glob.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\glob.py',
    'PYMODULE'),
   ('setuptools.installer',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\installer.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\installer.py',
    'PYMODULE'),
   ('setuptools.logging',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\logging.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\logging.py',
    'PYMODULE'),
   ('setuptools.monkey',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\monkey.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\monkey.py',
    'PYMODULE'),
   ('setuptools.msvc',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\msvc.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\msvc.py',
    'PYMODULE'),
   ('setuptools.unicode_utils',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\unicode_utils.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\unicode_utils.py',
    'PYMODULE'),
   ('setuptools.version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\version.py',
    'PYMODULE'),
   ('setuptools.warnings',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\warnings.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\warnings.py',
    'PYMODULE'),
   ('setuptools.wheel',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\wheel.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\wheel.py',
    'PYMODULE'),
   ('setuptools.windows_support',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\setuptools\\windows_support.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\setuptools\\windows_support.py',
    'PYMODULE'),
   ('shiboken6',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\shiboken6\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\shiboken6\\__init__.py',
    'PYMODULE'),
   ('shlex',
    'C:\\Program '
@@ -1958,197 +2242,260 @@
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\urllib\\response.py',
    'PYMODULE'),
   ('urllib3',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\__init__.py',
    'PYMODULE'),
   ('urllib3._base_connection',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\_base_connection.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\_base_connection.py',
    'PYMODULE'),
   ('urllib3._collections',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\_collections.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\_collections.py',
    'PYMODULE'),
   ('urllib3._request_methods',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\_request_methods.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\_request_methods.py',
    'PYMODULE'),
   ('urllib3._version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\_version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\_version.py',
    'PYMODULE'),
   ('urllib3.connection',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\connection.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\connection.py',
    'PYMODULE'),
   ('urllib3.connectionpool',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\connectionpool.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\connectionpool.py',
    'PYMODULE'),
   ('urllib3.contrib',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\__init__.py',
    'PYMODULE'),
   ('urllib3.contrib.emscripten',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\emscripten\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\__init__.py',
    'PYMODULE'),
   ('urllib3.contrib.emscripten.connection',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\emscripten\\connection.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\connection.py',
    'PYMODULE'),
   ('urllib3.contrib.emscripten.fetch',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\emscripten\\fetch.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\fetch.py',
    'PYMODULE'),
   ('urllib3.contrib.emscripten.request',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\emscripten\\request.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\request.py',
    'PYMODULE'),
   ('urllib3.contrib.emscripten.response',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\emscripten\\response.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\response.py',
    'PYMODULE'),
   ('urllib3.contrib.pyopenssl',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\pyopenssl.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\pyopenssl.py',
    'PYMODULE'),
   ('urllib3.contrib.socks',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\contrib\\socks.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\contrib\\socks.py',
    'PYMODULE'),
   ('urllib3.exceptions',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\exceptions.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\exceptions.py',
    'PYMODULE'),
   ('urllib3.fields',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\fields.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\fields.py',
    'PYMODULE'),
   ('urllib3.filepost',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\filepost.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\filepost.py',
    'PYMODULE'),
   ('urllib3.http2',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\http2\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\http2\\__init__.py',
    'PYMODULE'),
   ('urllib3.http2.connection',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\http2\\connection.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\http2\\connection.py',
    'PYMODULE'),
   ('urllib3.http2.probe',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\http2\\probe.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\http2\\probe.py',
    'PYMODULE'),
   ('urllib3.poolmanager',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\poolmanager.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\poolmanager.py',
    'PYMODULE'),
   ('urllib3.response',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\response.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\response.py',
    'PYMODULE'),
   ('urllib3.util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\__init__.py',
    'PYMODULE'),
   ('urllib3.util.connection',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\connection.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\connection.py',
    'PYMODULE'),
   ('urllib3.util.proxy',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\proxy.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\proxy.py',
    'PYMODULE'),
   ('urllib3.util.request',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\request.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\request.py',
    'PYMODULE'),
   ('urllib3.util.response',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\response.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\response.py',
    'PYMODULE'),
   ('urllib3.util.retry',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\retry.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\retry.py',
    'PYMODULE'),
   ('urllib3.util.ssl_',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\ssl_.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\ssl_.py',
    'PYMODULE'),
   ('urllib3.util.ssl_match_hostname',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\ssl_match_hostname.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\ssl_match_hostname.py',
    'PYMODULE'),
   ('urllib3.util.ssltransport',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\ssltransport.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\ssltransport.py',
    'PYMODULE'),
   ('urllib3.util.timeout',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\timeout.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\timeout.py',
    'PYMODULE'),
   ('urllib3.util.url',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\url.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\url.py',
    'PYMODULE'),
   ('urllib3.util.util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\util.py',
    'PYMODULE'),
   ('urllib3.util.wait',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\urllib3\\util\\wait.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\urllib3\\util\\wait.py',
    'PYMODULE'),
   ('webbrowser',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\\Lib\\webbrowser.py',
    'PYMODULE'),
   ('win32ctypes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\__init__.py',
    'PYMODULE'),
   ('win32ctypes.core',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\__init__.py',
    'PYMODULE'),
   ('win32ctypes.core._winerrors',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\_winerrors.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\_winerrors.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\__init__.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._authentication',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_authentication.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_authentication.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._common',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_common.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_common.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._dll',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_dll.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_dll.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._nl_support',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_nl_support.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_nl_support.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._resource',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_resource.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_resource.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._system_information',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_system_information.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_system_information.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._time',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_time.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_time.py',
    'PYMODULE'),
   ('win32ctypes.core.cffi._util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\cffi\\_util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\cffi\\_util.py',
    'PYMODULE'),
   ('win32ctypes.core.compat',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\compat.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\compat.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\__init__.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._authentication',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_authentication.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_authentication.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._common',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_common.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_common.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._dll',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_dll.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_dll.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._nl_support',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_nl_support.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_nl_support.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._resource',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_resource.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_resource.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._system_information',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_system_information.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_system_information.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._time',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_time.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_time.py',
    'PYMODULE'),
   ('win32ctypes.core.ctypes._util',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\core\\ctypes\\_util.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\core\\ctypes\\_util.py',
    'PYMODULE'),
   ('win32ctypes.pywin32',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\pywin32\\__init__.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\pywin32\\__init__.py',
    'PYMODULE'),
   ('win32ctypes.pywin32.pywintypes',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\pywin32\\pywintypes.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\pywin32\\pywintypes.py',
    'PYMODULE'),
   ('win32ctypes.pywin32.win32api',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\pywin32\\win32api.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\pywin32\\win32api.py',
    'PYMODULE'),
   ('win32ctypes.pywin32.win32cred',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\pywin32\\win32cred.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\pywin32\\win32cred.py',
    'PYMODULE'),
   ('win32ctypes.version',
-   'C:\\Users\\lucas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32ctypes\\version.py',
+   'C:\\Users\\lucas\\Desktop\\Kit de Validação MyTeam vs '
+   'ERP\\.venv\\Lib\\site-packages\\win32ctypes\\version.py',
    'PYMODULE'),
   ('xml',
    'C:\\Program '

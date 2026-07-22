@@ -6,10 +6,6 @@ from core.credentials import (
 )
 
 
-def config_exists() -> bool:
-    return load_secure_config() is not None
-
-
 def load_config() -> dict:
     data = load_secure_config()
     if data is None:

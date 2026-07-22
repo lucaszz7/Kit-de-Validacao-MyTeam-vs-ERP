@@ -1,7 +1,7 @@
 import configparser
 import subprocess
 from pathlib import Path
-from datetime import datetime
+
 from core.database import Database
 from core.port_checks import is_optimizer_port_open
 from core.webapi_checks import are_api_keys_equal

@@ -456,7 +456,8 @@ class MainWindow(QMainWindow):
                 action_widget=validate_button,
             )
         )
-        layout.addWidget(self.build_results_section("environment"), 1)
+        layout.addWidget(self.build_results_section("environment"))
+        layout.addStretch(1)
         return page
 
     def build_orders_page(self):
@@ -472,8 +473,6 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.build_cards_group("Encomendas", cards, "orders"))
 
-
-
         validate_button = self.create_validation_button(
             "Validar encomendas",
             self.run_order_checks,
@@ -481,6 +480,7 @@ class MainWindow(QMainWindow):
         )
         layout.addWidget(validate_button)
         layout.addWidget(self.build_orders_results_section("orders"))
+        layout.addStretch(1)
         return page
 
     def build_sales_page(self):
@@ -496,8 +496,6 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.build_cards_group("Vendas", cards, "sales"))
 
-
-
         validate_button = self.create_validation_button(
             "Validar vendas",
             self.run_sales_checks,
@@ -505,6 +503,7 @@ class MainWindow(QMainWindow):
         )
         layout.addWidget(validate_button)
         layout.addWidget(self.build_orders_results_section("sales"))
+        layout.addStretch(1)
         return page
 
     def build_salesmen_page(self):
@@ -526,7 +525,8 @@ class MainWindow(QMainWindow):
             primary=True,
         )
         layout.addWidget(validate_button)
-        layout.addWidget(self.build_results_section("salesmen"), 1)
+        layout.addWidget(self.build_results_section("salesmen"))
+        layout.addStretch(1)
         return page
 
     def build_filter_bar(self, page_key: str, include_salesman: bool):
@@ -807,8 +807,6 @@ class MainWindow(QMainWindow):
         table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        table.setMinimumHeight(160)
-        table.setMaximumHeight(260)
         table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         
@@ -832,7 +830,6 @@ class MainWindow(QMainWindow):
         log_box = QTextEdit()
         log_box.setReadOnly(True)
         log_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        log_box.setMinimumHeight(140)
         log_box.setPlaceholderText("As mensagens da validação aparecem aqui.")
         
         layout.addLayout(summary_row)
@@ -841,6 +838,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(table)
         layout.addWidget(log_label)
         layout.addWidget(log_box)
+        layout.addStretch(1)
         
         self.result_widgets[page_key] = {
             "summary": summary,
@@ -990,13 +988,13 @@ class MainWindow(QMainWindow):
             "3. Tipos de documentos existentes na tabela de vendas"
         )
         section_issues = QGroupBox("4. Divergências encontradas")
+        section_issues.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         issues_layout = QVBoxLayout(section_issues)
         issues_box = QTextEdit()
         issues_box.setReadOnly(True)
         issues_box.setObjectName("issuesBox")
-        issues_box.setMinimumHeight(90)
-        issues_box.setMaximumHeight(160)
-        issues_box.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        issues_box.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        issues_box.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         issues_box.setPlaceholderText("As divergências aparecem aqui após a validação.")
         issues_layout.addWidget(issues_box)
         layout.addLayout(summary_row)
@@ -1028,14 +1026,14 @@ class MainWindow(QMainWindow):
     def build_doc_list_section(self, title: str) -> tuple[QGroupBox, QTextEdit]:
         """Lista de documentos, um por linha."""
         group = QGroupBox(title)
-        group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         section_layout = QVBoxLayout(group)
         section_layout.setContentsMargins(0, 0, 0, 0)
         doc_list = QTextEdit()
         doc_list.setReadOnly(True)
         doc_list.setObjectName("docListBox")
-        doc_list.setMinimumHeight(72)
-        doc_list.setMaximumHeight(160)
+        doc_list.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        doc_list.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         doc_list.setPlaceholderText("Sem dados.")
         section_layout.addWidget(doc_list)
         return group, doc_list
@@ -1920,6 +1918,7 @@ class MainWindow(QMainWindow):
         else:
             issue_lines = [f"⚠ {issue['message']}" for issue in orders["issues"]]
             widgets["issues"].setPlainText("\n".join(issue_lines))
+        self._fit_text_edit(widgets["issues"])
 
         widgets["has_results"] = True
 
@@ -1971,9 +1970,6 @@ class MainWindow(QMainWindow):
         widgets["stat_issues"].set_state("error" if total_issues else "ok")
 
         self.set_doc_list(widgets["bo_list"], bo_docs)
-        erp_values = sales.get("erp_values", {})
-
-        erp_values = sales.get("erp_values", {})
 
         monthly = sales.get("monthly_breakdown", [])
         self.populate_integrated_table(widgets["integrated_table"], monthly)
@@ -2004,6 +2000,7 @@ class MainWindow(QMainWindow):
         else:
             issue_lines = [f"⚠ {issue['message']}" for issue in sales["issues"]]
             widgets["issues"].setPlainText("\n".join(issue_lines))
+        self._fit_text_edit(widgets["issues"])
 
         widgets["has_results"] = True
 
@@ -2091,15 +2088,13 @@ class MainWindow(QMainWindow):
         formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
         return f"{formatted} €"
 
-    def format_amount(self, value: Any) -> str:
-        try:
-            numeric_value = int(round(float(value)))
-        except (TypeError, ValueError):
-            return "-"
-        return f"{numeric_value:,}".replace(",", " ")
-
     def set_doc_list(self, widget: QTextEdit, documents: list[str]):
         widget.setPlainText("\n".join(documents) if documents else "Nenhum documento encontrado.")
+        self._fit_text_edit(widget)
+
+    def _fit_text_edit(self, widget: QTextEdit):
+        doc_height = int(widget.document().size().height()) + 4
+        widget.setFixedHeight(max(36, doc_height))
 
     def populate_integrated_table(self, table: QTableWidget, monthly_breakdown: list[dict[str, Any]]):
         table.setRowCount(0)
@@ -2198,6 +2193,7 @@ class MainWindow(QMainWindow):
                 widgets["issues"].append(f"\n{text}")
             else:
                 widgets["issues"].setPlainText(text)
+            self._fit_text_edit(widgets["issues"])
             return
         widgets["log"].append(text)
 
