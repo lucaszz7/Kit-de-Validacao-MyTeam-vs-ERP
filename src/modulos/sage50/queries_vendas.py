@@ -22,9 +22,9 @@ def _build_join_msusr(sc: str | None) -> str:
     return f"LEFT JOIN MSUSR U ON LTRIM(RTRIM(CAST(D.{sc} AS VARCHAR(50)))) = LTRIM(RTRIM(CAST(U.USRVND AS VARCHAR(50))))"
 
 
-# ==========================================================
+# ==========================================================================================================
 # Documentos configurados no BackOffice
-# ==========================================================
+# ==========================================================================================================
 
 def get_documents_configured_in_bo(db_mss: DatabaseExecutor):
     query = """
@@ -45,9 +45,9 @@ def get_documents_configured_in_bo(db_mss: DatabaseExecutor):
         if doc.strip()
     }
 
-# ==========================================================
+# ==========================================================================================================
 # Documentos de venda existentes no ERP
-# ==========================================================
+# ==========================================================================================================
 
 def get_sale_documents_in_erp(db: DatabaseExecutor):
     query = """
@@ -63,9 +63,9 @@ def get_sale_documents_in_erp(db: DatabaseExecutor):
         if row[0]
     }
 
-# ==========================================================
+# ==========================================================================================================
 # Documentos já integrados no MyTeam
-# ==========================================================
+# ==========================================================================================================
 
 def get_integrated_sales_documents(
     db_mss: DatabaseExecutor,
@@ -120,9 +120,9 @@ def get_integrated_sales_documents(
         if not allowed or normalize_text(row[0]) in allowed
     ]
 
-# ==========================================================
+# ==========================================================================================================
 # Documentos existentes na tabela de vendas
-# ==========================================================
+# ==========================================================================================================
 
 def get_sales_documents_in_sales_table(db: DatabaseExecutor):
     query = """
@@ -182,9 +182,9 @@ def get_erp_sales_values_by_year(db: DatabaseExecutor, ano_atual: int = 2026):
     return result
 
 
-# ==========================================================
+# ==========================================================================================================
 # Validação do campo vendedor (DCCACL_38) nos documentos
-# ==========================================================
+# ==========================================================================================================
 
 def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set | None = None, start_date: str | None = None, end_date: str | None = None, salesman_id: str | None = None):
     sc = detect_salesman_column(db_mss)
@@ -274,9 +274,9 @@ def check_salesman_field_filled(db_mss: DatabaseExecutor, allowed_documents: set
     }
 
 
-# ==========================================================
+# ==========================================================================================================
 # Contagem de documentos MSS (Qt. MSS na grelha)
-# ==========================================================
+# ==========================================================================================================
 
 def get_mss_doc_counts(
     db_mss: DatabaseExecutor,
@@ -316,9 +316,9 @@ def get_mss_doc_counts(
     ]
 
 
-# ==========================================================
+# ==========================================================================================================
 # Contagem de documentos ERP (Qt. ERP na grelha)
-# ==========================================================
+# ==========================================================================================================
 
 def get_erp_doc_counts(db: DatabaseExecutor, ano_atual: int = 2026):
     query = f"""
@@ -343,9 +343,9 @@ def get_erp_doc_counts(db: DatabaseExecutor, ano_atual: int = 2026):
     return result
 
 
-# ==========================================================
+# ==========================================================================================================
 # Monthly breakdown (ano anterior vs atual) — VENDAS
-# ==========================================================
+# ==========================================================================================================
 
 def get_monthly_sales_breakdown(db_mss: DatabaseExecutor, allowed_documents: set | None = None, start_date: str | None = None, end_date: str | None = None, salesman_id: str | None = None):
     ano_atual = 2026
@@ -424,9 +424,9 @@ def get_monthly_sales_breakdown(db_mss: DatabaseExecutor, allowed_documents: set
     return results
 
 
-# ==========================================================
+# ==========================================================================================================
 # VALIDAÇÃO
-# ==========================================================
+# ==========================================================================================================
 
 def validate_sales_documents(
     db,

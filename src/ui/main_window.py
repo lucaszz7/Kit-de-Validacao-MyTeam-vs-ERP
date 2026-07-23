@@ -89,7 +89,7 @@ class FixedStackedWidget(QStackedWidget):
 class HorizontalResizeScrollArea(QScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWidgetResizable(True)
+        self.setWidgetResizable(False)
 
     def eventFilter(self, obj, event):
         if obj is self.widget() and event.type() == event.Type.Resize:
@@ -417,7 +417,7 @@ class MainWindow(QMainWindow):
     def build_environment_page(self):
         """Painel 0: serviços Windows, WebAPI, SQL Server e configs MSS."""
         page = QWidget()
-        page.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        page.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(16)
@@ -962,7 +962,7 @@ class MainWindow(QMainWindow):
         integrated_layout.addWidget(filter_row)
         integrated_layout.addWidget(salesman_label)
 
-        integrated_table = ExpandingTableWidget(0, 11)
+        integrated_table = QTableWidget(0, 11)
         integrated_table.setHorizontalHeaderLabels([
             "Mês", "Cód. Vendedor", "Vendedor", "Documento",
             "Qt. MSS", "MSS Ano Anterior", "MSS Ano Atual",
@@ -972,11 +972,13 @@ class MainWindow(QMainWindow):
         integrated_table.setAlternatingRowColors(True)
         integrated_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         integrated_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        integrated_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        integrated_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        integrated_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        integrated_table.setFixedHeight(300)
+        integrated_table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        integrated_table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         integrated_table.verticalHeader().setVisible(False)
         integrated_table.verticalHeader().setDefaultSectionSize(34)
+        integrated_table.horizontalHeader().setStretchLastSection(True)
         for col in range(11):
             integrated_table.horizontalHeader().setSectionResizeMode(
                 col,
@@ -1121,6 +1123,19 @@ class MainWindow(QMainWindow):
 
     def _refit_table(self, table: QTableWidget):
         table.resizeRowsToContents()
+        if isinstance(table, ExpandingTableWidget):
+            visible_rows = sum(1 for r in range(table.rowCount()) if not table.isRowHidden(r))
+            header_h = table.horizontalHeader().height()
+            frame = table.frameWidth() * 2
+            row_h = table.verticalHeader().defaultSectionSize()
+            if visible_rows <= 20:
+                content_h = header_h + visible_rows * row_h + frame + 4
+                table.setMinimumHeight(content_h)
+                table.setMaximumHeight(content_h)
+            else:
+                content_h = header_h + 20 * row_h + frame + 4
+                table.setMinimumHeight(content_h)
+                table.setMaximumHeight(16777215)
         table.updateGeometry()
         w = table.parentWidget()
         while w:
@@ -1318,6 +1333,9 @@ class MainWindow(QMainWindow):
 
         if hasattr(self, 'content_scroll') and self.content_scroll:
             self.content_scroll.verticalScrollBar().setValue(0)
+            content_w = self.content_scroll.widget()
+            if content_w:
+                content_w.updateGeometry()
 
         if page_key in ("orders", "sales"):
             self.ensure_salesman_filter_options(page_key)
