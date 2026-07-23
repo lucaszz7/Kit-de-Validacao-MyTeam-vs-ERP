@@ -72,32 +72,6 @@ def get_salesmen_mapping(db: DatabaseExecutor) -> list[dict[str, str]]:
     ]
 
 
-def get_erp_salesmen(db: DatabaseExecutor) -> list[dict[str, str]]:
-    """Retorna os vendedores do Sage 50 para filtros da interface."""
-
-    config = load_config()
-    sage_db = quote_sql_identifier(config["databases"]["sage50"])
-
-    query = f"""
-    SELECT
-        CAST(SalesmanID AS VARCHAR(50)) AS SalesmanID,
-        SalesmanName
-    FROM {sage_db}.dbo.Salesman
-    ORDER BY SalesmanName
-    """
-
-    rows = db.execute(query)
-
-    return [
-        {
-            "salesman_id": normalize_text(row[0]),
-            "salesman_name": normalize_text(row[1]),
-        }
-        for row in rows
-        if normalize_text(row[0])
-    ]
-
-
 def get_unmapped_salesmen(db: DatabaseExecutor) -> list[ValidationIssue]:
     """Identifica vendedores do ERP que nao estao mapeados em nenhum utilizador MSS."""
 

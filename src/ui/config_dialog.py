@@ -262,7 +262,7 @@ class ConfigDialog(QDialog):
             msg = str(exc).strip()
             friendly = self._friendly_error(msg, server)
             self._set_busy(False)
-            self._show_error(f"{friendly}\n\n{msg}")
+            self._show_error(friendly)
             return
 
         ini_path = self.ini_edit.text().strip()

@@ -1,6 +1,28 @@
-.venv/
+# Python
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+*.egg-info/
+
+# Ambiente
+.venv/
+.env
+
+# IDE
 .vscode/
-config/config.json
+.idea/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Config local (contém credenciais)
+**/config.json
+
+# Logs
+*.log
+
+# Windows
+Thumbs.db

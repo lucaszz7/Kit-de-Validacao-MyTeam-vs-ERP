@@ -6,3 +6,12 @@ pyodbc
 
 # Verificações WebAPI (endpoint de status)
 requests
+
+# Credenciais seguras (Windows Credential Manager)
+keyring
+
+# Encriptação de passwords (Fernet AES-128)
+cryptography
+
+# Exportação Excel
+openpyxl

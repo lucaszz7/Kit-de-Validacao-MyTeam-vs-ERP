@@ -13,13 +13,12 @@ from typing import Any
 from xml.sax.saxutils import escape
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from PySide6.QtCore import QDate, QEvent, QSize, QObject, Qt, QThread, Signal, Slot
+from PySide6.QtCore import QEvent, QSize, QObject, Qt, QThread, Signal, Slot
 from PySide6.QtGui import QColor, QFont, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
     QComboBox,
-    QDateEdit,
     QDialog,
     QFileDialog,
     QFrame,
@@ -59,7 +58,7 @@ from core.verifications import (
     get_world_geometries_info,
 )
 from modulos.sage50.queries_encomendas import validate_order_documents
-from modulos.sage50.queries_vendedores import get_erp_salesmen, get_salesmen_mapping, validate_salesmen
+from modulos.sage50.queries_vendedores import get_salesmen_mapping, validate_salesmen
 from modulos.sage50.queries_vendas import validate_sales_documents
 
 
@@ -193,24 +192,6 @@ class StatusCard(QFrame):
         self.style().polish(self.status_label)
 
 
-class ExpandingTableWidget(QTableWidget):
-    def sizeHint(self):
-        hint = super().sizeHint()
-        hint.setHeight(self.fullHeight())
-        return hint
-
-    def minimumSizeHint(self):
-        return self.sizeHint()
-
-    def fullHeight(self):
-        h = self.horizontalHeader().height()
-        for r in range(self.rowCount()):
-            if not self.isRowHidden(r):
-                h += self.rowHeight(r)
-        h += self.frameWidth() * 2
-        return max(h, 40)
-
-
 class CountStatCard(QFrame):
     """
     Cartão numérico do painel de encomendas (BackOffice, ERP, Integrados, Divergências).
@@ -272,7 +253,6 @@ class MainWindow(QMainWindow):
 
         self.cards: dict[str, StatusCard] = {}
         self.result_widgets: dict[str, dict[str, Any]] = {}
-        self.filter_widgets: dict[str, dict[str, Any]] = {}
         self.nav_buttons: dict[str, QPushButton] = {}
         self.validation_controls: list[QWidget] = []
 
@@ -528,50 +508,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.build_results_section("salesmen"))
         layout.addStretch(1)
         return page
-
-    def build_filter_bar(self, page_key: str, include_salesman: bool):
-        """Filtros visuais usados antes das validações documentais."""
-        group = QGroupBox("Filtros")
-        group.setObjectName("filterGroup")
-        layout = QHBoxLayout(group)
-        layout.setContentsMargins(14, 16, 14, 14)
-        layout.setSpacing(12)
-
-        start_date = self.create_date_filter()
-        start_date.setMaximumDate(QDate.currentDate())
-        end_date = self.create_date_filter()
-
-        layout.addWidget(self.create_labeled_control("Data início", start_date))
-        layout.addWidget(self.create_labeled_control("Data fim", end_date))
-
-        widgets: dict[str, Any] = {
-            "start_date": start_date,
-            "end_date": end_date,
-        }
-
-        if include_salesman:
-            salesman_combo = QComboBox()
-            salesman_combo.setObjectName("filterCombo")
-            salesman_combo.addItem("Todos os vendedores", None)
-            salesman_combo.setMinimumWidth(240)
-            salesman_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-            self.validation_controls.append(salesman_combo)
-            layout.addWidget(self.create_labeled_control("Vendedor", salesman_combo), 1)
-            widgets["salesman"] = salesman_combo
-
-        layout.addStretch()
-        self.filter_widgets[page_key] = widgets
-        return group
-
-    def create_date_filter(self):
-        date_edit = QDateEdit()
-        date_edit.setObjectName("filterDate")
-        date_edit.setCalendarPopup(True)
-        date_edit.setDisplayFormat("dd/MM/yyyy")
-        date_edit.setDate(QDate.currentDate())
-        date_edit.setMinimumWidth(132)
-        self.validation_controls.append(date_edit)
-        return date_edit
 
     def create_labeled_control(self, label_text: str, control: QWidget):
         container = QWidget()
@@ -1123,19 +1059,6 @@ class MainWindow(QMainWindow):
 
     def _refit_table(self, table: QTableWidget):
         table.resizeRowsToContents()
-        if isinstance(table, ExpandingTableWidget):
-            visible_rows = sum(1 for r in range(table.rowCount()) if not table.isRowHidden(r))
-            header_h = table.horizontalHeader().height()
-            frame = table.frameWidth() * 2
-            row_h = table.verticalHeader().defaultSectionSize()
-            if visible_rows <= 20:
-                content_h = header_h + visible_rows * row_h + frame + 4
-                table.setMinimumHeight(content_h)
-                table.setMaximumHeight(content_h)
-            else:
-                content_h = header_h + 20 * row_h + frame + 4
-                table.setMinimumHeight(content_h)
-                table.setMaximumHeight(16777215)
         table.updateGeometry()
         w = table.parentWidget()
         while w:
@@ -1337,66 +1260,6 @@ class MainWindow(QMainWindow):
             if content_w:
                 content_w.updateGeometry()
 
-        if page_key in ("orders", "sales"):
-            self.ensure_salesman_filter_options(page_key)
-
-    def ensure_salesman_filter_options(self, page_key: str):
-        """Carrega a lista de vendedores dos documentos integrados para os filtros."""
-        combo = self.filter_widgets.get(page_key, {}).get("salesman")
-        if combo is None or combo.property("loaded"):
-            return
-
-        try:
-            db_sage, _ = self.ensure_databases()
-            salesmen = get_erp_salesmen(db_sage)
-        except Exception as error:
-            self.append_global_log(
-                f"Não foi possível carregar vendedores para o filtro: {error}",
-                level="warning",
-            )
-            return
-
-        combo.blockSignals(True)
-        combo.clear()
-        combo.addItem("Todos os vendedores", None)
-        for salesman in salesmen:
-            name = salesman['salesman_name']
-            code = salesman['salesman_id']
-            label = f"{code} - {name}" if name else code
-            combo.addItem(label, code)
-        combo.setProperty("loaded", True)
-        combo.blockSignals(False)
-
-    def get_panel_filters(self, page_key: str) -> dict[str, Any] | None:
-        widgets = self.filter_widgets.get(page_key, {})
-        start_widget = widgets.get("start_date")
-        end_widget = widgets.get("end_date")
-
-        if start_widget is None or end_widget is None:
-            return {}
-
-        start_date = start_widget.date()
-        end_date = end_widget.date()
-
-        if start_date > end_date:
-            QMessageBox.warning(
-                self,
-                "Filtros inválidos",
-                "A data de início não pode ser posterior à data de fim.",
-            )
-            return None
-
-        filters = {
-            "start_date": start_date.toString("yyyy-MM-dd"),
-            "end_date": end_date.toString("yyyy-MM-dd"),
-        }
-
-        salesman_combo = widgets.get("salesman")
-        if salesman_combo is not None:
-            filters["salesman_id"] = salesman_combo.currentData()
-
-        return filters
-
     def _refresh_settings_panel(self):
         """Lê config (se já carregada) e atualiza os labels de Definições."""
         if self.config is None:
@@ -1554,13 +1417,10 @@ class MainWindow(QMainWindow):
 
     def run_sales_checks(self):
         self.show_page("sales")
-        filters = self.get_panel_filters("sales")
-        if filters is None:
-            return
 
         self.run_task(
             "vendas",
-            lambda: {"sales": self.collect_sales_checks(filters)},
+            lambda: {"sales": self.collect_sales_checks()},
             self.render_sales_results,
             "sales",
             ["sales"],
@@ -1709,9 +1569,9 @@ class MainWindow(QMainWindow):
         db_sage, db_mss = self.ensure_databases()
         return validate_order_documents(db_sage, db_mss)
 
-    def collect_sales_checks(self, filters: dict[str, Any] | None = None):
+    def collect_sales_checks(self):
         db_sage, db_mss = self.ensure_databases()
-        return validate_sales_documents(db_sage, db_mss, **(filters or {}))
+        return validate_sales_documents(db_sage, db_mss)
 
     def collect_salesmen_checks(self):
         db_sage, _ = self.ensure_databases()
