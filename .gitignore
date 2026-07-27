@@ -16,7 +16,7 @@ __pycache__/
 # PyInstaller
 build/
 dist/
-*.spec
+!KitValidacao.spec
 
 # Config local (contém credenciais)
 **/config.json
