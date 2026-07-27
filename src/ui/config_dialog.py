@@ -5,6 +5,7 @@ import os
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QMoveEvent
 from PySide6.QtWidgets import (
+    QComboBox,
     QDialog,
     QFileDialog,
     QHBoxLayout,
@@ -25,7 +26,7 @@ class ConfigDialog(QDialog):
     def __init__(self, existing_config: dict | None = None):
         super().__init__()
         self.setWindowTitle("Ligação ao SQL Server — Kit de Validação")
-        self.setFixedSize(580, 620)
+        self.setFixedSize(580, 720)
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
         self.setModal(True)
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -69,6 +70,32 @@ class ConfigDialog(QDialog):
         self.password_edit = self._add_field(layout, "Password:")
         self.password_edit.setPlaceholderText("Password do SQL Server")
         self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
+
+        # ── Seleção de ERP ──
+        erp_label = QLabel("ERP:")
+        erp_label.setObjectName("fieldLabel")
+        layout.addWidget(erp_label)
+        self.erp_combo = QComboBox()
+        self.erp_combo.addItems([
+            "Sage 50",
+            "Primavera",
+            "PHC",
+            "Eticadata",
+            "Sage 100",
+            "ERP XD",
+            "Outros",
+        ])
+        self.erp_combo.currentTextChanged.connect(self._on_erp_changed)
+        layout.addWidget(self.erp_combo)
+
+        self.erp_custom_label = QLabel("Nome do ERP:")
+        self.erp_custom_label.setObjectName("fieldLabel")
+        self.erp_custom_label.hide()
+        layout.addWidget(self.erp_custom_label)
+        self.erp_custom_edit = QLineEdit()
+        self.erp_custom_edit.setPlaceholderText("Indique o nome do ERP")
+        self.erp_custom_edit.hide()
+        layout.addWidget(self.erp_custom_edit)
 
         self.sage_edit = self._add_field(layout, "Base ERP (Sage 50):")
         self.sage_edit.setPlaceholderText("ex: Sage50_1")
@@ -145,6 +172,11 @@ class ConfigDialog(QDialog):
         layout.addWidget(edit)
         return edit
 
+    def _on_erp_changed(self, text: str):
+        custom_visible = text == "Outros"
+        self.erp_custom_label.setVisible(custom_visible)
+        self.erp_custom_edit.setVisible(custom_visible)
+
     def _browse_ini(self):
         path, _ = QFileDialog.getOpenFileName(
             self,
@@ -182,6 +214,14 @@ class ConfigDialog(QDialog):
             self.ini_edit.setText(cfg["mss_ini_path"])
         if cfg.get("mss_appsettings_path"):
             self.app_edit.setText(cfg["mss_appsettings_path"])
+        if cfg.get("erp"):
+            erp = cfg["erp"]
+            idx = self.erp_combo.findText(erp)
+            if idx >= 0:
+                self.erp_combo.setCurrentIndex(idx)
+            else:
+                self.erp_combo.setCurrentText("Outros")
+                self.erp_custom_edit.setText(erp)
         self.save_checkbox.setChecked(cfg.get("save_credentials", False))
 
     def _validate_ini_file(self, path: str) -> str | None:
@@ -280,9 +320,18 @@ class ConfigDialog(QDialog):
             self._show_error(app_error)
             return
 
+        erp = self.erp_combo.currentText()
+        if erp == "Outros":
+            custom = self.erp_custom_edit.text().strip()
+            if not custom:
+                self._show_error("Indique o nome do ERP.")
+                return
+            erp = custom
+
         self._result = {
             "sql_server": {"server": server, "user": user, "password": password},
             "databases": {"sage50": sage, "mss": mss},
+            "erp": erp,
             "mss_ini_path": ini_path,
             "mss_appsettings_path": app_path,
             "save_credentials": self.save_checkbox.isChecked(),
@@ -376,6 +425,32 @@ QLineEdit:focus {
 QLineEdit:disabled {
     background: #f7fafc;
     color: #a0aec0;
+}
+QComboBox {
+    background: #ffffff;
+    color: #1a202c;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+}
+QComboBox:focus {
+    border: 1px solid #21866f;
+}
+QComboBox::drop-down {
+    width: 24px;
+    border: none;
+}
+QComboBox::down-arrow {
+    width: 12px;
+    height: 12px;
+}
+QComboBox QAbstractItemView {
+    background: #ffffff;
+    color: #1a202c;
+    border: 1px solid #cbd5e0;
+    selection-background-color: #21866f;
+    selection-color: #ffffff;
 }
 QCheckBox {
     color: #1a202c;
