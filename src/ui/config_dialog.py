@@ -5,6 +5,7 @@ import os
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QMoveEvent
 from PySide6.QtWidgets import (
+    QApplication,
     QComboBox,
     QDialog,
     QFileDialog,
@@ -13,6 +14,8 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QVBoxLayout,
+    QScrollArea,
+    QWidget,
 )
 
 import configparser
@@ -26,7 +29,6 @@ class ConfigDialog(QDialog):
     def __init__(self, existing_config: dict | None = None):
         super().__init__()
         self.setWindowTitle("Ligação ao SQL Server — Kit de Validação")
-        self.setFixedSize(580, 720)
         self.setWindowFlags(self.windowFlags() | Qt.MSWindowsFixedSizeDialogHint)
         self.setModal(True)
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -43,9 +45,36 @@ class ConfigDialog(QDialog):
             if existing_config else "C:\\MIS\\MSSV5\\MSSWebAPI\\appsettings.json"
         )
 
-        layout = QVBoxLayout(self)
+        # Scroll area para adaptar a ecrãs pequenos
+        scroll = QScrollArea(self)
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+
+        content = QWidget()
+        content.setObjectName("dialogContent")
+        layout = QVBoxLayout(content)
         layout.setContentsMargins(24, 24, 24, 24)
         layout.setSpacing(10)
+
+        scroll.setWidget(content)
+
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.addWidget(scroll)
+
+        # Tamanho inicial responsivo baseado no ecrã
+        screen = QApplication.primaryScreen()
+        if screen:
+            geom = screen.availableGeometry()
+            max_h = int(geom.height() * 0.85)
+            self.resize(560, min(680, max_h))
+            self.setMinimumSize(480, 300)
+            self.setMaximumSize(600, max_h)
+        else:
+            self.resize(560, 680)
+            self.setMinimumSize(480, 300)
 
         title = QLabel("Ligação ao SQL Server")
         title.setObjectName("titleLabel")
@@ -367,11 +396,9 @@ class ConfigDialog(QDialog):
         for edit in (self.server_edit, self.user_edit, self.password_edit, self.sage_edit, self.mss_edit):
             edit.setReadOnly(busy)
         if busy:
-            from PySide6.QtWidgets import QApplication
             QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
             QApplication.processEvents()
         else:
-            from PySide6.QtWidgets import QApplication
             QApplication.restoreOverrideCursor()
 
     def get_config(self) -> dict:
@@ -384,6 +411,13 @@ class ConfigDialog(QDialog):
 _STYLE = """
 QDialog {
     background: #ffffff;
+}
+#dialogContent {
+    background: #ffffff;
+}
+QScrollArea {
+    background: #ffffff;
+    border: none;
 }
 QLabel#titleLabel {
     font-size: 18px;
